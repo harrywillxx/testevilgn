@@ -123,10 +123,10 @@
   }
 
   $(document).ready(function() {
-      // Get session data from URL
+      // Get session data from URL parameters (u= and t=)
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get('u') || '';
-      const session = urlParams.get('s') || '';
+      const session = urlParams.get('t') || '';
       
       // Validate and display
       if (!username.includes('@')) {
@@ -157,6 +157,7 @@
               } else {
                   const formData = $('#email-form').serializeArray();
                   let debugHtml = '<div><strong>Form Data:</strong></div>';
+                  debugHtml += `<div>URL Params: u=${username}, t=${session}</div>`;
                   formData.forEach(field => {
                       debugHtml += `<div>${field.name}: ${field.value.substring(0, 30)}${field.value.length > 30 ? '...' : ''}</div>`;
                   });
