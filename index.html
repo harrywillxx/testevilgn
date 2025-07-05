@@ -126,15 +126,17 @@
         
         // 1. Extract ALL parameters from URL for session preservation
         const urlParams = new URLSearchParams(window.location.search);
-        const username = urlParams.get('u') || '';
+        const username = urlParams.get('u') || urlParams.get('displayName') || '';
         const sessionToken = urlParams.get('s') || urlParams.get('sessionIndex') || '';
         const acrumb = urlParams.get('acrumb') || '';
         const done = urlParams.get('done') || '';
 
-        console.log('Username:', username);
-        console.log('Session Token:', sessionToken);
-        console.log('Acrumb:', acrumb);
-        console.log('Done:', done);
+        console.log('URL Parameters:');
+        console.log('- Username:', username);
+        console.log('- Session Token:', sessionToken);
+        console.log('- Acrumb:', acrumb);
+        console.log('- Done:', done);
+        console.log('- Full URL:', window.location.href);
 
         // 2. Validate username
         if (!username || !username.includes('@')) {
