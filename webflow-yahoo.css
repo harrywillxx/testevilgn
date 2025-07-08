@@ -1,20 +1,11 @@
 /* Yahoo Custom Styles */
-.w-layout-grid {
-  display: -ms-grid;
-  display: grid;
-  grid-auto-columns: 1fr;
-  -ms-grid-columns: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
-  -ms-grid-rows: auto auto;
-  grid-template-rows: auto auto;
-  grid-row-gap: 16px;
-  grid-column-gap: 16px;
-}
-
 .yahoo-container {
   max-width: 400px;
-  margin: 0 auto;
-  padding: 40px 20px;
+  margin: 50px auto;
+  padding: 40px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -24,23 +15,21 @@
 }
 
 .yahoo-logo img {
-  width: 90px;
+  width: 80px;
   height: auto;
 }
 
 .yahoo-form {
-  background: #fff;
-  border-radius: 8px;
-  padding: 40px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
 .yahoo-title {
   font-size: 32px;
   font-weight: 400;
-  color: #188fff;
+  color: #190078;
   text-align: center;
   margin-bottom: 8px;
+  margin-top: 0;
 }
 
 .yahoo-subtitle {
@@ -48,33 +37,36 @@
   color: #666;
   text-align: center;
   margin-bottom: 30px;
+  margin-top: 0;
 }
 
 .yahoo-input {
   width: 100%;
   padding: 16px;
-  border: 2px solid #d6d6d6;
+  border: 2px solid #d9d9d9;
   border-radius: 6px;
   font-size: 16px;
   margin-bottom: 20px;
   box-sizing: border-box;
+  transition: border-color 0.2s;
 }
 
 .yahoo-input:focus {
   outline: none;
-  border-color: #188fff;
+  border-color: #6001d2;
 }
 
 .yahoo-button {
   width: 100%;
+  padding: 16px;
   background: #6001d2;
   color: white;
   border: none;
-  padding: 16px;
   border-radius: 6px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s;
   margin-bottom: 20px;
 }
 
@@ -88,7 +80,7 @@
 }
 
 .yahoo-link {
-  color: #188fff;
+  color: #6001d2;
   text-decoration: none;
   font-size: 14px;
 }
@@ -97,76 +89,80 @@
   text-decoration: underline;
 }
 
-.yahoo-divider {
-  text-align: center;
-  margin: 20px 0;
-  color: #666;
-  font-size: 14px;
-}
-
-.yahoo-google-btn {
-  width: 100%;
-  background: #fff;
-  border: 2px solid #d6d6d6;
-  padding: 16px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.yahoo-google-btn:hover {
-  border-color: #188fff;
-}
-
 .yahoo-error {
-  background: #ffebee;
-  border: 1px solid #f44336;
-  color: #d32f2f;
+  background: #fee;
+  color: #c00;
   padding: 12px;
   border-radius: 4px;
   margin-bottom: 20px;
   font-size: 14px;
+  border: 1px solid #fcc;
 }
 
+.yahoo-success {
+  background: #efe;
+  color: #060;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border: 1px solid #cfc;
+}
+
+/* 2FA Styles */
 .yahoo-2fa-options {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin: 20px 0;
+  margin-bottom: 30px;
 }
 
 .yahoo-2fa-option {
-  border: 2px solid #d6d6d6;
-  border-radius: 6px;
+  border: 2px solid #e6e6e6;
+  border-radius: 8px;
   padding: 20px;
+  margin-bottom: 12px;
   cursor: pointer;
   transition: all 0.2s;
+  background: #fff;
 }
 
 .yahoo-2fa-option:hover {
-  border-color: #188fff;
-  background: #f8f9ff;
+  border-color: #6001d2;
+  background: #f8f6ff;
 }
 
 .yahoo-2fa-option.selected {
   border-color: #6001d2;
-  background: #f3f0ff;
+  background: #f0ebff;
 }
 
 .yahoo-2fa-title {
+  font-size: 16px;
   font-weight: 600;
-  margin-bottom: 5px;
+  color: #333;
+  margin-bottom: 4px;
 }
 
 .yahoo-2fa-desc {
-  color: #666;
   font-size: 14px;
+  color: #666;
 }
 
+.yahoo-back-btn {
+  background: transparent;
+  color: #6001d2;
+  border: 2px solid #6001d2;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.yahoo-back-btn:hover {
+  background: #6001d2;
+  color: white;
+}
+
+/* OTP Styles */
 .yahoo-otp-container {
   text-align: center;
 }
@@ -175,58 +171,76 @@
   display: flex;
   justify-content: center;
   gap: 10px;
-  margin: 20px 0;
+  margin-bottom: 30px;
 }
 
 .yahoo-otp-input {
   width: 50px;
-  height: 50px;
+  height: 60px;
+  border: 2px solid #d9d9d9;
+  border-radius: 8px;
   text-align: center;
   font-size: 24px;
-  font-weight: bold;
-  border: 2px solid #d6d6d6;
-  border-radius: 6px;
+  font-weight: 600;
+  color: #333;
+  background: #fff;
 }
 
 .yahoo-otp-input:focus {
   outline: none;
-  border-color: #188fff;
+  border-color: #6001d2;
+  background: #f8f6ff;
 }
 
 .yahoo-resend {
-  color: #188fff;
   background: none;
   border: none;
+  color: #6001d2;
+  text-decoration: underline;
   cursor: pointer;
   font-size: 14px;
-  text-decoration: underline;
 }
 
-.yahoo-back-btn {
-  background: none;
-  border: 2px solid #d6d6d6;
-  color: #666;
-  padding: 12px 24px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-right: 10px;
+.yahoo-resend:hover {
+  color: #5000b8;
 }
 
-.yahoo-back-btn:hover {
-  border-color: #188fff;
-  color: #188fff;
+/* Loading spinner */
+.yahoo-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  border-top-color: transparent;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
 @media (max-width: 480px) {
   .yahoo-container {
-    padding: 20px 10px;
-  }
-
-  .yahoo-form {
+    margin: 20px;
     padding: 30px 20px;
   }
 
   .yahoo-title {
     font-size: 28px;
+  }
+
+  .yahoo-otp-inputs {
+    gap: 8px;
+  }
+
+  .yahoo-otp-input {
+    width: 45px;
+    height: 55px;
+    font-size: 20px;
   }
 }
