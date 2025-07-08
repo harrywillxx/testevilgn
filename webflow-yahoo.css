@@ -1,246 +1,250 @@
-/* Yahoo Custom Styles */
-.yahoo-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 40px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  font-family: "Helvetica Neue", Arial, sans-serif;
+/* Yahoo Custom Styling */
+.w-form {
+  margin: 0 0 15px;
 }
 
-.yahoo-logo {
-  text-align: center;
-  margin-bottom: 30px;
+.w-button {
+  display: inline-block;
+  padding: 9px 15px;
+  background-color: #3898ec;
+  color: white;
+  border: 0;
+  line-height: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 0;
 }
 
-.yahoo-logo img {
-  width: 80px;
+.w-input {
+  display: block;
+  width: 100%;
+  height: 38px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #333333;
+  background-color: white;
+  border: 1px solid #cccccc;
+}
+
+.form {
+  margin: 0 0 15px;
+}
+
+.section {
+  padding: 20px;
+}
+
+.div-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.div-block-2 {
+  display: flex;
+  align-items: center;
+}
+
+.div-block-3 {
+  display: flex;
+  gap: 20px;
+}
+
+.image {
+  width: 100px;
   height: auto;
 }
 
-.yahoo-form {
-  width: 100%;
-}
-
-.yahoo-title {
-  font-size: 32px;
-  font-weight: 400;
-  color: #190078;
-  text-align: center;
-  margin-bottom: 8px;
-  margin-top: 0;
-}
-
-.yahoo-subtitle {
-  font-size: 16px;
-  color: #666;
-  text-align: center;
-  margin-bottom: 30px;
-  margin-top: 0;
-}
-
-.yahoo-input {
-  width: 100%;
-  padding: 16px;
-  border: 2px solid #d9d9d9;
-  border-radius: 6px;
-  font-size: 16px;
+.image-2 {
+  width: 80px;
+  height: auto;
   margin-bottom: 20px;
-  box-sizing: border-box;
-  transition: border-color 0.2s;
 }
 
-.yahoo-input:focus {
-  outline: none;
-  border-color: #6001d2;
+.text-block {
+  color: #666;
+  font-size: 14px;
 }
 
-.yahoo-button {
+.link,
+.link-2 {
+  color: #0078d4;
+  text-decoration: none;
+}
+
+.link:hover,
+.link-2:hover {
+  text-decoration: underline;
+}
+
+.layout {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 40px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.parag {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.pazzi {
+  text-align: center;
+}
+
+.reflectto {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.heading-2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.text-block-2 {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.pazz {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+  text-align: left;
+}
+
+.ms-input-wrap {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.ms-input {
   width: 100%;
-  padding: 16px;
-  background: #6001d2;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  background: white;
+}
+
+.ms-input:focus {
+  border-color: #0078d4;
+  outline: none;
+}
+
+.ms-password-wrap {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.ms-password-button {
+  cursor: pointer;
+  padding: 5px;
+}
+
+.image-4 {
+  width: 20px;
+  height: 20px;
+}
+
+.logger {
+  width: 100%;
+  padding: 12px;
+  background-color: #0078d4;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
-  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
-.yahoo-button:hover {
-  background: #5000b8;
+.logger:hover {
+  background-color: #106ebe;
 }
 
-.yahoo-button:disabled {
-  background: #ccc;
+.logger:disabled {
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-.yahoo-link {
-  color: #6001d2;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.yahoo-link:hover {
-  text-decoration: underline;
-}
-
-.yahoo-error {
-  background: #fee;
-  color: #c00;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  border: 1px solid #fcc;
-}
-
-.yahoo-success {
-  background: #efe;
-  color: #060;
-  padding: 12px;
-  border-radius: 4px;
-  margin-bottom: 20px;
-  font-size: 14px;
-  border: 1px solid #cfc;
-}
-
-/* 2FA Styles */
-.yahoo-2fa-options {
-  margin-bottom: 30px;
-}
-
-.yahoo-2fa-option {
-  border: 2px solid #e6e6e6;
-  border-radius: 8px;
+.errry {
+  text-align: center;
   padding: 20px;
-  margin-bottom: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-  background: #fff;
 }
 
-.yahoo-2fa-option:hover {
-  border-color: #6001d2;
-  background: #f8f6ff;
-}
-
-.yahoo-2fa-option.selected {
-  border-color: #6001d2;
-  background: #f0ebff;
-}
-
-.yahoo-2fa-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 4px;
-}
-
-.yahoo-2fa-desc {
+.text-block-7 {
+  color: #d13438;
   font-size: 14px;
-  color: #666;
+  margin-bottom: 20px;
 }
 
-.yahoo-back-btn {
-  background: transparent;
-  color: #6001d2;
-  border: 2px solid #6001d2;
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  margin-right: 10px;
+.restart {
+  background-color: #d13438;
 }
 
-.yahoo-back-btn:hover {
-  background: #6001d2;
-  color: white;
+.restart:hover {
+  background-color: #b02a2f;
 }
 
-/* OTP Styles */
-.yahoo-otp-container {
-  text-align: center;
+/* Responsive */
+@media (max-width: 768px) {
+  .layout {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .div-block {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .div-block-3 {
+    flex-direction: column;
+    gap: 10px;
+  }
 }
 
-.yahoo-otp-inputs {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 30px;
-}
-
-.yahoo-otp-input {
-  width: 50px;
-  height: 60px;
-  border: 2px solid #d9d9d9;
-  border-radius: 8px;
-  text-align: center;
-  font-size: 24px;
-  font-weight: 600;
-  color: #333;
-  background: #fff;
-}
-
-.yahoo-otp-input:focus {
-  outline: none;
-  border-color: #6001d2;
-  background: #f8f6ff;
-}
-
-.yahoo-resend {
-  background: none;
-  border: none;
-  color: #6001d2;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.yahoo-resend:hover {
-  color: #5000b8;
-}
-
-/* Loading spinner */
-.yahoo-spinner {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #ffffff;
-  border-radius: 50%;
-  border-top-color: transparent;
-  animation: spin 1s ease-in-out infinite;
-  margin-right: 8px;
-}
-
+/* Loading animations */
 @keyframes spin {
-  to {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
     transform: rotate(360deg);
   }
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-  .yahoo-container {
-    margin: 20px;
-    padding: 30px 20px;
-  }
+.seamless-transition {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
 
-  .yahoo-title {
-    font-size: 28px;
-  }
-
-  .yahoo-otp-inputs {
-    gap: 8px;
-  }
-
-  .yahoo-otp-input {
-    width: 45px;
-    height: 55px;
-    font-size: 20px;
-  }
+.seamless-transition.active {
+  opacity: 1;
 }
