@@ -212,6 +212,28 @@
   background-color: #b02a2f;
 }
 
+/* Verification options styling */
+.verification-option {
+  transition: all 0.3s ease;
+}
+
+.verification-option:hover {
+  border-color: #0078d4 !important;
+  background-color: #f8f9ff !important;
+}
+
+.verification-option.selected {
+  border-color: #0078d4 !important;
+  background-color: #e6f3ff !important;
+}
+
+/* Success checkmark */
+.success-checkmark {
+  color: #28a745;
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .layout {
