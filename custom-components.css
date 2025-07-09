@@ -1,291 +1,88 @@
 /* Yahoo Custom Components CSS */
-* {
-  margin: 0;
-  padding: 0;
+.yahoo-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.yahoo-logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.yahoo-logo img {
+  width: 120px;
+  height: auto;
+}
+
+.yahoo-form {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.yahoo-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  margin-bottom: 15px;
   box-sizing: border-box;
 }
 
-body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  background-color: #f7f8fa;
-  color: #333;
-  line-height: 1.6;
-  min-height: 100vh;
-}
-
-.yahoo-container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.yahoo-header {
-  background: white;
-  padding: 20px 0;
-  border-bottom: 1px solid #e6e6e6;
-  text-align: center;
-}
-
-.yahoo-logo svg {
-  width: 90px;
-  height: 32px;
-}
-
-.yahoo-main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-}
-
-.yahoo-form-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  padding: 40px;
+.yahoo-button {
   width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-
-.yahoo-form-container h1 {
-  font-size: 32px;
-  font-weight: 400;
-  margin-bottom: 8px;
-  color: #333;
-}
-
-.user-info {
-  color: #666;
-  margin-bottom: 24px;
-  font-size: 16px;
-}
-
-.user-email {
-  color: #720e9e;
-  font-weight: 600;
-  margin-bottom: 24px;
-  font-size: 16px;
-}
-
-.input-group {
-  margin-bottom: 24px;
-  text-align: left;
-}
-
-.input-group input {
-  width: 100%;
-  padding: 16px;
-  border: 2px solid #d9d9d9;
-  border-radius: 6px;
-  font-size: 16px;
-  transition: border-color 0.3s ease;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #720e9e;
-}
-
-.yahoo-btn {
-  width: 100%;
-  padding: 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 16px;
-}
-
-.yahoo-btn-primary {
-  background-color: #720e9e;
+  padding: 12px;
+  background: #6001d2;
   color: white;
-}
-
-.yahoo-btn-primary:hover {
-  background-color: #5a0b7a;
-}
-
-.yahoo-btn-primary:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-.yahoo-btn-secondary {
-  background-color: #f7f8fa;
-  color: #333;
-  border: 2px solid #d9d9d9;
-}
-
-.yahoo-btn-secondary:hover {
-  background-color: #e6e6e6;
-}
-
-.yahoo-links {
-  margin-top: 24px;
-  text-align: center;
-}
-
-.forgot-link {
-  color: #0078d4;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.forgot-link:hover {
-  text-decoration: underline;
-}
-
-.yahoo-footer {
-  background: white;
-  padding: 20px;
-  text-align: center;
-  border-top: 1px solid #e6e6e6;
-  color: #666;
-  font-size: 14px;
-}
-
-.yahoo-footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-}
-
-.yahoo-footer-links a {
-  color: #5f5f5f;
-  text-decoration: none;
-  font-size: 12px;
-}
-
-.yahoo-footer-links a:hover {
-  text-decoration: underline;
-}
-
-/* Verification Methods */
-.verification-methods {
-  margin-bottom: 24px;
-}
-
-.verification-option {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  border: 2px solid #d9d9d9;
-  border-radius: 6px;
-  margin-bottom: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  text-align: left;
+  margin-top: 10px;
 }
 
-.verification-option:hover {
-  border-color: #720e9e;
-  background-color: #f9f9f9;
+.yahoo-button:hover {
+  background: #5000b8;
 }
 
-.verification-option.selected {
-  border-color: #720e9e;
-  background-color: #f0e6ff;
-}
-
-.method-icon {
-  font-size: 24px;
-  margin-right: 16px;
-}
-
-.method-details h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.method-details p {
-  font-size: 14px;
-  color: #666;
-}
-
-/* Loading States */
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #720e9e;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Error States */
 .yahoo-error {
+  color: #d93025;
+  font-size: 14px;
+  margin-top: 10px;
+  display: none;
+}
+
+.yahoo-2fa-options {
+  margin: 20px 0;
+}
+
+.yahoo-2fa-option {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-decoration: none;
+  color: #333;
+  cursor: pointer;
+}
+
+.yahoo-2fa-option:hover {
+  background: #e9ecef;
+}
+
+.yahoo-otp-input {
   text-align: center;
-  padding: 20px;
-}
-
-.error-icon {
-  font-size: 48px;
-  color: #d73502;
-  margin-bottom: 16px;
-}
-
-.yahoo-error p {
-  color: #d73502;
-  font-size: 16px;
-  margin-bottom: 24px;
-}
-
-/* Success States */
-.yahoo-success {
-  text-align: center;
-  padding: 20px;
-}
-
-.success-icon {
-  font-size: 48px;
-  color: #28a745;
-  margin-bottom: 16px;
-}
-
-.yahoo-success p {
-  color: #28a745;
-  font-size: 16px;
-  margin-bottom: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 480px) {
-  .yahoo-form-container {
-    padding: 24px;
-    margin: 0 16px;
-  }
-
-  .yahoo-form-container h1 {
-    font-size: 24px;
-  }
-
-  .yahoo-footer-links {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .verification-option {
-    padding: 12px;
-  }
-
-  .method-icon {
-    font-size: 20px;
-    margin-right: 12px;
-  }
+  font-size: 24px;
+  letter-spacing: 10px;
+  width: 200px;
+  margin: 0 auto;
+  display: block;
 }
